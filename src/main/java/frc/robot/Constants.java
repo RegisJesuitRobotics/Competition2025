@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,5 +17,16 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+
+    public static class MiscConstants {
+    public static final String CANIVORE_NAME = "canivore";
+
+    private MiscConstants() {}
+
+    public static final int[] USED_CONTROLLER_PORTS = {0, 1};
+    public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();
+
+    public static final int CONFIGURATION_ATTEMPTS = 10;
   }
 }

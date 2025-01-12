@@ -16,4 +16,10 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class VisionConstants {
+    public static final double CAMERA_MOUNT_ANGLE = 0.0;
+    public static final double CAMERA_MOUNT_HEIGHT_INCHES = 0.0;
+
+    public static final double CORAL_HEIGHT = 0.0;
+  }
 }

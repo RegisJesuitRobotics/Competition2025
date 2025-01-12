@@ -14,8 +14,7 @@ public class ConfigEquality {
 
   private static boolean isMagnetSensorEqual(MagnetSensorConfigs obj1, MagnetSensorConfigs obj2) {
     return obj1.SensorDirection.value == obj2.SensorDirection.value
-        && fpEqual(obj1.MagnetOffset, obj2.MagnetOffset)
-        && obj1.AbsoluteSensorRange.value == obj2.AbsoluteSensorRange.value;
+        && fpEqual(obj1.MagnetOffset, obj2.MagnetOffset);
   }
 
   // This class is pain, but necessary because of floating point comparison
@@ -54,9 +53,7 @@ public class ConfigEquality {
     return fpEqual(obj1.StatorCurrentLimit, obj2.StatorCurrentLimit)
         && obj1.StatorCurrentLimitEnable == obj2.StatorCurrentLimitEnable
         && fpEqual(obj1.SupplyCurrentLimit, obj2.SupplyCurrentLimit)
-        && obj1.SupplyCurrentLimitEnable == obj2.SupplyCurrentLimitEnable
-        && fpEqual(obj1.SupplyCurrentThreshold, obj2.SupplyCurrentThreshold)
-        && fpEqual(obj1.SupplyTimeThreshold, obj2.SupplyTimeThreshold);
+        && obj1.SupplyCurrentLimitEnable == obj2.SupplyCurrentLimitEnable;
   }
 
   private static boolean isVoltageEqual(VoltageConfigs obj1, VoltageConfigs obj2) {

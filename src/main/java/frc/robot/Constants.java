@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
@@ -18,6 +20,18 @@ import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class ElevatorConstants {
+    public static final int LEFT_ID = 0;
+    public static final int RIGHT_ID = 0;
+    public static final int BOTTOM_ID = 0;
+    public static final double SUPPLY_CURRENT_LIMIT = 0.0;
+    public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
+    public static final double GEAR_RATIO = 1.0;
+    //TODO: inches of gear
+    public static final double METERS_PER_REVOLUTION = (Math.PI * Units.inchesToMeters(0.0)) / GEAR_RATIO;
+    public static final boolean LEFT_INVERTED = false;
+  };
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }

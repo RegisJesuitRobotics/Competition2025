@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.gains.TunableFFGains;
+import frc.robot.telemetry.tunable.gains.TunablePIDGains;
+import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -34,5 +37,11 @@ public final class Constants {
     public static final double CAMERA_MOUNT_HEIGHT_INCHES = 0.0;
 
     public static final double CORAL_HEIGHT = 0.0;
+  }
+
+  public static class AutoConstants {
+      public static final TunablePIDGains pointTranslationGains = new TunablePIDGains("/drive/gains/pointTranslationController", 0, 0, 0, MiscConstants.TUNING_MODE);
+      public static final TunableTrapezoidalProfileGains trapPointTranslationGains = new TunableTrapezoidalProfileGains("/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
+      public static final TunableFFGains pointTranslationFFGains = new TunableFFGains("/drive/gains/pointFFController", 0, 0, 0, MiscConstants.TUNING_MODE);
   }
 }

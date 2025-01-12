@@ -4,14 +4,23 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.commands.autoCommands.ToPointCommand;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.VisionSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
   public static Command exampleAuto(ExampleSubsystem subsystem) {
     return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
+  }
+
+  public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive){
+    Pose2d targetPose = vision.getTargetTrajectory();
+    return new ToPointCommand(drive, ()-> targetPose);
   }
 
   private Autos() {

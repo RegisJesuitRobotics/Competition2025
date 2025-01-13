@@ -1,11 +1,10 @@
 package frc.robot.telemetry.wrappers;
 
+import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.REVLibError;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
 
@@ -17,8 +16,7 @@ public class TelemetryCANSparkFlex extends SparkFlex {
   private final DoubleTelemetryEntry positionEntry;
   private final DoubleTelemetryEntry velocityEntry;
   SparkFlexConfig config = new SparkFlexConfig();
-  
-  
+
   /**
    * Create a new object to control a SPARK Flex motor Controller
    *
@@ -41,7 +39,7 @@ public class TelemetryCANSparkFlex extends SparkFlex {
     velocityEntry = new DoubleTelemetryEntry(telemetryPath + "velocity", tuningMode);
   }
 
-  public SparkFlexConfig IdleMode(IdleMode mode){
+  public SparkFlexConfig IdleMode(IdleMode mode) {
     inBrakeModeEntry.append(mode == IdleMode.kBrake);
 
     return IdleMode(mode);
@@ -49,7 +47,8 @@ public class TelemetryCANSparkFlex extends SparkFlex {
 
   public REVLibError burnFlashWithDelay() {
     Timer.delay(0.1);
-    REVLibError error = configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    REVLibError error =
+        configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     Timer.delay(0.1);
     return error;
   }

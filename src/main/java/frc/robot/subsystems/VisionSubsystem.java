@@ -5,26 +5,37 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import java.util.OptionalDouble;
 
 public class VisionSubsystem extends SubsystemBase {
 
   private VisionSubsystem() {}
 
-  public double getTargetVerticalOffset() {
-    return LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
-        .targets_Detector[0]
-        .ty;
+  public OptionalDouble getTargetVerticalOffset() {
+    LimelightHelpers.LimelightTarget_Detector detector =
+        LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
+            .targets_Detector[0];
+    if (detector.confidence > 80) {
+      return OptionalDouble.of(detector.ty);
+    } else {
+      return OptionalDouble.empty();
+    }
   }
 
-  public double getTargetHorizontalOffset() {
-    return LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
-        .targets_Detector[0]
-        .tx;
+  public OptionalDouble getTargetHorizontalOffset() {
+    LimelightHelpers.LimelightTarget_Detector detector =
+        LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
+            .targets_Detector[0];
+    if (detector.confidence > 80) {
+      return OptionalDouble.of(detector.tx);
+    } else {
+      return OptionalDouble.empty();
+    }
   }
 
   public double getEstimatedDistanceTarget() {
     double angleToGoalRadians =
-        getTargetVerticalOffset() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
+        getTargetVerticalOffset().getAsDouble() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
 
     return (Constants.VisionConstants.CORAL_HEIGHT
             - Constants.VisionConstants.CAMERA_MOUNT_HEIGHT_METERS)
@@ -36,9 +47,13 @@ public class VisionSubsystem extends SubsystemBase {
 
     return new Pose2d(
         (estimatedDistanceTarget
-            * Math.cos(getTargetVerticalOffset() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
+            * Math.cos(
+                getTargetVerticalOffset().getAsDouble()
+                    + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
         (estimatedDistanceTarget
-            * Math.sin(getTargetVerticalOffset() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
+            * Math.sin(
+                getTargetVerticalOffset().getAsDouble()
+                    + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
         new Rotation2d(0.0));
   }
 }

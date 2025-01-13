@@ -28,15 +28,13 @@ public class ToPointCommand extends Command {
   public ToPointCommand(CommandSwerveDrivetrain drive, Supplier<Pose2d> desiredPoseSupplier) {
     this.drive = drive;
     this.desiredPoseSupplier = desiredPoseSupplier;
-    // each subsystem used by the command must be passed into the
-    // addRequirements() method (which takes a vararg of Subsystem)
+    translationController.setTolerance(0.05);
     addRequirements(drive);
   }
 
   @Override
   public void initialize() {
     desiredPoseEntry.append(desiredPoseCurrent);
-
     desiredPoseCurrent = desiredPoseSupplier.get();
     translationController.setGoal(0.0);
   }

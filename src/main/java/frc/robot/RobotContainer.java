@@ -15,23 +15,23 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.hid.CommandNintendoSwitchController;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+    private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
                                                                                       // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     private final SwerveRequest.RobotCentric centricdrive = new SwerveRequest.RobotCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(maxSpeed);
 
 
     private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
@@ -50,14 +50,14 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> {
                     if (joystick.rightBumper().getAsBoolean()) {
 
-                        return centricdrive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
-                                .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate);
+                        return centricdrive.withVelocityX(-joystick.getLeftY() * maxSpeed)
+                                .withVelocityY(-joystick.getLeftX() * maxSpeed)
+                                .withRotationalRate(-joystick.getRightX() * maxAngularRate);
                     } else {
 
-                        return drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
-                                .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate);
+                        return drive.withVelocityX(-joystick.getLeftY() * maxSpeed)
+                                .withVelocityY(-joystick.getLeftX() * maxSpeed)
+                                .withRotationalRate(-joystick.getRightX() * maxAngularRate);
                     }
                 }));
 

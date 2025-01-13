@@ -4,29 +4,30 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
-import frc.robot.telemetry.types.EventTelemetryEntry;
-import frc.robot.utils.Alert;
+import frc.robot.telemetry.types.EventTelemetryEntry;;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.Constants;
-import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 
 import java.util.function.DoubleSupplier;
 
+@Logged
 public class ElevatorSubsystem extends SubsystemBase {
     private final TelemetryTalonFX leftElevatorMotor = new TelemetryTalonFX(Constants.ElevatorConstants.LEFT_ID, "/elevator/motorleft", Constants.MiscConstants.TUNING_MODE);
     private final TelemetryTalonFX rightElevatorMotor = new TelemetryTalonFX(Constants.ElevatorConstants.RIGHT_ID, "/elevator/motorright", Constants.MiscConstants.TUNING_MODE);
-    private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
-    private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
+    private final Alert rightMotorAlert = new Alert("right elevator motor fault", Alert.AlertType.kError);
+    private final Alert leftMotorAlert = new Alert("left elevator motor fault", Alert.AlertType.kError);
     private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
     private final EventTelemetryEntry rightEventEntry = new EventTelemetryEntry("/elevator/motorright/events");
     private final EventTelemetryEntry leftEventEntry = new EventTelemetryEntry("/elevator/motorleft/events");
@@ -114,7 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftElevatorMotor.hasResetOccurred();
 
     }
-
+    @Logged
     public double getElevatorPosition() {
         return rightElevatorMotor.getPosition().getValueAsDouble() * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
 
@@ -124,8 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightElevatorMotor.setVoltage(volts);
     }
 
-
-
+    @Logged
     public boolean atLimit() {
         return bottomSwitch.get();
     }

@@ -4,7 +4,12 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.utils.Alert;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -14,6 +19,8 @@ import frc.robot.Constants;
 import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
+
+import java.util.function.DoubleSupplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
     private final TelemetryTalonFX leftElevatorMotor = new TelemetryTalonFX(Constants.ElevatorConstants.LEFT_ID, "/elevator/motorleft", Constants.MiscConstants.TUNING_MODE);
@@ -25,6 +32,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final EventTelemetryEntry leftEventEntry = new EventTelemetryEntry("/elevator/motorleft/events");
     private boolean isHomed = false;
     private final Debouncer debouncer = new Debouncer(0.5);
+    private final TunableTelemetryProfiledPIDController controller = new TunableTelemetryProfiledPIDController("/elevator/controller", Constants.ElevatorConstants.PID_GAINS, Constants.ElevatorConstants.TRAP_GAINS);
+    private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
 
     private ElevatorSubsystem() {
         configMotors();
@@ -72,8 +81,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         TalonFXConfiguration leftMotorConfiguration = new TalonFXConfiguration();
         leftMotorConfiguration.CurrentLimits.SupplyCurrentLimit = Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
         leftMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-        leftMotorConfiguration.MotorOutput.Inverted = Constants.ElevatorConstants.INVERTED_LEFT;
-
         leftMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         ConfigurationUtils.StringFaultRecorder leftFaultRecorder = new ConfigurationUtils.StringFaultRecorder();
         ConfigurationUtils.applyCheckRecordCTRE(
@@ -113,8 +120,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     }
 
+    public void setVoltage(double volts){
+        rightElevatorMotor.setVoltage(volts);
+    }
+
+
+
     public boolean atLimit() {
         return bottomSwitch.get();
+    }
+
+    public Command setPosition(DoubleSupplier position){
+        return this.run(() -> {
+            double positionClamped = MathUtil.clamp(position.getAsDouble() ,Constants.ElevatorConstants.LOW, Constants.ElevatorConstants.HIGH);
+            controller.setGoal(positionClamped);
+            double feedback = controller.calculate(getElevatorPosition());
+            TrapezoidProfile.State currentSetpoint = controller.getSetpoint();
+            setVoltage(feedback + FF.calculate(currentSetpoint.velocity));
+
+
+
+        }).beforeStarting(() -> controller.reset(getElevatorPosition(), rightElevatorMotor.getVelocity().getValueAsDouble())).onlyIf(() -> isHomed);
     }
 
     @Override

@@ -30,6 +30,11 @@ public final class Constants {
     //TODO: inches of gear
     public static final double METERS_PER_REVOLUTION = (Math.PI * Units.inchesToMeters(0.0)) / GEAR_RATIO;
     public static final boolean LEFT_INVERTED = false;
+    public static final TunablePIDGains PID_GAINS = new TunablePIDGains("/elevator/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableTrapezoidalProfileGains TRAP_GAINS = new TunableTrapezoidalProfileGains("/elevator/trap", 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains FF = new TunableFFGains("/elevator/ff", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double LOW = 0.0;
+    public static final double HIGH = 0.0;
   };
 
   public static class OperatorConstants {

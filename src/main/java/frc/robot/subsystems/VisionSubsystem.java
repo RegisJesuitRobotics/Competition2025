@@ -35,6 +35,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
+  @Logged(name = "estimated target distance")
   public double getEstimatedDistanceTarget() {
     double angleToGoalRadians =
         getTargetVerticalOffset().getAsDouble() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
@@ -44,6 +45,7 @@ public class VisionSubsystem extends SubsystemBase {
         / Math.tan(angleToGoalRadians);
   }
 
+  @Logged(name = "target trajectory")
   public Pose2d getTargetTrajectory() {
     double estimatedDistanceTarget = getEstimatedDistanceTarget();
 

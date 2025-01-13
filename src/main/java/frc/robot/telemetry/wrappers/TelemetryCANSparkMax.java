@@ -1,11 +1,10 @@
 package frc.robot.telemetry.wrappers;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.*;
 import com.revrobotics.REVLibError;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.*;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
 
@@ -40,7 +39,8 @@ public class TelemetryCANSparkMax extends SparkMax {
 
   public REVLibError burnFlashWithDelay() {
     Timer.delay(0.1);
-    REVLibError error = configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    REVLibError error =
+        configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     Timer.delay(0.1);
     return error;
   }

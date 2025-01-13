@@ -1,51 +1,61 @@
 package frc.robot.subsystems;
 
-
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.proto.Trajectory;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import java.util.OptionalDouble;
 
 @Logged
 public class VisionSubsystem extends SubsystemBase {
 
-    private final static VisionSubsystem INSTANCE = new VisionSubsystem();
+  private VisionSubsystem() {}
 
-
-
-
-
-    private VisionSubsystem() {}
-
-
-    public double getTargetVerticalOffset(){
-        return LimelightHelpers.getLatestResults("limelight2").targets_Detector[0].ty;
+  public OptionalDouble getTargetVerticalOffset() {
+    LimelightHelpers.LimelightTarget_Detector detector =
+        LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
+            .targets_Detector[0];
+    if (detector.confidence > 80) {
+      return OptionalDouble.of(detector.ty);
+    } else {
+      return OptionalDouble.empty();
     }
-    public double getTargetHorizontalOffset(){
-        return LimelightHelpers.getLatestResults("limelight2").targets_Detector[0].tx;
+  }
+
+  public OptionalDouble getTargetHorizontalOffset() {
+    LimelightHelpers.LimelightTarget_Detector detector =
+        LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
+            .targets_Detector[0];
+    if (detector.confidence > 80) {
+      return OptionalDouble.of(detector.tx);
+    } else {
+      return OptionalDouble.empty();
     }
+  }
 
-    @Logged
-    public double getEstimatedDistanceTarget(){
-        double angleToGoalRadians = getTargetVerticalOffset() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
+  public double getEstimatedDistanceTarget() {
+    double angleToGoalRadians =
+        getTargetVerticalOffset().getAsDouble() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
 
-       return (Constants.VisionConstants.CORAL_HEIGHT - Constants.VisionConstants.CAMERA_MOUNT_HEIGHT_INCHES) / Math.tan(angleToGoalRadians);
+    return (Constants.VisionConstants.CORAL_HEIGHT
+            - Constants.VisionConstants.CAMERA_MOUNT_HEIGHT_METERS)
+        / Math.tan(angleToGoalRadians);
+  }
 
-    }
-    @Logged
-    public Pose2d getTargetTrajectory(){
-        double estimatedDistanceTarget = getEstimatedDistanceTarget();
+  public Pose2d getTargetTrajectory() {
+    double estimatedDistanceTarget = getEstimatedDistanceTarget();
 
-        return new Pose2d((estimatedDistanceTarget * Math.cos(getTargetVerticalOffset() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)), (estimatedDistanceTarget * Math.sin(getTargetVerticalOffset() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)), new Rotation2d(0.0));
-    }
-
-
-
-
+    return new Pose2d(
+        (estimatedDistanceTarget
+            * Math.cos(
+                getTargetVerticalOffset().getAsDouble()
+                    + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
+        (estimatedDistanceTarget
+            * Math.sin(
+                getTargetVerticalOffset().getAsDouble()
+                    + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
+        new Rotation2d(0.0));
+  }
 }
-

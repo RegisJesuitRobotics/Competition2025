@@ -33,8 +33,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    // private final NintendoSwitchController joystick = new
-    // NintendoSwitchController(0);
+
     private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();

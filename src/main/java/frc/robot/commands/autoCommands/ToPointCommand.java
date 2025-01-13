@@ -43,6 +43,8 @@ private final SimpleMotorFeedforward ffController = Constants.AutoConstants.poin
         desiredPoseCurrent = desiredPoseSupplier.get();
         translationController.setGoal(0.0);
 
+        translationController.reset(-getTranslationError().getNorm(), Math.hypot(drive.getPigeon2().getAngularVelocityXDevice().getValueAsDouble(), drive.getPigeon2().getAngularVelocityYDevice().getValueAsDouble()));
+
 
 
     }

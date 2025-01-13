@@ -19,8 +19,7 @@ public final class Autos {
   }
 
   public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive){
-    Pose2d targetPose = vision.getTargetTrajectory();
-    return new ToPointCommand(drive, ()-> targetPose);
+    return new ToPointCommand(drive, ()-> vision.getTargetTrajectory());
   }
 
   private Autos() {

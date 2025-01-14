@@ -16,11 +16,13 @@ public class ToPointCommand extends Command {
   private final SwerveRequest.FieldCentric swerveRequest = new SwerveRequest.FieldCentric();
   private Supplier<Pose2d> desiredPoseSupplier;
   private Pose2d desiredPoseCurrent = new Pose2d();
+
   private final TunableTelemetryProfiledPIDController translationController =
       new TunableTelemetryProfiledPIDController(
           "/drive/auto",
           Constants.AutoConstants.pointTranslationGains,
           Constants.AutoConstants.trapPointTranslationGains);
+
   private final Pose2dEntry desiredPoseEntry = new Pose2dEntry("/drive/neuralDesiredPose", true);
   private final SimpleMotorFeedforward ffController =
       Constants.AutoConstants.pointTranslationFFGains.createFeedforward();

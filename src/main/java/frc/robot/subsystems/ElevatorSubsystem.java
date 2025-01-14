@@ -22,32 +22,42 @@ import java.util.function.DoubleSupplier;
 
 @Logged
 public class ElevatorSubsystem extends SubsystemBase {
+    
   private final TelemetryTalonFX leftElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.LEFT_ID,
           "/elevator/motorleft",
           Constants.MiscConstants.TUNING_MODE);
+
   private final TelemetryTalonFX rightElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.RIGHT_ID,
           "/elevator/motorright",
           Constants.MiscConstants.TUNING_MODE);
+
   private final Alert rightMotorAlert =
       new Alert("right elevator motor fault", Alert.AlertType.kError);
+
   private final Alert leftMotorAlert =
       new Alert("left elevator motor fault", Alert.AlertType.kError);
+
   private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
+
   private final EventTelemetryEntry rightEventEntry =
       new EventTelemetryEntry("/elevator/motorright/events");
+
   private final EventTelemetryEntry leftEventEntry =
       new EventTelemetryEntry("/elevator/motorleft/events");
+
   private boolean isHomed = false;
   private final Debouncer debouncer = new Debouncer(0.5);
+
   private final TunableTelemetryProfiledPIDController controller =
       new TunableTelemetryProfiledPIDController(
           "/elevator/controller",
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
+
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
 
   private ElevatorSubsystem() {
@@ -63,6 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfiguration.Audio.AllowMusicDurDisable = true;
+
     ConfigurationUtils.StringFaultRecorder faultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -98,8 +109,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     leftMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
+
     ConfigurationUtils.applyCheckRecordCTRE(
         () -> leftElevatorMotor.getConfigurator().apply(motorConfiguration),
         () -> {
@@ -107,6 +120,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           leftElevatorMotor.getConfigurator().refresh(appliedConfig);
           return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
         },
+        
         leftFaultRecorder.run("Motor configuration"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -175,6 +189,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       isHomed = true;
       rightElevatorMotor.setPosition(0.0);
     }
+
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
   }

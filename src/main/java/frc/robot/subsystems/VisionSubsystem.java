@@ -15,7 +15,7 @@ public class VisionSubsystem extends SubsystemBase {
     LimelightHelpers.LimelightTarget_Detector detector =
         LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
             .targets_Detector[0];
-    if (detector.confidence > 80) {
+    if (detector.confidence > Constants.VisionConstants.CONFIDENCE_THRESHOLD) {
       return OptionalDouble.of(detector.ty);
     } else {
       return OptionalDouble.empty();
@@ -26,7 +26,7 @@ public class VisionSubsystem extends SubsystemBase {
     LimelightHelpers.LimelightTarget_Detector detector =
         LimelightHelpers.getLatestResults(Constants.VisionConstants.OBJECT_LIMELIGHT)
             .targets_Detector[0];
-    if (detector.confidence > 80) {
+    if (detector.confidence > Constants.VisionConstants.CONFIDENCE_THRESHOLD) {
       return OptionalDouble.of(detector.tx);
     } else {
       return OptionalDouble.empty();

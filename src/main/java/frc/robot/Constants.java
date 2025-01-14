@@ -40,6 +40,7 @@ public final class Constants {
     public static final double CORAL_HEIGHT = 0.0;
     public static final String APRIL_LIMELIGHT = "limelight1";
     public static final String OBJECT_LIMELIGHT = "limelight2";
+    public static final double CONFIDENCE_THRESHOLD = 80.0;
   }
 
   public static class AutoConstants {

@@ -27,15 +27,20 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 0.0;
     public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
     public static final double GEAR_RATIO = 1.0;
-    //TODO: inches of gear
-    public static final double METERS_PER_REVOLUTION = (Math.PI * Units.inchesToMeters(0.0)) / GEAR_RATIO;
+    // TODO: inches of gear
+    public static final double METERS_PER_REVOLUTION =
+        (Math.PI * Units.inchesToMeters(0.0)) / GEAR_RATIO;
     public static final boolean LEFT_INVERTED = false;
-    public static final TunablePIDGains PID_GAINS = new TunablePIDGains("/elevator/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final TunableTrapezoidalProfileGains TRAP_GAINS = new TunableTrapezoidalProfileGains("/elevator/trap", 0, 0, MiscConstants.TUNING_MODE);
-    public static final TunableFFGains FF = new TunableFFGains("/elevator/ff", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunablePIDGains PID_GAINS =
+        new TunablePIDGains("/elevator/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableTrapezoidalProfileGains TRAP_GAINS =
+        new TunableTrapezoidalProfileGains("/elevator/trap", 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains FF =
+        new TunableFFGains("/elevator/ff", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final double LOW = 0.0;
     public static final double HIGH = 0.0;
-  };
+  }
+  ;
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;

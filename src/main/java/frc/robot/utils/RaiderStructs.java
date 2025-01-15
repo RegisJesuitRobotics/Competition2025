@@ -60,7 +60,7 @@ public class RaiderStructs {
     @Override
     public String getTypeName() {
       // TODO Auto-generated method stub
-      throw new UnsupportedOperationException("Unimplemented method 'getTypeName'");
+      return "CANBusStatus";
     }
   }
 
@@ -105,8 +105,7 @@ public class RaiderStructs {
 
     @Override
     public String getTypeName() {
-      // TODO Auto-generated method stub
-      throw new UnsupportedOperationException("Unimplemented method 'getTypeName'");
+      return "CANStatus";
     }
   }
 
@@ -146,8 +145,7 @@ public class RaiderStructs {
 
     @Override
     public String getTypeName() {
-      // TODO Auto-generated method stub
-      throw new UnsupportedOperationException("Unimplemented method 'getTypeName'");
+      return "TrapezoidProfile.State";
     }
   }
 }

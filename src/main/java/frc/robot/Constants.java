@@ -41,7 +41,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-    public static class MiscConstants {
+  public static class MiscConstants {
     public static final String CANIVORE_NAME = "canivore";
 
     private MiscConstants() {}
@@ -51,16 +51,25 @@ public final class Constants {
 
     public static final int CONFIGURATION_ATTEMPTS = 10;
   }
+
   public static class VisionConstants {
     public static final double CAMERA_MOUNT_ANGLE = 0.0;
-    public static final double CAMERA_MOUNT_HEIGHT_INCHES = 0.0;
+    public static final double CAMERA_MOUNT_HEIGHT_METERS = 0.0;
 
     public static final double CORAL_HEIGHT = 0.0;
+    public static final String APRIL_LIMELIGHT = "limelight1";
+    public static final String OBJECT_LIMELIGHT = "limelight2";
+    public static final double CONFIDENCE_THRESHOLD = 80.0;
   }
 
   public static class AutoConstants {
-      public static final TunablePIDGains pointTranslationGains = new TunablePIDGains("/drive/gains/pointTranslationController", 0, 0, 0, MiscConstants.TUNING_MODE);
-      public static final TunableTrapezoidalProfileGains trapPointTranslationGains = new TunableTrapezoidalProfileGains("/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
-      public static final TunableFFGains pointTranslationFFGains = new TunableFFGains("/drive/gains/pointFFController", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunablePIDGains pointTranslationGains =
+        new TunablePIDGains(
+            "/drive/gains/pointTranslationController", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
+        new TunableTrapezoidalProfileGains(
+            "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains pointTranslationFFGains =
+        new TunableFFGains("/drive/gains/pointFFController", 0, 0, 0, MiscConstants.TUNING_MODE);
   }
 }

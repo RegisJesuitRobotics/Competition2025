@@ -2,14 +2,12 @@ package frc.robot.telemetry.types;
 
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 
@@ -48,33 +46,33 @@ public class DoubleTelemetryEntry extends PrimitiveTelemetryEntry {
     throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 
-public void append(Double value) {
+  public void append(Double value) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'append'");
-}
+  }
 
-public void append(Current value) {
+  public void append(Current value) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'append'");
-}
+  }
 
-public void append(Angle value) {
+  public void append(Angle value) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'append'");
-}
+  }
 
-public void append(AngularVelocity value) {
+  public void append(AngularVelocity value) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'append'");
-}
+  }
 
-public void append(LinearAcceleration value) {
+  public void append(LinearAcceleration value) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'append'");
-}
+  }
 
-public void append(Voltage value) {
+  public void append(Voltage value) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'append'");
-}
+  }
 }

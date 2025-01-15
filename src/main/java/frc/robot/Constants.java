@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.gains.TunableFFGains;
+import frc.robot.telemetry.tunable.gains.TunablePIDGains;
+import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -19,5 +24,37 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-  };
+  }
+
+  public static class MiscConstants {
+    public static final String CANIVORE_NAME = "canivore";
+
+    private MiscConstants() {}
+
+    public static final int[] USED_CONTROLLER_PORTS = {0, 1};
+    public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();
+
+    public static final int CONFIGURATION_ATTEMPTS = 10;
+  }
+
+  public static class VisionConstants {
+    public static final double CAMERA_MOUNT_ANGLE = 0.0;
+    public static final double CAMERA_MOUNT_HEIGHT_METERS = 0.0;
+
+    public static final double CORAL_HEIGHT = 0.0;
+    public static final String APRIL_LIMELIGHT = "limelight1";
+    public static final String OBJECT_LIMELIGHT = "limelight2";
+    public static final double CONFIDENCE_THRESHOLD = 80.0;
+  }
+
+  public static class AutoConstants {
+    public static final TunablePIDGains pointTranslationGains =
+        new TunablePIDGains(
+            "/drive/gains/pointTranslationController", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
+        new TunableTrapezoidalProfileGains(
+            "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains pointTranslationFFGains =
+        new TunableFFGains("/drive/gains/pointFFController", 0, 0, 0, MiscConstants.TUNING_MODE);
+  }
 }

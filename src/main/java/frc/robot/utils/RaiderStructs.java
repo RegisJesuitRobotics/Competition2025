@@ -56,6 +56,12 @@ public class RaiderStructs {
       byteBuffer.putInt(canBusStatus.REC);
       byteBuffer.putInt(canBusStatus.TEC);
     }
+
+    @Override
+    public String getTypeName() {
+      // TODO Auto-generated method stub
+      return "CANBusStatus";
+    }
   }
 
   public static final CANStatusStruct CANStatusStruct = new CANStatusStruct();
@@ -96,6 +102,11 @@ public class RaiderStructs {
       bb.putInt(value.receiveErrorCount);
       bb.putInt(value.transmitErrorCount);
     }
+
+    @Override
+    public String getTypeName() {
+      return "CANStatus";
+    }
   }
 
   public static final TrapezoidStateStruct trapezoidStateStruct = new TrapezoidStateStruct();
@@ -130,6 +141,11 @@ public class RaiderStructs {
     public void pack(ByteBuffer bb, TrapezoidProfile.State value) {
       bb.putDouble(value.position);
       bb.putDouble(value.velocity);
+    }
+
+    @Override
+    public String getTypeName() {
+      return "TrapezoidProfile.State";
     }
   }
 }

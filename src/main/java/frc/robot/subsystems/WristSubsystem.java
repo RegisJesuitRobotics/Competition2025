@@ -115,8 +115,7 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
 //but idk if we will need that or not. I have no idea what I am doing.)
   public double getPosition(){
     return wristMotor.getRotorPosition().getValueAsDouble() + Constants.WristConstants.WRIST_OFFSET
-    * 2 * Math.PI 
-    / 4096;
+    * 2 * Math.PI;
   }
   public Command setPositionCommand(double desiredPositionRadians) {
     return setPositionCommand(() -> desiredPositionRadians);

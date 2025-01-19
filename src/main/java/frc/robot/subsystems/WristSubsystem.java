@@ -41,7 +41,7 @@ public TelemetryTalonFX wristMotor = new TelemetryTalonFX(
   Constants.MiscConstants.TUNING_MODE
 );
 
-private final SysIdRoutine wristRoutine = new SysIdRoutine(
+private final SysIdRoutine wristSysId = new SysIdRoutine(
  new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
    new SysIdRoutine.Mechanism(
               (voltage) -> setVoltage(voltage.in(Volts)),
@@ -104,14 +104,47 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
 
   public void setVoltage(double voltage) {
     wristMotor.setVoltage(voltage);
-    wristVoltageReq.append(voltage);
   }
 
   public Command setVoltageCommand(double voltage) {
-    return this.run(() -> setVoltage(voltage)).withName("WristVoltage");
+    return this.run(() -> setVoltage(voltage)).withName("wristVoltage :P");
+  }
+
+//janky math that probably doesn't work but whatever (the position in encoder ticks divided 
+// by the kraken x60 ticks per revolution times 2pi for radians and then added the wrist offset there
+//but idk if we will need that or not. I have no idea what I am doing.)
+  public double getPosition(){
+    return wristMotor.getRotorPosition().getValueAsDouble() + Constants.WristConstants.WRIST_OFFSET
+    * 2 * Math.PI 
+    / 4096;
+  }
+  public Command setPositionCommand(double desiredPositionRadians) {
+    return setPositionCommand(() -> desiredPositionRadians);
+  }
+
+  public Command setPositionCommand(DoubleSupplier desiredPositionRadians) {
+    return this.run(
+            () -> {
+              pidController.setGoal(desiredPositionRadians.getAsDouble());
+              double feedbackOutput = pidController.calculate(getPosition());
+              TrapezoidProfile.State currentSetpoint = pidController.getSetpoint();
+
+              setVoltage(
+                  feedbackOutput
+                      + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
+            })
+        .beforeStarting(() -> pidController.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
+        .withName("SetWristPosition");
   }
 
   
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return wristSysId.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return wristSysId.dynamic(direction);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

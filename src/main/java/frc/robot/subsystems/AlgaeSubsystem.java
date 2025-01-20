@@ -7,8 +7,6 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.units.Units;
-import frc.robot.Constants.AlgaeConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -17,17 +15,11 @@ import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.MiscConstants;
-import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
@@ -49,7 +41,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   private RelativeEncoder algaeEncoder;
   private EventTelemetryEntry algaeEvent = new EventTelemetryEntry("AlgaeMotor/Event");
 
-  private final SysIdRoutine wristSysId = new SysIdRoutine(
+  private final SysIdRoutine algaeSysId = new SysIdRoutine(
  new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
    new SysIdRoutine.Mechanism(
               (voltage) -> setVoltage(voltage.in(Volts)),
@@ -91,38 +83,46 @@ public void configMotor() {
     () -> algaeMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
       faultRecorder.run("Inverted"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+  ConfigurationUtils.applyCheckRecord(
+      () -> config.idleMode(IdleMode.kCoast),
+      () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
+      faultRecorder.run("Idle mode"),
+      Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
       ConfigurationUtils.applyCheckRecord(
-        () -> config.idleMode(IdleMode.kCoast),
-        () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
-        faultRecorder.run("Idle mode"),
+        () -> config.encoder.positionConversionFactor(conversionFactor / 60),
+        () ->
+            ConfigurationUtils.fpEqual(
+              algaeMotor.configAccessor.encoder.getVelocityConversionFactor(), conversionFactor / 60),
+        faultRecorder.run("Velocity conversion factor"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecord(
-      () -> config.encoder.positionConversionFactor(conversionFactor / 60),
-      () ->
-          ConfigurationUtils.fpEqual(
-              algaeMotor.configAccessor.encoder.getPositionConversionFactor(), conversionFactor),
-      faultRecorder.run("Position conversion factor"),
-      Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecord(
-      () -> config.encoder.positionConversionFactor(conversionFactor / 60),
-      () ->
-          ConfigurationUtils.fpEqual(
-            algaeMotor.configAccessor.encoder.getVelocityConversionFactor(), conversionFactor / 60),
-      faultRecorder.run("Velocity conversion factor"),
-      Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
-      algaeMotor::burnFlashWithDelay,
-      () -> true,
-      faultRecorder.run("Burn flash"),
-      Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.postDeviceConfig(
-      faultRecorder.hasFault(),
-      algaeEvent::append,
-      "Shooter motor",
-      faultRecorder.getFaultString());
-  algaeMotorAlert.set(faultRecorder.hasFault());
+    ConfigurationUtils.applyCheckRecordRev(
+        algaeMotor::burnFlashWithDelay,
+        () -> true,
+        faultRecorder.run("Burn flash"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.postDeviceConfig(
+        faultRecorder.hasFault(),
+        algaeEvent::append,
+        "Shooter motor",
+        faultRecorder.getFaultString());
+    algaeMotorAlert.set(faultRecorder.hasFault());
 }
 
+@Logged
+  public void setVoltage(double voltage){
+    algaeMotor.setVoltage(voltage);
+  }
+  public Command setVoltageCommand(double voltage){
+    return this.run(
+      ()-> setVoltage(voltage)).withName("Algae/Voltage");
+  }
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return algaeSysId.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return algaeSysId.dynamic(direction);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

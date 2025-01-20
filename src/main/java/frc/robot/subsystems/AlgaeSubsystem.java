@@ -17,6 +17,7 @@ import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -78,7 +79,7 @@ public void configMotor() {
       () -> true,
       faultRecorder.run("Factory defaults"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
+  ConfigurationUtils.applyCheckRecord(
       () -> config.smartCurrentLimit(Constants.AlgaeConstants.STALL_MOTOR_CURRENT, 
       Constants.AlgaeConstants.FREE_MOTOR_CURRENT),
       () -> true,
@@ -89,9 +90,9 @@ public void configMotor() {
     () -> algaeMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
       faultRecorder.run("Inverted"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
-      () -> config.IdleMode(IdleMode.kCoast),
-      () -> algaeMotor.configAcessor.getIdleMode() == SparkMax.IdleMode.kCoast,
+  ConfigurationUtils.applyCheckRecord(
+      () -> config.idleMode(IdleMode.kCoast),
+      () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
       faultRecorder.run("Idle mode"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecordRev(
@@ -101,7 +102,7 @@ public void configMotor() {
               algaeEncoder.getPositionConversionFactor(), conversionFactor),
       faultRecorder.run("Position conversion factor"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
+  ConfigurationUtils.applyCheckRecord(
       () -> config.encoder.velocityConversionFactor(conversionFactor / 60),
       () ->
           ConfigurationUtils.fpEqual(

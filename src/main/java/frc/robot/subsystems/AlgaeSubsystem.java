@@ -91,7 +91,6 @@ public void configMotor() {
     () -> algaeMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
       faultRecorder.run("Inverted"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-<<<<<<< HEAD
       ConfigurationUtils.applyCheckRecord(
         () -> config.idleMode(IdleMode.kCoast),
         () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
@@ -99,26 +98,13 @@ public void configMotor() {
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecord(
       () -> config.encoder.positionConversionFactor(conversionFactor / 60),
-=======
-  ConfigurationUtils.applyCheckRecord(
-      () -> config.idleMode(IdleMode.kCoast),
-      () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
-      faultRecorder.run("Idle mode"),
-      Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
-      () -> config.encoder.positionConversionFactor(1000),
->>>>>>> 70dc8c1c1f3dd356143d32f1a9f375ca57177854
       () ->
           ConfigurationUtils.fpEqual(
               algaeMotor.configAccessor.encoder.getPositionConversionFactor(), conversionFactor),
       faultRecorder.run("Position conversion factor"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecord(
-<<<<<<< HEAD
       () -> config.encoder.positionConversionFactor(conversionFactor / 60),
-=======
-      () -> config.encoder.velocityConversionFactor(conversionFactor / 60),
->>>>>>> 70dc8c1c1f3dd356143d32f1a9f375ca57177854
       () ->
           ConfigurationUtils.fpEqual(
             algaeMotor.configAccessor.encoder.getVelocityConversionFactor(), conversionFactor / 60),

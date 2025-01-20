@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -7,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import java.util.OptionalDouble;
 
+@Logged
 public class VisionSubsystem extends SubsystemBase {
 
   private VisionSubsystem() {}
@@ -33,6 +35,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
+  @Logged(name = "estimated target distance")
   public double getEstimatedDistanceTarget() {
     double angleToGoalRadians =
         getTargetVerticalOffset().getAsDouble() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
@@ -42,6 +45,7 @@ public class VisionSubsystem extends SubsystemBase {
         / Math.tan(angleToGoalRadians);
   }
 
+  @Logged(name = "target trajectory")
   public Pose2d getTargetTrajectory() {
     double estimatedDistanceTarget = getEstimatedDistanceTarget();
 

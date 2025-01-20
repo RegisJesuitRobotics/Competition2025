@@ -16,11 +16,13 @@ public class ToPointCommand extends Command {
   private final SwerveRequest.FieldCentric swerveRequest = new SwerveRequest.FieldCentric();
   private Supplier<Pose2d> desiredPoseSupplier;
   private Pose2d desiredPoseCurrent = new Pose2d();
+
   private final TunableTelemetryProfiledPIDController translationController =
       new TunableTelemetryProfiledPIDController(
           "/drive/auto",
           Constants.AutoConstants.pointTranslationGains,
           Constants.AutoConstants.trapPointTranslationGains);
+
   private final Pose2dEntry desiredPoseEntry = new Pose2dEntry("/drive/neuralDesiredPose", true);
   private final SimpleMotorFeedforward ffController =
       Constants.AutoConstants.pointTranslationFFGains.createFeedforward();
@@ -35,8 +37,15 @@ public class ToPointCommand extends Command {
   @Override
   public void initialize() {
     desiredPoseEntry.append(desiredPoseCurrent);
+
     desiredPoseCurrent = desiredPoseSupplier.get();
     translationController.setGoal(0.0);
+
+    translationController.reset(
+        -getTranslationError().getNorm(),
+        Math.hypot(
+            drive.getPigeon2().getAngularVelocityXDevice().getValueAsDouble(),
+            drive.getPigeon2().getAngularVelocityYDevice().getValueAsDouble()));
   }
 
   @Override
@@ -49,15 +58,15 @@ public class ToPointCommand extends Command {
 
       translationVeloctiy =
           new Translation2d(translationFeedback + translationFF, getTranslationError().getAngle());
-    }
 
-    Translation2d finalTranslationVeloctiy = translationVeloctiy;
-    drive.applyRequest(
-        () ->
-            swerveRequest
-                .withVelocityX(finalTranslationVeloctiy.getX())
-                .withVelocityY(finalTranslationVeloctiy.getY())
-                .withRotationalRate(0.0));
+      Translation2d finalTranslationVeloctiy = translationVeloctiy;
+      drive.applyRequest(
+          () ->
+              swerveRequest
+                  .withVelocityX(finalTranslationVeloctiy.getX())
+                  .withVelocityY(finalTranslationVeloctiy.getY())
+                  .withRotationalRate(0.0));
+    }
   }
 
   @Override

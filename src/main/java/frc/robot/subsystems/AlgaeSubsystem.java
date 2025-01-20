@@ -18,6 +18,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -78,7 +79,7 @@ public void configMotor() {
       () -> true,
       faultRecorder.run("Factory defaults"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
+  ConfigurationUtils.applyCheckRecord(
       () -> config.smartCurrentLimit(Constants.AlgaeConstants.STALL_MOTOR_CURRENT, 
       Constants.AlgaeConstants.FREE_MOTOR_CURRENT),
       () -> true,
@@ -89,23 +90,23 @@ public void configMotor() {
     () -> algaeMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
       faultRecorder.run("Inverted"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
-      () -> config.IdleMode(IdleMode.kCoast),
-      () -> algaeMotor.configAcessor.getIdleMode() == SparkMax.IdleMode.kCoast,
-      faultRecorder.run("Idle mode"),
-      Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
-      () -> config.encoder.positionConversionFactor(1000),
+      ConfigurationUtils.applyCheckRecord(
+        () -> config.idleMode(IdleMode.kCoast),
+        () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
+        faultRecorder.run("Idle mode"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+  ConfigurationUtils.applyCheckRecord(
+      () -> config.encoder.positionConversionFactor(conversionFactor / 60),
       () ->
           ConfigurationUtils.fpEqual(
-              algaeEncoder.getPositionConversionFactor(), conversionFactor),
+              algaeMotor.configAccessor.encoder.getPositionConversionFactor(), conversionFactor),
       faultRecorder.run("Position conversion factor"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  ConfigurationUtils.applyCheckRecordRev(
-      () -> config.encoder.velocityConversionFactor(conversionFactor / 60),
+  ConfigurationUtils.applyCheckRecord(
+      () -> config.encoder.positionConversionFactor(conversionFactor / 60),
       () ->
           ConfigurationUtils.fpEqual(
-              algaeEncoder.getVelocityConversionFactor(), conversionFactor / 60),
+            algaeMotor.configAccessor.encoder.getVelocityConversionFactor(), conversionFactor / 60),
       faultRecorder.run("Velocity conversion factor"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecordRev(

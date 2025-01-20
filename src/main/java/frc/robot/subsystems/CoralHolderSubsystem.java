@@ -14,6 +14,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.util.Units;
@@ -35,25 +36,57 @@ import frc.robot.utils.ConfigurationUtils;
 import frc.robot.utils.ConfigurationUtils.StringFaultRecorder;
 
 public class CoralHolderSubsystem extends SubsystemBase {
+  new Alert("Haii~\nI have a sniper on the building next to this one you better win :3", AlertType.INFO).set(true);
   
   /* I put null for anything I didn't know */
-  private final TelemetryCANSparkFlex coralHolderMotor = new TelemetryCANSparkFlex(CoralConstants.CORAL_HOLDER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless, "/coral/motor",MiscConstants.TUNING_MODE);
-  private final Alert coralMotorAlert = new Alert("you're so incompetent that you broke my motor (coral holder motor fault)", AlertType.ERROR);  //maybe cycle through a list of insults randomly but not rn
+  private final TelemetryCANSparkFlex coralHolderMotor = new TelemetryCANSparkFlex(CoralConstants.CORAL_HOLDER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless, "/coralHolder/motor", MiscConstants.TUNING_MODE);
+  private final Alert coralMotorAlert = new Alert("you're so incompetent that you broke my motor (coral holder motor fault)", AlertType.ERROR);
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
   private final RelativeEncoder coralHolderMotorEncoder = coralHolderMotor.getEncoder();
-  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(null, null);
-  private final SimpleMotorFeedforward coralHolderMotorPID = CoralConstants.FF_GAINS.createFeedforward();
+  private final SysIdRoutine sysIDRoutine = new SysIdRoutine(null, null);
+  private final SimpleMotorFeedforward coralHolderMotorFF = CoralConstants.FF_GAINS.createFeedforward();
 
+  /* telemetry stuff */
+  private final EventTelemetryEntry coralHolderMotorTelemetry = new EventTelemetryEntry("/coralHolder/events");
+  private final DoubleTelemetryEntry coralHolderDoubleEntries = new DoubleTelemetryEntry("/coralHolder/voltageReq", null);
+  private final BooleanTelemetryEntry coralHolderBooleanEntries = new BooleanTelemetryEntry("/coralHolder/boolean", null);
+  private final TunableTelemetryPIDController coralHolderMotorPID = new TunableTelemetryPIDController("/coralHolder/pid", );
 
   void configMotor() {
     ;   //haha not my problem
   }
 
-  /** Creates a new CoralHolderSubsystem. (constructor) */
   public CoralHolderSubsystem() {
     configMotor();
+  }
 
-    
+  public void setVoltage(double voltage) {
+    coralHolderMotor.setVoltage(voltage);
+  }
+
+  public double getVelocity() {
+    return coralHolderMotorEncoder.getVelocity();
+  }
+
+  public double getSetpoint() {
+    return coralHolderMotorPID.getSetpoint();
+  }
+
+  public boolean inTolerance() {
+    return Math.abs(getVelocity() - getSetpoint()) / (getSetpoint()) < 0.05;
+  }
+
+  public void runVelocity(double setpointRadiansPerSecond) {
+    double limitedRate = rateLimiter.calculate(setpointRadiansPerSecond);
+    setVoltage(coralHolderMotorPID.calculate(getVelocity(), limitedRate) + coralHolderMotorFF.calculate(limitedRate));
+  }
+
+  public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIDRoutine.quasistatic(direction);
+  }
+
+  public Command sysIDDynamic(SysIdRoutine.Direction direction) {
+    return sysIDRoutine.dynamic(direction);
   }
 
   @Override

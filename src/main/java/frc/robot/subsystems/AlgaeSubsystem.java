@@ -15,8 +15,12 @@ import frc.robot.Constants;
 import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -62,43 +66,43 @@ public void configMotor() {
   double conversionFactor = Math.PI * 2 / Constants.AlgaeConstants.SHOOTER_GEAR_RATIO;
 
   StringFaultRecorder faultRecorder = new StringFaultRecorder();
+  SparkFlexConfig config = new SparkFlexConfig();
+
   ConfigurationUtils.applyCheckRecordRev(
       () -> algaeMotor.setCANTimeout(250),
       () -> true,
       faultRecorder.run("CAN timeout"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecordRev(
-      algaeMotor::restoreFactoryDefaults,
+      () -> algaeMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters),
       () -> true,
       faultRecorder.run("Factory defaults"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecordRev(
-      () -> algaeMotor.setSmartCurrentLimit(Constants.AlgaeConstants.STALL_MOTOR_CURRENT, 
+      () -> config.smartCurrentLimit(Constants.AlgaeConstants.STALL_MOTOR_CURRENT, 
       Constants.AlgaeConstants.FREE_MOTOR_CURRENT),
       () -> true,
       faultRecorder.run("Current limits"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecord(
-    () -> SparkBaseConfig.inverted(Constants.AlgaeConstants.INVERTED()),
-    () -> SparkBaseConfig.getInverted() == Constants.AlgaeConstants.INVERTED,
-     // () -> algaeMotor.setInverted(Constants.AlgaeConstants.INVERTED), //actually what is this. WHy would they depricate it this is so ctupid.
-    // () -> algaeMotor.getInverted() == Constants.AlgaeConstants.INVERTED,
+    () -> config.inverted(Constants.AlgaeConstants.INVERTED),
+    () -> algaeMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
       faultRecorder.run("Inverted"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecordRev(
-      () -> algaeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast),
-      () -> algaeMotor.getIdleMode() == CANSparkMax.IdleMode.kCoast,
+      () -> config.IdleMode(IdleMode.kCoast),
+      () -> algaeMotor.configAcessor.getIdleMode() == SparkMax.IdleMode.kCoast,
       faultRecorder.run("Idle mode"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecordRev(
-      () -> algaeEncoder.setPositionConversionFactor(conversionFactor),
+      () -> config.encoder.positionConversionFactor(1000),
       () ->
           ConfigurationUtils.fpEqual(
               algaeEncoder.getPositionConversionFactor(), conversionFactor),
       faultRecorder.run("Position conversion factor"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecordRev(
-      () -> algaeEncoder.setVelocityConversionFactor(conversionFactor / 60),
+      () -> config.encoder.velocityConversionFactor(conversionFactor / 60),
       () ->
           ConfigurationUtils.fpEqual(
               algaeEncoder.getVelocityConversionFactor(), conversionFactor / 60),

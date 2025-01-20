@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
 import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
@@ -25,7 +26,7 @@ public final class Constants {
   public static class MiscConstants {
     public static final String CANIVORE_NAME = "canivore";
 
-    private MiscConstants() {}
+    private MiscConstants() {} //why is there a constructor here
 
     public static final int[] USED_CONTROLLER_PORTS = {0, 1};
     public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();
@@ -40,6 +41,13 @@ public final class Constants {
     public static final double SHOOTER_GEAR_RATIO = 3; //m
     public static final boolean INVERTED = true; //m
 
+  }
+
+  public static class CoralConstants {
+    public static final int CORAL_HOLDER_MOTOR_ID = -4;  //idk port
+    public static final boolean INVERTED = false;
+    public static final int SLEW_RATE_LIMIT = -8; //idk slew limit
+    public static final TunableFFGains FF_GAINS = new TunableFFGains("/gains/coral", 1, 1, 1, MiscConstants.TUNING_MODE);
   }
 
   public static class VisionConstants {

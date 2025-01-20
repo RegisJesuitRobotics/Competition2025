@@ -33,6 +33,15 @@ public final class Constants {
     public static final int CONFIGURATION_ATTEMPTS = 10;
   }
 
+  public static class AlgaeConstants{
+    public static final int ALGAE_MOTOR_ID = 13;
+    public static final int STALL_MOTOR_CURRENT = 3; //m
+    public static final int FREE_MOTOR_CURRENT = 3; //m
+    public static final double SHOOTER_GEAR_RATIO = 3; //m
+    public static final boolean INVERTED = true; //m
+
+  }
+
   public static class VisionConstants {
     public static final double CAMERA_MOUNT_ANGLE = 0.0;
     public static final double CAMERA_MOUNT_HEIGHT_METERS = 0.0;

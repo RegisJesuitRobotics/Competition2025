@@ -45,14 +45,12 @@ public class CoralHolderSubsystem extends SubsystemBase {
   private final RelativeEncoder coralHolderMotorEncoder = coralHolderMotor.getEncoder();
   private final SysIdRoutine sysIDRoutine = new SysIdRoutine(null, null);
   private final SimpleMotorFeedforward coralHolderMotorFF = CoralConstants.FF_GAINS.createFeedforward();
-
-  /* telemetry stuff */
   private final EventTelemetryEntry coralHolderMotorTelemetry = new EventTelemetryEntry("/coralHolder/events");
   private final DoubleTelemetryEntry coralHolderDoubleEntries = new DoubleTelemetryEntry("/coralHolder/voltageReq", null);
   private final BooleanTelemetryEntry coralHolderBooleanEntries = new BooleanTelemetryEntry("/coralHolder/boolean", null);
   private final TunableTelemetryPIDController coralHolderMotorPID = new TunableTelemetryPIDController("/coralHolder/pid", );
 
-  void configMotor() {
+  private void configMotor() {
     ;   //haha not my problem
   }
 

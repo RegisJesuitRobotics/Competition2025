@@ -44,10 +44,16 @@ public final class Constants {
   }
 
   public static class CoralConstants {
-    public static final int CORAL_HOLDER_MOTOR_ID = -4;  //idk port
-    public static final boolean INVERTED = false;
-    public static final int SLEW_RATE_LIMIT = -8; //idk slew limit
-    public static final TunableFFGains FF_GAINS = new TunableFFGains("/gains/coral", 1, 1, 1, MiscConstants.TUNING_MODE);
+    public static final int CORAL_MOTOR_ID = 12; 
+    public static final boolean INVERTED = false; //m
+    public static final int SLEW_RATE_LIMIT = 1; //m
+
+    //tune :p
+   public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
+      "/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+public static final TunableFFGains FF_GAINS =
+  new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+
   }
 
   public static class VisionConstants {

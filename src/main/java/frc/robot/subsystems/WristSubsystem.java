@@ -114,8 +114,7 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
 // by the kraken x60 ticks per revolution times 2pi for radians and then added the wrist offset there
 //but idk if we will need that or not. I have no idea what I am doing.)
   public double getPosition(){
-    return wristMotor.getRotorPosition().getValueAsDouble() + Constants.WristConstants.WRIST_OFFSET
-    * 2 * Math.PI;
+    return Units.rotationsToRadians(wristMotor.getRotorPosition().getValueAsDouble()) + Constants.WristConstants.WRIST_OFFSET;
   }
   public Command setPositionCommand(double desiredPositionRadians) {
     return setPositionCommand(() -> desiredPositionRadians);

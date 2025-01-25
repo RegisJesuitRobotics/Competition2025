@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -20,6 +21,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
@@ -35,6 +37,10 @@ public class AlgaeSubsystem extends SubsystemBase {
     SparkLowLevel.MotorType.kBrushless,  //no more CANSparkLowLevel?
     "algae/motor", 
      Constants.MiscConstants.TUNING_MODE);
+
+  private final TunableTelemetryProfiledPIDController algaePID = new TunableTelemetryProfiledPIDController
+  ("algae/pid", Constants.AlgaeConstants.PID_GAINS, Constants.AlgaeConstants.TRAP_GAINS);
+  private final SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
 
   public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);
   SlewRateLimiter limiter = new SlewRateLimiter(0); //deal with later
@@ -116,6 +122,26 @@ public void configMotor() {
     return this.run(
       ()-> setVoltage(voltage)).withName("Algae/Voltage");
   }
+
+public double getVelocity(){
+  return algaeEncoder.getVelocity();
+}
+
+
+
+public Command runVelocityCommand(double setpointRadiansSecond) {
+  return this.run(
+          () -> {
+            double rateLimited = limiter.calculate(setpointRadiansSecond);
+            setVoltage(
+                algaePID.calculate(algaeEncoder.getVelocity(), rateLimited)
+                    + algaeFF.calculate(rateLimited));
+          })
+      .beforeStarting(() -> limiter.reset(algaeEncoder.getVelocity()))
+      .withName("ShooterRunVelocity");
+}
+
+
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return algaeSysId.quasistatic(direction);
   }

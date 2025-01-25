@@ -40,7 +40,15 @@ public final class Constants {
     public static final double SHOOTER_GEAR_RATIO = 3; //m
     public static final boolean INVERTED = true; //m
 
+    public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
+      "algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE
+    );
+    public static final TunableTrapezoidalProfileGains TRAP_GAINS = new TunableTrapezoidalProfileGains(
+      "algae/trapezoidal profile", 0.0, 0.0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains FF_GAINS = new TunableFFGains(
+      "algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
   }
+
 
   public static class VisionConstants {
     public static final double CAMERA_MOUNT_ANGLE = 0.0;

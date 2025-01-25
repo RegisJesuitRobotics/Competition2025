@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
 import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
@@ -25,7 +26,7 @@ public final class Constants {
   public static class MiscConstants {
     public static final String CANIVORE_NAME = "canivore";
 
-    private MiscConstants() {}
+    private MiscConstants() {} //why is there a constructor here
 
     public static final int[] USED_CONTROLLER_PORTS = {0, 1};
     public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();
@@ -47,6 +48,19 @@ public final class Constants {
       "algae/trapezoidal profile", 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF_GAINS = new TunableFFGains(
       "algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+  }
+
+  public static class CoralConstants {
+    public static final int CORAL_MOTOR_ID = 12; 
+    public static final boolean INVERTED = false; //m
+    public static final int SLEW_RATE_LIMIT = 1; //m
+
+    //tune :p
+   public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
+      "/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+public static final TunableFFGains FF_GAINS =
+  new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+
   }
 
 

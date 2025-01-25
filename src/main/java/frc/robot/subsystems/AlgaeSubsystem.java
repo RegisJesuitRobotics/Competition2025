@@ -114,8 +114,7 @@ public void configMotor() {
     algaeMotorAlert.set(faultRecorder.hasFault());
 }
 
-@Logged
-  public void setVoltage(double voltage){
+  public void setVoltage(Double voltage){
     algaeMotor.setVoltage(voltage);
   }
   public Command setVoltageCommand(double voltage){

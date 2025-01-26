@@ -38,7 +38,7 @@ public final class Constants {
     public static final int ALGAE_MOTOR_ID = 13;
     public static final int STALL_MOTOR_CURRENT = 3; //m
     public static final int FREE_MOTOR_CURRENT = 3; //m
-    public static final double SHOOTER_GEAR_RATIO = 3; //m
+    public static final double GEAR_RATIO = 3; //m
     public static final boolean INVERTED = true; //m
 
     public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
@@ -52,8 +52,11 @@ public final class Constants {
     public static final int CORAL_MOTOR_ID = 12; 
     public static final boolean INVERTED = false; //m
     public static final int SLEW_RATE_LIMIT = 1; //m
+    public static final int STALL_MOTOR_CURRENT = 3; //m
+    public static final int FREE_MOTOR_CURRENT = 3; //m
+    public static final double GEAR_RATIO = 3; //m
 
-    //tune :p
+    //tune 
    public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
       "/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
 public static final TunableFFGains FF_GAINS =

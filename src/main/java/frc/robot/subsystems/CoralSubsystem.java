@@ -49,7 +49,7 @@ public class CoralSubsystem extends SubsystemBase {
     private final TunableTelemetryPIDController coralpid = 
         new TunableTelemetryPIDController("/coral/pid", 
            Constants.CoralConstants.PID_GAINS);
-    private final SimpleMotorFeedforward coralMotorFF = CoralConstants.FF_GAINS.createFeedforward();
+    private SimpleMotorFeedforward coralFF = CoralConstants.FF_GAINS.createFeedforward();
   
     private final SysIdRoutine coralSysId = new SysIdRoutine(
    new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
@@ -59,10 +59,14 @@ public class CoralSubsystem extends SubsystemBase {
                 this
   ));
   
-  
+  public CoralSubsystem() {
+    configMotor();
+    setDefaultCommand(setVoltageCommand(0.0)
+    .ignoringDisable(true).withName("CoralDefault"));
+  }
     private void configMotor() {
       coralEncoder = coralMotor.getEncoder();
-  double conversionFactor = Math.PI * 2 / Constants.AlgaeConstants.SHOOTER_GEAR_RATIO;
+  double conversionFactor = Math.PI * 2 / Constants.CoralConstants.GEAR_RATIO;
 
   StringFaultRecorder faultRecorder = new StringFaultRecorder();
   SparkFlexConfig config = new SparkFlexConfig();
@@ -78,14 +82,14 @@ public class CoralSubsystem extends SubsystemBase {
       faultRecorder.run("Factory defaults"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecord(
-      () -> config.smartCurrentLimit(Constants.AlgaeConstants.STALL_MOTOR_CURRENT, 
-      Constants.AlgaeConstants.FREE_MOTOR_CURRENT),
+      () -> config.smartCurrentLimit(Constants.CoralConstants.STALL_MOTOR_CURRENT, 
+      Constants.CoralConstants.FREE_MOTOR_CURRENT),
       () -> true,
       faultRecorder.run("Current limits"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecord(
-    () -> config.inverted(Constants.AlgaeConstants.INVERTED),
-    () -> coralMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
+    () -> config.inverted(Constants.CoralConstants.INVERTED),
+    () -> coralMotor.configAccessor.getInverted() == Constants.CoralConstants.INVERTED,
       faultRecorder.run("Inverted"),
       Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
   ConfigurationUtils.applyCheckRecord(
@@ -113,10 +117,6 @@ public class CoralSubsystem extends SubsystemBase {
     coralMotorAlert.set(faultRecorder.hasFault());
   }
 
-  public CoralSubsystem() {
-    configMotor();
-  }
-
   public void setVoltage(double voltage) {
     coralMotor.setVoltage(voltage);
   }
@@ -124,18 +124,20 @@ public class CoralSubsystem extends SubsystemBase {
   public double getVelocity() {
     return coralEncoder.getVelocity();
   }
-
-  public double getSetpoint() {
-    return coralpid.getSetpoint();
+  public Command setVoltageCommand(double voltage){
+    return this.run(()-> coralMotor.setVoltage(voltage));
   }
 
-  public boolean inTolerance() {
-    return Math.abs(getVelocity() - getSetpoint()) / (getSetpoint()) < 0.05;
-  }
-
-  public void runVelocity(double setpointRadiansPerSecond) {
-    double limitedRate = rateLimiter.calculate(setpointRadiansPerSecond);
-    setVoltage(coralpid.calculate(getVelocity(), limitedRate) + coralMotorFF.calculate(limitedRate));
+  public Command runVelocityCommand(double setpointRadiansSecond) {
+    return this.run(
+            () -> {
+              double rateLimited = rateLimiter.calculate(setpointRadiansSecond);
+              setVoltage(
+                  coralpid.calculate(coralEncoder.getVelocity(), rateLimited)
+                      + coralFF.calculate(rateLimited));
+            })
+        .beforeStarting(() -> rateLimiter.reset(coralEncoder.getVelocity()))
+        .withName("CoralRunVelocity");
   }
 
   public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
@@ -148,6 +150,10 @@ public class CoralSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (Constants.CoralConstants.FF_GAINS.hasChanged()) {
+      coralFF = Constants.CoralConstants.FF_GAINS.createFeedforward();
+    }
+    coralMotor.logValues();
     // This method will be called once per scheduler run
   }
 }

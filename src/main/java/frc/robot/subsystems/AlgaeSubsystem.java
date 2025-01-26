@@ -21,7 +21,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
@@ -33,13 +33,14 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   
   private final TelemetryCANSparkFlex algaeMotor = new TelemetryCANSparkFlex(
-    Constants.AlgaeConstants.ALGAE_MOTOR_ID,
-    SparkLowLevel.MotorType.kBrushless,  //no more CANSparkLowLevel?
-    "algae/motor", 
+     Constants.AlgaeConstants.ALGAE_MOTOR_ID,
+     SparkLowLevel.MotorType.kBrushless,  //no more CANSparkLowLevel?
+     "algae/motor", 
      Constants.MiscConstants.TUNING_MODE);
 
-  private final TunableTelemetryProfiledPIDController algaePID = new TunableTelemetryProfiledPIDController
-  ("algae/pid", Constants.AlgaeConstants.PID_GAINS, Constants.AlgaeConstants.TRAP_GAINS);
+  private final TunableTelemetryPIDController algaePID = 
+    new TunableTelemetryPIDController
+      ("algae/pid", Constants.AlgaeConstants.PID_GAINS);
   private final SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
 
   public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);
@@ -58,7 +59,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
 public AlgaeSubsystem() {
   configMotor();
-  setDefaultCommand(setVoltageCommand(0.0).withName("Default Algae"));
+  setDefaultCommand(setVoltageCommand(0.0).ignoringDisable(true).withName("Default Algae"));
 }
 
 public void configMotor() {
@@ -117,19 +118,18 @@ public void configMotor() {
   public void setVoltage(Double voltage){
     algaeMotor.setVoltage(voltage);
   }
+
   public Command setVoltageCommand(double voltage){
     return this.run(
       ()-> setVoltage(voltage)).withName("Algae/Voltage");
   }
 
-public double getVelocity(){
+  public double getVelocity(){
   return algaeEncoder.getVelocity();
-}
+  }
 
-
-
-public Command runVelocityCommand(double setpointRadiansSecond) {
-  return this.run(
+  public Command runVelocityCommand(double setpointRadiansSecond) {
+    return this.run(
           () -> {
             double rateLimited = limiter.calculate(setpointRadiansSecond);
             setVoltage(
@@ -138,7 +138,7 @@ public Command runVelocityCommand(double setpointRadiansSecond) {
           })
       .beforeStarting(() -> limiter.reset(algaeEncoder.getVelocity()))
       .withName("ShooterRunVelocity");
-}
+  }
 
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

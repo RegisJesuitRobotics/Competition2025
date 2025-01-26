@@ -44,8 +44,6 @@ public final class Constants {
     public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
       "algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE
     );
-    public static final TunableTrapezoidalProfileGains TRAP_GAINS = new TunableTrapezoidalProfileGains(
-      "algae/trapezoidal profile", 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF_GAINS = new TunableFFGains(
       "algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
   }

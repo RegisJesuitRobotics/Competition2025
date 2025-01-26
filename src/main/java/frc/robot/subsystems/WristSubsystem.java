@@ -9,18 +9,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.Constants.WristConstants;
-import frc.robot.Constants.MiscConstants;
 import edu.wpi.first.epilogue.Logged;
 import frc.robot.utils.Alert;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
@@ -49,7 +43,7 @@ private final SysIdRoutine wristSysId = new SysIdRoutine(
               this
 ));
 
-private final TunableTelemetryProfiledPIDController pidController = 
+private final TunableTelemetryProfiledPIDController wristpid = 
   new TunableTelemetryProfiledPIDController(
     "wrist/profiledpid", 
     WristConstants.WRIST_PID_GAINS, 
@@ -61,10 +55,12 @@ private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
 private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wrist/motor/events");
 
   public WristSubsystem() {
-    configMotors();
+    configMotor();
+    wristpid.setTolerance(Units.degreesToRadians(2)); // idk if this is a good tolerance or not, probably needs to be changed
+    setDefaultCommand(setVoltageCommand(0));
   }
 
-  private void configMotors() {
+  private void configMotor() {
     TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
     motorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.WristConstants.SUPPLY_CURRENT_LIMIT;
@@ -106,16 +102,19 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
     wristMotor.setVoltage(voltage);
   }
 
+  public boolean atGoal(){
+    return wristpid.atGoal();
+  }
+
   public Command setVoltageCommand(double voltage) {
     return this.run(() -> setVoltage(voltage)).withName("wristVoltage :P");
   }
 
-//janky math that probably doesn't work but whatever (the position in encoder ticks divided 
-// by the kraken x60 ticks per revolution times 2pi for radians and then added the wrist offset there
-//but idk if we will need that or not. I have no idea what I am doing.)
+//we love not having to do math
   public double getPosition(){
     return Units.rotationsToRadians(wristMotor.getRotorPosition().getValueAsDouble()) + Constants.WristConstants.WRIST_OFFSET;
   }
+
   public Command setPositionCommand(double desiredPositionRadians) {
     return setPositionCommand(() -> desiredPositionRadians);
   }
@@ -123,15 +122,15 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
   public Command setPositionCommand(DoubleSupplier desiredPositionRadians) {
     return this.run(
             () -> {
-              pidController.setGoal(desiredPositionRadians.getAsDouble());
-              double feedbackOutput = pidController.calculate(getPosition());
-              TrapezoidProfile.State currentSetpoint = pidController.getSetpoint();
+              wristpid.setGoal(desiredPositionRadians.getAsDouble());
+              double feedbackOutput = wristpid.calculate(getPosition());
+              TrapezoidProfile.State currentSetpoint = wristpid.getSetpoint();
 
               setVoltage(
                   feedbackOutput
                       + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
             })
-        .beforeStarting(() -> pidController.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
+        .beforeStarting(() -> wristpid.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
         .withName("SetWristPosition");
   }
 
@@ -145,6 +144,7 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
   }
   @Override
   public void periodic() {
+    wristMotor.logValues();
     // This method will be called once per scheduler run
   }
 }

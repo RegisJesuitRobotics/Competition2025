@@ -49,7 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.ElevatorConstants.TRAP_GAINS);
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
 
-  private ElevatorSubsystem() {
+  public ElevatorSubsystem() {
     configMotors();
   }
 
@@ -146,14 +146,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     return bottomSwitch.get();
   }
 
+  public Command setPosition(double position){
+    return setPosition(() -> position);
+  }
+
   public Command setPosition(DoubleSupplier position) {
     return this.run(
             () -> {
               double positionClamped =
                   MathUtil.clamp(
                       position.getAsDouble(),
-                      Constants.ElevatorConstants.LOW,
-                      Constants.ElevatorConstants.HIGH);
+                      Constants.ElevatorConstants.LOW_REEF,
+                      Constants.ElevatorConstants.HIGH_REEF);
               controller.setGoal(positionClamped);
               double feedback = controller.calculate(getElevatorPosition());
               TrapezoidProfile.State currentSetpoint = controller.getSetpoint();

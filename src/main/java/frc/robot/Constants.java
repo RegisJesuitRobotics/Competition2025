@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
 import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
@@ -37,8 +38,9 @@ public final class Constants {
         new TunableTrapezoidalProfileGains("/elevator/trap", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF =
         new TunableFFGains("/elevator/ff", 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final double LOW = 0.0;
-    public static final double HIGH = 0.0;
+    public static final double LOW_REEF = 0.0;
+    public static final double HIGH_REEF = 0.0;
+    public static final double MID_REEF = 0.0;
   }
   ;
 
@@ -81,5 +83,32 @@ public final class Constants {
     public static final double MAX_ANGULAR_VELOCITY = 0.0;
     public static final double MAX_ANGULAR_ACCELERATION = 0.0;
     public static final double NOMINAL_VOLTAGE = 12.0;
+  }
+
+  public static class WristConstants {
+    public static final int WRIST_ID = 11;
+    public static final double GEAR_RATIO = 0; //idk
+    public static final double SUPPLY_CURRENT_LIMIT = 0.0; //idk
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;     
+    public static final double WRIST_OFFSET = 0.0; //needs a value
+//a lot of 0s
+    public static final TunablePIDGains WRIST_PID_GAINS =
+        new TunablePIDGains(
+          "/pid/wrist/", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+
+    public static final TunableTrapezoidalProfileGains WRIST_TRAP_GAINS =
+        new TunableTrapezoidalProfileGains(
+            "/trapezoidalprofile/wrist",
+            Units.rotationsToRadians(0),
+            Units.rotationsToRadians(0),
+            MiscConstants.TUNING_MODE);
+    public static final double DYNAMIC_OFFSET = Units.degreesToRadians(0);
+  
+  public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
+        new TunableArmElevatorFFGains(
+            "/feedfoward/wrist/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double LOW_REEF = 0.0;
+    public static final double MID_REEF = 0.0;
+    public static final double HIGH_REEF = 0.0;
   }
 }

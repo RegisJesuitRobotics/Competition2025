@@ -7,10 +7,14 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.ElevatorWristCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandNintendoSwitchController;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 
 public class RobotContainer {
 
@@ -32,13 +36,24 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final WristSubsystem wristSubsystem = new WristSubsystem();
+
   // private final NintendoSwitchController joystick = new NintendoSwitchController(0);
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
-
+  private final CommandPS4Controller operator = new CommandPS4Controller(1);
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   public RobotContainer() {
     configureBindings();
+    configureOperatorBindings();
+  }
+
+  private void configureOperatorBindings(){
+    operator.povDown().onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
+    operator.povLeft().onTrue(ElevatorWristCommands.elevatorWristMidReef(elevatorSubsystem, wristSubsystem));
+    operator.povUp().onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
+
   }
 
   private void configureBindings() {

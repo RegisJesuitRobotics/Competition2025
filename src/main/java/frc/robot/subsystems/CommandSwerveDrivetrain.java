@@ -8,6 +8,9 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,7 +26,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import java.io.IOException;
 import java.util.function.Supplier;
+import org.json.simple.parser.ParseException;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -241,6 +246,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public Pose2d getPose() {
     return this.getState().Pose;
+  }
+
+  public Command autoDriveTrajectory(String position) {
+    PathConstraints constraints =
+        new PathConstraints(
+            Constants.AutoConstants.MAX_VELOCITY,
+            Constants.AutoConstants.MAX_ACCELERATION,
+            Constants.AutoConstants.MAX_ANGULAR_VELOCITY,
+            Constants.AutoConstants.MAX_ANGULAR_ACCELERATION,
+            Constants.AutoConstants.NOMINAL_VOLTAGE);
+
+    final PathPlannerPath path;
+    try {
+      path = PathPlannerPath.fromPathFile(position);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
+    }
+
+    return this.run(() -> AutoBuilder.pathfindThenFollowPath(path, constraints));
   }
 
   private void startSimThread() {

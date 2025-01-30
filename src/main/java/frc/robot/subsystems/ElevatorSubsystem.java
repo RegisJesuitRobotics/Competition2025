@@ -146,7 +146,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     return bottomSwitch.get();
   }
 
-  public Command setPosition(double position){
+  public Command setPosition(double position) {
     return setPosition(() -> position);
   }
 

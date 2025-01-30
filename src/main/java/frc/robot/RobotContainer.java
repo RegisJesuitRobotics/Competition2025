@@ -49,11 +49,16 @@ public class RobotContainer {
     configureOperatorBindings();
   }
 
-  private void configureOperatorBindings(){
-    operator.povDown().onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
-    operator.povLeft().onTrue(ElevatorWristCommands.elevatorWristMidReef(elevatorSubsystem, wristSubsystem));
-    operator.povUp().onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
-
+  private void configureOperatorBindings() {
+    operator
+        .povDown()
+        .onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
+    operator
+        .povLeft()
+        .onTrue(ElevatorWristCommands.elevatorWristMidReef(elevatorSubsystem, wristSubsystem));
+    operator
+        .povUp()
+        .onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
   }
 
   private void configureBindings() {

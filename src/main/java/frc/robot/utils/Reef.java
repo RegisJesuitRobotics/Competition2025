@@ -6,9 +6,9 @@ public enum Reef {
   MidUp("MID-UP-REEF.path"),
   Mid("MID-REEF.path"),
   MidDown("MID-DOWN-REEF.path"),
-  BackUp("BACK-UP-REEF.path"),
-  Back("BACK-REEF.path"),
-  BackDown("BACK-DOWN-REEF.path");
+  BackUp("STATION-UP-REEF.path"),
+  Back("STATION-REEF.path"),
+  BackDown("STATION-DOWN-REEF.path");
 
   public final String value;
   private static HashMap<String, Reef> _map = null;

@@ -64,6 +64,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 0.0; //idk
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;     
     public static final double WRIST_OFFSET = 0.0; //needs a value
+    public static final double PID_TOLERANCE = 2.0; //idk
+    public static final int WRIST_ENCODER_PORT = 0; //i also do not know
 //a lot of 0s
     public static final TunablePIDGains WRIST_PID_GAINS =
         new TunablePIDGains(

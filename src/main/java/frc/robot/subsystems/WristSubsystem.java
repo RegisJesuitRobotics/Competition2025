@@ -10,9 +10,11 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -30,7 +32,7 @@ import java.util.function.DoubleSupplier;
 @Logged
 public class WristSubsystem extends SubsystemBase {
 
-  public TelemetryTalonFX wristMotor =
+  private final TelemetryTalonFX wristMotor =
       new TelemetryTalonFX(
           Constants.WristConstants.WRIST_ID,
           "wrist/wristMotor",
@@ -46,15 +48,14 @@ public class WristSubsystem extends SubsystemBase {
           "wrist/profiledpid", WristConstants.WRIST_PID_GAINS, WristConstants.WRIST_TRAP_GAINS);
   private final ArmFeedforward wristff =
       Constants.WristConstants.WRIST_FF_GAINS.createArmFeedforward();
-
+  private final DutyCycleEncoder wristEncoder =
+      new DutyCycleEncoder(WristConstants.WRIST_ENCODER_PORT);
   private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
   private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wrist/motor/events");
 
   public WristSubsystem() {
     configMotor();
-    wristpid.setTolerance(
-        Units.degreesToRadians(
-            2)); // idk if this is a good tolerance or not, probably needs to be changed
+    wristpid.setTolerance(Units.degreesToRadians(WristConstants.PID_TOLERANCE));
     setDefaultCommand(setVoltageCommand(0));
   }
 
@@ -86,7 +87,7 @@ public class WristSubsystem extends SubsystemBase {
     ConfigurationUtils.postDeviceConfig(
         faultRecorder.hasFault(),
         wristEventEntry::append,
-        "right elevator motor fault",
+        "wrist motor fault",
         faultRecorder.getFaultString());
     wristAlert.set(faultRecorder.hasFault());
 
@@ -109,10 +110,10 @@ public class WristSubsystem extends SubsystemBase {
     return this.run(() -> setVoltage(voltage)).withName("wristVoltage :P");
   }
 
-  // we love not having to do math
   public double getPosition() {
-    return Units.rotationsToRadians(wristMotor.getRotorPosition().getValueAsDouble())
-        + Constants.WristConstants.WRIST_OFFSET;
+    return MathUtil.angleModulus(
+        Units.rotationsToRadians(wristEncoder.get()) + WristConstants.WRIST_OFFSET);
+    // should be just .get() this year instead of .getAbsolutePosition()
   }
 
   public Command setPositionCommand(double desiredPositionRadians) {
@@ -145,7 +146,7 @@ public class WristSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    wristMotor.logValues();
+    // wristMotor.logValues(); maybe if we need it
     // This method will be called once per scheduler run
   }
 }

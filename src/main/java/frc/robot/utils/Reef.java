@@ -17,7 +17,7 @@ public enum Reef {
     this.value = value;
   }
 
-  public static Reef valueOf(int value) {
+  public static Reef pathString(int value) {
     Reef retval = (Reef) _map.get(value);
     return retval != null ? retval : values()[0];
   }

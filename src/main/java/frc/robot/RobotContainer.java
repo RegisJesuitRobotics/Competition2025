@@ -58,7 +58,7 @@ public class RobotContainer {
         .onTrue(ElevatorWristCommands.elevatorWristMidReef(elevatorSubsystem, wristSubsystem));
     operator
         .povUp()
-        .onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
+        .onTrue(ElevatorWristCommands.elevatorWristHighReef(elevatorSubsystem, wristSubsystem));
   }
 
   private void configureBindings() {

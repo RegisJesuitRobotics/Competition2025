@@ -4,59 +4,54 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.telemetry.types.EventTelemetryEntry;
-import frc.robot.telemetry.wrappers.TelemetryTalonFX;
-import frc.robot.Constants.WristConstants;
-import edu.wpi.first.epilogue.Logged;
-import frc.robot.utils.Alert;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.types.EventTelemetryEntry;
+import frc.robot.telemetry.wrappers.TelemetryTalonFX;
+import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 import java.util.function.DoubleSupplier;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 @Logged
 public class WristSubsystem extends SubsystemBase {
-  
-public TelemetryTalonFX wristMotor = new TelemetryTalonFX(
-  Constants.WristConstants.WRIST_ID,
-  "wrist/wristMotor",
-  Constants.MiscConstants.TUNING_MODE
-);
 
-private final SysIdRoutine wristSysId = new SysIdRoutine(
-  new SysIdRoutine.Config(Volts.per(Second).of(.5), 
-      Volts.of(2), null, null),
-   new SysIdRoutine.Mechanism(
-              (voltage) -> setVoltage(voltage.in(Volts)),
-              null,
-              this
-));
+  private final TelemetryTalonFX wristMotor =
+      new TelemetryTalonFX(
+          Constants.WristConstants.WRIST_ID,
+          "wrist/wristMotor",
+          Constants.MiscConstants.TUNING_MODE);
 
-private final TunableTelemetryProfiledPIDController wristpid = 
-  new TunableTelemetryProfiledPIDController(
-    "wrist/profiledpid", 
-    WristConstants.WRIST_PID_GAINS, 
-    WristConstants.WRIST_TRAP_GAINS
-    );
-private final ArmFeedforward wristff = Constants.WristConstants.WRIST_FF_GAINS.createArmFeedforward();
-private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(WristConstants.WRIST_ENCODER_PORT);
-private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
-private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wrist/motor/events");
+  private final SysIdRoutine wristSysId =
+      new SysIdRoutine(
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
+
+  private final TunableTelemetryProfiledPIDController wristpid =
+      new TunableTelemetryProfiledPIDController(
+          "wrist/profiledpid", WristConstants.WRIST_PID_GAINS, WristConstants.WRIST_TRAP_GAINS);
+  private final ArmFeedforward wristff =
+      Constants.WristConstants.WRIST_FF_GAINS.createArmFeedforward();
+  private final DutyCycleEncoder wristEncoder =
+      new DutyCycleEncoder(WristConstants.WRIST_ENCODER_PORT);
+  private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
+  private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wrist/motor/events");
 
   public WristSubsystem() {
     configMotor();
@@ -74,7 +69,7 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
     motorConfiguration.Audio.AllowMusicDurDisable = true;
     ConfigurationUtils.StringFaultRecorder faultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
-        ConfigurationUtils.applyCheckRecordCTRE(
+    ConfigurationUtils.applyCheckRecordCTRE(
         () -> wristMotor.getConfigurator().apply(motorConfiguration),
         () -> {
           TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
@@ -82,42 +77,43 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
           return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
         },
         faultRecorder.run("Motor configuration"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS); ConfigurationUtils.applyCheckRecordCTRE(
-          wristMotor::optimizeBusUtilization,
-          () -> true,
-          faultRecorder.run("Optimize bus utilization"),
-          Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-  
-      ConfigurationUtils.postDeviceConfig(
-          faultRecorder.hasFault(),
-          wristEventEntry::append,
-          "wrist motor fault",
-          faultRecorder.getFaultString());
-      wristAlert.set(faultRecorder.hasFault());
-  
-      wristMotor.setLoggingPositionConversionFactor(Constants.WristConstants.GEAR_RATIO);
-      wristMotor.setLoggingVelocityConversionFactor(Constants.WristConstants.GEAR_RATIO);
-  
-      // Clear reset as this is on startup
-      wristMotor.hasResetOccurred();
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecordCTRE(
+        wristMotor::optimizeBusUtilization,
+        () -> true,
+        faultRecorder.run("Optimize bus utilization"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+
+    ConfigurationUtils.postDeviceConfig(
+        faultRecorder.hasFault(),
+        wristEventEntry::append,
+        "wrist motor fault",
+        faultRecorder.getFaultString());
+    wristAlert.set(faultRecorder.hasFault());
+
+    wristMotor.setLoggingPositionConversionFactor(Constants.WristConstants.GEAR_RATIO);
+    wristMotor.setLoggingVelocityConversionFactor(Constants.WristConstants.GEAR_RATIO);
+
+    // Clear reset as this is on startup
+    wristMotor.hasResetOccurred();
   }
 
   public void setVoltage(double voltage) {
     wristMotor.setVoltage(voltage);
   }
 
-  public boolean atGoal(){
+  public boolean atGoal() {
     return wristpid.atGoal();
   }
 
   public Command setVoltageCommand(double voltage) {
     return this.run(() -> setVoltage(voltage)).withName("wristVoltage :P");
   }
-  
-  public double getPosition(){
+
+  public double getPosition() {
     return MathUtil.angleModulus(
         Units.rotationsToRadians(wristEncoder.get()) + WristConstants.WRIST_OFFSET);
-        //should be just .get() this year instead of .getAbsolutePosition()
+    // should be just .get() this year instead of .getAbsolutePosition()
   }
 
   public Command setPositionCommand(double desiredPositionRadians) {
@@ -130,16 +126,16 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
               wristpid.setGoal(desiredPositionRadians.getAsDouble());
               double feedbackOutput = wristpid.calculate(getPosition());
               TrapezoidProfile.State currentSetpoint = wristpid.getSetpoint();
-              
+
               setVoltage(
                   feedbackOutput
                       + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
             })
-        .beforeStarting(() -> wristpid.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
+        .beforeStarting(
+            () -> wristpid.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
         .withName("SetWristPosition");
   }
 
-  
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return wristSysId.quasistatic(direction);
   }
@@ -147,9 +143,10 @@ private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wri
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return wristSysId.dynamic(direction);
   }
+
   @Override
   public void periodic() {
-   // wristMotor.logValues(); maybe if we need it
+    // wristMotor.logValues(); maybe if we need it
     // This method will be called once per scheduler run
   }
 }

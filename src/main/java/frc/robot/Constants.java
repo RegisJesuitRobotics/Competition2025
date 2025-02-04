@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
@@ -60,16 +59,15 @@ public final class Constants {
 
   public static class WristConstants {
     public static final int WRIST_ID = 11;
-    public static final double GEAR_RATIO = 0; //idk
-    public static final double SUPPLY_CURRENT_LIMIT = 0.0; //idk
-    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;     
-    public static final double WRIST_OFFSET = 0.0; //needs a value
-    public static final double PID_TOLERANCE = 2.0; //idk
-    public static final int WRIST_ENCODER_PORT = 0; //i also do not know
-//a lot of 0s
+    public static final double GEAR_RATIO = 0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT = 0.0; // idk
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+    public static final double WRIST_OFFSET = 0.0; // needs a value
+    public static final double PID_TOLERANCE = 2.0; // idk
+    public static final int WRIST_ENCODER_PORT = 0; // i also do not know
+    // a lot of 0s
     public static final TunablePIDGains WRIST_PID_GAINS =
-        new TunablePIDGains(
-          "/pid/wrist/", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/pid/wrist/", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
 
     public static final TunableTrapezoidalProfileGains WRIST_TRAP_GAINS =
         new TunableTrapezoidalProfileGains(
@@ -78,9 +76,8 @@ public final class Constants {
             Units.rotationsToRadians(0),
             MiscConstants.TUNING_MODE);
     public static final double DYNAMIC_OFFSET = Units.degreesToRadians(0);
-  
-  public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
-        new TunableArmElevatorFFGains(
-            "/feedfoward/wrist/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
+
+    public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
+        new TunableArmElevatorFFGains("/feedfoward/wrist/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
   }
 }

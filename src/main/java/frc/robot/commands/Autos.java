@@ -11,8 +11,6 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-
-
   public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
     return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
   }

@@ -77,6 +77,11 @@ public final class Constants {
             "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains pointTranslationFFGains =
         new TunableFFGains("/drive/gains/pointFFController", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double MAX_VELOCITY = 0.0;
+    public static final double MAX_ACCELERATION = 0.0;
+    public static final double MAX_ANGULAR_VELOCITY = 0.0;
+    public static final double MAX_ANGULAR_ACCELERATION = 0.0;
+    public static final double NOMINAL_VOLTAGE = 12.0;
   }
 
   public static class WristConstants {

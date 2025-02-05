@@ -28,4 +28,11 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.HIGH_REEF),
         wristSubsystem.setPositionCommand(Constants.WristConstants.HIGH_REEF));
   }
+
+  public static Command elevatorWristHuman(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem){
+    return Commands.parallel(
+            elevatorSubsystem.setPosition(Constants.ElevatorConstants.HUMAN),
+            wristSubsystem.setPositionCommand(Constants.WristConstants.HUMAN)
+    );
+  }
 }

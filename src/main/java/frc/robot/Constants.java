@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
 import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
@@ -40,7 +41,25 @@ public final class Constants {
     public static final double LOW = 0.0;
     public static final double HIGH = 0.0;
   }
-  ;
+  
+  public static class IntakeConstants{
+    //rotation stuff
+    public static final int ROTATION_MOTOR_ID = 0; //idk
+    public static final int ROTATION_LIMIT_SWITCH_ID = 0; //idk
+    public static final TunablePIDGains ROTATION_PID_GAINS =
+    new TunablePIDGains("/intake/rotation/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
+public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
+    new TunableTrapezoidalProfileGains("/intake/rotation/trap gains", 0, 0, MiscConstants.TUNING_MODE);
+public static final TunableArmElevatorFFGains ROTATION_FF_GAINS =
+    new TunableArmElevatorFFGains("/intake/rotation/ff/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double GEAR_RATIO = 0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT = 0.0; // idk
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+    public static final double ROTATION_UP_ANGLE = 0; //idk
+
+    //spinny stuff
+    public static final int SPINNING_MOTOR_ID = 0; //idk
+  }
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;

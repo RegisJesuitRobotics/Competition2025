@@ -23,7 +23,7 @@ public enum Reef {
   }
 
   static {
-    _map = new HashMap<String,Reef>();
+    _map = new HashMap<String, Reef>();
 
     for (Reef type : values()) {
       _map.put(type.value, type);

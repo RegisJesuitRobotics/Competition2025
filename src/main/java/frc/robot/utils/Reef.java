@@ -17,13 +17,13 @@ public enum Reef {
     this.value = value;
   }
 
-  public static Reef valueOf(int value) {
-    Reef retval = (Reef) _map.get(value);
+  public static Reef pathString(String value) {
+    Reef retval = _map.get(value);
     return retval != null ? retval : values()[0];
   }
 
   static {
-    _map = new HashMap();
+    _map = new HashMap<String, Reef>();
 
     for (Reef type : values()) {
       _map.put(type.value, type);

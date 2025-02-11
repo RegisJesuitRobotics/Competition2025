@@ -5,15 +5,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-
-
   public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
     return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
   }

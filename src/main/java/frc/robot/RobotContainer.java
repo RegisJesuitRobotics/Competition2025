@@ -52,13 +52,31 @@ public class RobotContainer {
   private void configureOperatorBindings() {
     operator
         .povDown()
-        .onTrue(ElevatorWristCommands.elevatorWristLowReef(elevatorSubsystem, wristSubsystem));
+        .onTrue(ElevatorWristCommands.elevatorWristL2(elevatorSubsystem, wristSubsystem));
     operator
-        .povLeft()
-        .onTrue(ElevatorWristCommands.elevatorWristMidReef(elevatorSubsystem, wristSubsystem));
+        .povRight()
+        .onTrue(ElevatorWristCommands.elevatorWristL3(elevatorSubsystem, wristSubsystem));
     operator
         .povUp()
-        .onTrue(ElevatorWristCommands.elevatorWristHighReef(elevatorSubsystem, wristSubsystem));
+        .onTrue(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem));
+    operator
+        .povLeft()
+        .onTrue(ElevatorWristCommands.elevatorWristL1(elevatorSubsystem, wristSubsystem));
+    operator
+        .cross()
+        .onTrue(ElevatorWristCommands.elevatorWristProcessor(elevatorSubsystem, wristSubsystem));
+    operator
+        .circle()
+        .onTrue(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem));
+    operator
+        .square()
+        .onTrue(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem));
+    operator
+        .R2()
+        .onTrue(ElevatorWristCommands.elevatorWristHuman(elevatorSubsystem, wristSubsystem));
+    operator
+        .L2()
+        .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
   }
 
   private void configureBindings() {

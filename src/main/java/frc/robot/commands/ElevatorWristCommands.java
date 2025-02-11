@@ -8,31 +8,65 @@ import frc.robot.subsystems.WristSubsystem;
 
 public class ElevatorWristCommands {
 
-  public static Command elevatorWristLowReef(
+  public static Command elevatorWristL2(
       ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
     return Commands.parallel(
-        elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_REEF),
-        wristSubsystem.setPositionCommand(Constants.WristConstants.LOW_REEF));
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.L2_REEF),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.L2_REEF));
   }
 
-  public static Command elevatorWristMidReef(
+  public static Command elevatorWristL3(
       ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
     return Commands.parallel(
-        elevatorSubsystem.setPosition(Constants.ElevatorConstants.MID_REEF),
-        wristSubsystem.setPositionCommand(Constants.WristConstants.MID_REEF));
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.L3_REEF),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.L3_REEF));
   }
 
-  public static Command elevatorWristHighReef(
+  public static Command elevatorWristL4(
       ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
     return Commands.parallel(
-        elevatorSubsystem.setPosition(Constants.ElevatorConstants.HIGH_REEF),
-        wristSubsystem.setPositionCommand(Constants.WristConstants.HIGH_REEF));
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.L4_REEF));
   }
 
-  public static Command elevatorWristHuman(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem){
+  public static Command elevatorWristHuman(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
     return Commands.parallel(
-            elevatorSubsystem.setPosition(Constants.ElevatorConstants.HUMAN),
-            wristSubsystem.setPositionCommand(Constants.WristConstants.HUMAN)
-    );
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.HUMAN),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.HUMAN));
+  }
+
+  public static Command elevatorWristBallLow(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_BALL_PICKUP),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.BALL_PICKUP));
+  }
+
+  public static Command elevatorWristL1(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.L1_REEF),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.L1_REEF));
+  }
+
+  public static Command elevatorWristNet(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.NET),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.NET));
+  }
+
+  public static Command elevatorWristProcessor(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.PROCESSOR),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.PROCESSOR));
+  }
+
+  public static Command elevatorWristReset(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(0.0), wristSubsystem.setPositionCommand(0.0));
   }
 }

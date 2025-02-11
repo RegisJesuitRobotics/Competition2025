@@ -38,13 +38,14 @@ public final class Constants {
         new TunableTrapezoidalProfileGains("/elevator/trap", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF =
         new TunableFFGains("/elevator/ff", 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final double LOW_REEF = Units.inchesToMeters(7.9736);
-    public static final double HIGH_REEF = Units.inchesToMeters(49.706);
-    public static final double MID_REEF = Units.inchesToMeters(20.75);
-    public static final double BASE_REEF = 0.0;
+    public static final double L2_REEF = Units.inchesToMeters(7.9736);
+    public static final double L4_REEF = Units.inchesToMeters(49.706);
+    public static final double L3_REEF = Units.inchesToMeters(20.75);
+    public static final double L1_REEF = 0.0;
     public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(15.9377);
+    public static final double PROCESSOR = 0.0;
   }
   ;
 
@@ -111,18 +112,13 @@ public final class Constants {
 
     public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
         new TunableArmElevatorFFGains("/feedfoward/wrist/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final double LOW_REEF = Units.degreesToRadians(138.2326);
-    public static final double MID_REEF = Units.degreesToRadians(138.2326);
-    public static final double HIGH_REEF = Units.degreesToRadians(118.8490);
-    public static final double PROCESSOR = Units.degreesToRadians(107.0); // X(oper) processor
-    public static final double BALL_PICKUP = Units.degreesToRadians(-90.0); // O bottom reef // triangle upper
-    public static final double NET = Units.degreesToRadians(30.0); // square
-    public static final double HUMAN = Units.degreesToRadians(-42.5551); // right trigger(operator)
+    public static final double L2_REEF = Units.degreesToRadians(138.2326);
+    public static final double L3_REEF = Units.degreesToRadians(138.2326);
+    public static final double L4_REEF = Units.degreesToRadians(118.8490);
+    public static final double PROCESSOR = Units.degreesToRadians(112.5900);
+    public static final double BALL_PICKUP = Units.degreesToRadians(-90.0);
+    public static final double NET = Units.degreesToRadians(30.0);
+    public static final double HUMAN = Units.degreesToRadians(-42.5551);
+    public static final double L1_REEF = Units.degreesToRadians(4.8061);
   }
-  //right trigger: intake both
-  //right bumper ground intake(drive)
-  // left trigger(drive): realse coral
-  // X(driver): net shoot
-  //alge vs coral mode allignment
- // algae outake: A(driver)
 }

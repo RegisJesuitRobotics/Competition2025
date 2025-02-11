@@ -156,8 +156,8 @@ public class ElevatorSubsystem extends SubsystemBase {
               double positionClamped =
                   MathUtil.clamp(
                       position.getAsDouble(),
-                      Constants.ElevatorConstants.LOW_REEF,
-                      Constants.ElevatorConstants.HIGH_REEF);
+                      Constants.ElevatorConstants.L2_REEF,
+                      Constants.ElevatorConstants.L4_REEF);
               controller.setGoal(positionClamped);
               double feedback = controller.calculate(getElevatorPosition());
               TrapezoidProfile.State currentSetpoint = controller.getSetpoint();

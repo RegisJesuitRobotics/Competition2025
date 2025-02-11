@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
@@ -50,13 +51,44 @@ public final class Constants {
   public static class MiscConstants {
     public static final String CANIVORE_NAME = "canivore";
 
-    private MiscConstants() {}
+    private MiscConstants() {} //why is there a constructor here
 
     public static final int[] USED_CONTROLLER_PORTS = {0, 1};
     public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();
 
     public static final int CONFIGURATION_ATTEMPTS = 10;
   }
+
+  public static class AlgaeConstants{
+    public static final int ALGAE_MOTOR_ID = 13;
+    public static final int STALL_MOTOR_CURRENT = 3; //m
+    public static final int FREE_MOTOR_CURRENT = 3; //m
+    public static final double GEAR_RATIO = 3; //m
+    public static final boolean INVERTED = true; //m
+
+    public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
+      "algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE
+    );
+    public static final TunableFFGains FF_GAINS = new TunableFFGains(
+      "algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+  }
+
+  public static class CoralConstants {
+    public static final int CORAL_MOTOR_ID = 12; 
+    public static final boolean INVERTED = false; //m
+    public static final int SLEW_RATE_LIMIT = 1; //m
+    public static final int STALL_MOTOR_CURRENT = 3; //m
+    public static final int FREE_MOTOR_CURRENT = 3; //m
+    public static final double GEAR_RATIO = 3; //m
+
+    //tune 
+   public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
+      "/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+public static final TunableFFGains FF_GAINS =
+  new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+
+  }
+
 
   public static class VisionConstants {
     public static final double CAMERA_MOUNT_ANGLE = 0.0;

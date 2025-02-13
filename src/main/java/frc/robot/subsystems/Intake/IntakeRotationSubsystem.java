@@ -35,7 +35,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     "motor/intake/rotation", 
     MiscConstants.TUNING_MODE);
 
-    private final SysIdRoutine slapdownRotationSysId =
+    private final SysIdRoutine intakeRotationSysId =
       new SysIdRoutine(
           new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(3), Seconds.of(5), null),
           new SysIdRoutine.Mechanism(
@@ -44,7 +44,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
               this));
 
   private static final Alert rotationIntakeMotorAlert =
-      new Alert("Slapdown rotation motor had a fault initializing", Alert.AlertType.ERROR);
+      new Alert("Intake rotation motor had a fault initializing", Alert.AlertType.ERROR);
   private final TunableTelemetryProfiledPIDController rotationPid = new TunableTelemetryProfiledPIDController(
     "profiled/pid/intake", 
     null, 
@@ -65,9 +65,9 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   private void configMotor() {
     TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
     motorConfiguration.CurrentLimits.SupplyCurrentLimit =
-        Constants.IntakeConstants.SUPPLY_CURRENT_LIMIT;
+        Constants.IntakeConstants.SUPPLY_CURRENT_LIMIT_ROTATION;
     motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-    motorConfiguration.MotorOutput.Inverted = Constants.IntakeConstants.INVERTED;
+    motorConfiguration.MotorOutput.Inverted = Constants.IntakeConstants.INVERTED_ROTATION;
     motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfiguration.Audio.AllowMusicDurDisable = true;
     ConfigurationUtils.StringFaultRecorder faultRecorder =
@@ -94,8 +94,8 @@ public class IntakeRotationSubsystem extends SubsystemBase {
         faultRecorder.getFaultString());
     rotationIntakeMotorAlert.set(faultRecorder.hasFault());
 
-    intakeRotationMotor.setLoggingPositionConversionFactor(Constants.IntakeConstants.GEAR_RATIO);
-    intakeRotationMotor.setLoggingVelocityConversionFactor(Constants.IntakeConstants.GEAR_RATIO);
+    intakeRotationMotor.setLoggingPositionConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
+    intakeRotationMotor.setLoggingVelocityConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
 
     // Clear reset as this is on startup
     intakeRotationMotor.hasResetOccurred();
@@ -135,11 +135,11 @@ public class IntakeRotationSubsystem extends SubsystemBase {
               rotationPid.reset(getPosition(), intakeRotationMotor.getVelocity().getValueAsDouble());
             })
         .onlyIf(this::isHomed)
-        .withName("SetSlapdownRotationGoal");
+        .withName("SetIntakeRotationGoal");
   }
 
   public Command setVoltageCommand(double voltage) {
-    return this.run(() -> setRotationVoltage(voltage)).withName("SetSlapdownRotationVoltage");
+    return this.run(() -> setRotationVoltage(voltage)).withName("SetIntakeRotationVoltage");
   }
 
   public Command homeIntakeCommand() {
@@ -151,15 +151,15 @@ public class IntakeRotationSubsystem extends SubsystemBase {
               isHomed = false;
             })
         .finallyDo(() -> isHoming = false)
-        .withName("HomeSlapdownRotation");
+        .withName("HomeIntakeRotation");
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return slapdownRotationSysId.quasistatic(direction);
+    return intakeRotationSysId.quasistatic(direction);
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return slapdownRotationSysId.dynamic(direction);
+    return intakeRotationSysId.dynamic(direction);
   }
   @Override
   public void periodic() {

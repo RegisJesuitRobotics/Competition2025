@@ -52,13 +52,23 @@ public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
     new TunableTrapezoidalProfileGains("/intake/rotation/trap gains", 0, 0, MiscConstants.TUNING_MODE);
 public static final TunableArmElevatorFFGains ROTATION_FF_GAINS =
     new TunableArmElevatorFFGains("/intake/rotation/ff/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final double GEAR_RATIO = 0; // idk
-    public static final double SUPPLY_CURRENT_LIMIT = 0.0; // idk
-    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+    public static final double GEAR_RATIO_ROTATION = 0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 0.0; // idk
+    public static final InvertedValue INVERTED_ROTATION = InvertedValue.Clockwise_Positive;
     public static final double ROTATION_UP_ANGLE = 0; //idk
+    public static final double ROTATION_DOWN_ANGLE = 0;//m
 
     //spinny stuff
     public static final int SPINNING_MOTOR_ID = 0; //idk
+    public static final double SPINNING_VOLTAGE = 1; //m
+    public static final double RATE_LIMIT = 1; //m
+    public static final TunablePIDGains SPINNING_PID_GAINS =
+      new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains SPINNING_FF_GAINS =
+      new TunableFFGains("/intake/spinning/ff/", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+      public static final double GEAR_RATIO_SPINNING = 0; // idk
+      public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 0.0; // idk
+      public static final InvertedValue INVERTED_SPINNING = InvertedValue.Clockwise_Positive;
   }
 
   public static class OperatorConstants {

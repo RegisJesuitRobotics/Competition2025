@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems.Intake;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
@@ -18,24 +18,23 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
-import frc.robot.Constants;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.MiscConstants;
-import frc.robot.telemetry.types.EventTelemetryEntry;
 
 public class IntakeRotationSubsystem extends SubsystemBase {
 
-  public static final TelemetryTalonFX intakeRotationMotor= new TelemetryTalonFX(
-    IntakeConstants.ROTATION_MOTOR_ID, 
-    "motor/intake/rotation", 
-    MiscConstants.TUNING_MODE);
+  public static final TelemetryTalonFX intakeRotationMotor =
+      new TelemetryTalonFX(
+          IntakeConstants.ROTATION_MOTOR_ID, "motor/intake/rotation", MiscConstants.TUNING_MODE);
 
-    private final SysIdRoutine intakeRotationSysId =
+  private final SysIdRoutine intakeRotationSysId =
       new SysIdRoutine(
           new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(3), Seconds.of(5), null),
           new SysIdRoutine.Mechanism(
@@ -45,21 +44,21 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   private static final Alert rotationIntakeMotorAlert =
       new Alert("Intake rotation motor had a fault initializing", Alert.AlertType.ERROR);
-  private final TunableTelemetryProfiledPIDController rotationPid = new TunableTelemetryProfiledPIDController(
-    "profiled/pid/intake", 
-    null, 
-    null);
-    private EventTelemetryEntry intakeRotationEntry= new EventTelemetryEntry("intake/rotation/entry");
-  private final ArmFeedforward rotationFF = IntakeConstants.ROTATION_FF_GAINS.createArmFeedforward();
+  private final TunableTelemetryProfiledPIDController rotationPid =
+      new TunableTelemetryProfiledPIDController("profiled/pid/intake", null, null);
+  private EventTelemetryEntry intakeRotationEntry =
+      new EventTelemetryEntry("intake/rotation/entry");
+  private final ArmFeedforward rotationFF =
+      IntakeConstants.ROTATION_FF_GAINS.createArmFeedforward();
   private boolean isHomed = false;
   private boolean isHoming = false;
-  private final Debouncer debouncer = new Debouncer(0.0); //good time for this?
-  private final DigitalInput rotationLimitSwitch = new DigitalInput(IntakeConstants.ROTATION_LIMIT_SWITCH_ID);
+  private final Debouncer debouncer = new Debouncer(0.5);
+  private final DigitalInput rotationLimitSwitch =
+      new DigitalInput(IntakeConstants.ROTATION_LIMIT_SWITCH_ID);
 
   public IntakeRotationSubsystem() {
     configMotor();
-    setDefaultCommand(
-        setVoltageCommand(0.0).withName("IntakeRotationDefault"));
+    setDefaultCommand(setVoltageCommand(0.0).withName("IntakeRotationDefault"));
   }
 
   private void configMotor() {
@@ -94,20 +93,21 @@ public class IntakeRotationSubsystem extends SubsystemBase {
         faultRecorder.getFaultString());
     rotationIntakeMotorAlert.set(faultRecorder.hasFault());
 
-    intakeRotationMotor.setLoggingPositionConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
-    intakeRotationMotor.setLoggingVelocityConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
+    intakeRotationMotor.setLoggingPositionConversionFactor(
+        Constants.IntakeConstants.GEAR_RATIO_ROTATION);
+    intakeRotationMotor.setLoggingVelocityConversionFactor(
+        Constants.IntakeConstants.GEAR_RATIO_ROTATION);
 
     // Clear reset as this is on startup
     intakeRotationMotor.hasResetOccurred();
   }
 
-  
   public void setRotationVoltage(double voltage) {
     intakeRotationMotor.setVoltage(voltage);
   }
 
   private double getPosition() {
-    return  MathUtil.angleModulus(
+    return MathUtil.angleModulus(
         Units.rotationsToRadians(intakeRotationMotor.getPosition().getValueAsDouble()));
   }
 
@@ -132,7 +132,8 @@ public class IntakeRotationSubsystem extends SubsystemBase {
         .beforeStarting(
             () -> {
               rotationPid.setGoal(goal.getRadians());
-              rotationPid.reset(getPosition(), intakeRotationMotor.getVelocity().getValueAsDouble());
+              rotationPid.reset(
+                  getPosition(), intakeRotationMotor.getVelocity().getValueAsDouble());
             })
         .onlyIf(this::isHomed)
         .withName("SetIntakeRotationGoal");
@@ -161,6 +162,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return intakeRotationSysId.dynamic(direction);
   }
+
   @Override
   public void periodic() {
     if ((atLimit() && isHoming) || debouncer.calculate(atLimit())) {

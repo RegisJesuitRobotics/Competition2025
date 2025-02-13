@@ -21,14 +21,16 @@ public class IntakeSuperstructure extends SubsystemBase {
   public Command setDownAndRunCommand() {
     return Commands.parallel(
             SpinningSubsystem.setVoltageCommand(IntakeConstants.SPINNING_VOLTAGE),
-            rotationSubsystem.setRotationGoalCommand(Rotation2d.fromRadians(IntakeConstants.ROTATION_DOWN_ANGLE)))
+            rotationSubsystem.setRotationGoalCommand(
+                Rotation2d.fromRadians(IntakeConstants.ROTATION_DOWN_ANGLE)))
         .withName("IntakeSetDownAndRun");
   }
 
   public Command setUpCommand() {
     return Commands.parallel(
             SpinningSubsystem.setVoltageCommand(0.0),
-            rotationSubsystem.setRotationGoalCommand(Rotation2d.fromRadians(IntakeConstants.ROTATION_UP_ANGLE)))
+            rotationSubsystem.setRotationGoalCommand(
+                Rotation2d.fromRadians(IntakeConstants.ROTATION_UP_ANGLE)))
         .withName("IntakeSetUp");
   }
 }

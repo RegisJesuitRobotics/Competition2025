@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
+import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
 import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
@@ -37,8 +39,14 @@ public final class Constants {
         new TunableTrapezoidalProfileGains("/elevator/trap", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF =
         new TunableFFGains("/elevator/ff", 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final double LOW = 0.0;
-    public static final double HIGH = 0.0;
+    public static final double L2_REEF = Units.inchesToMeters(7.9736);
+    public static final double L4_REEF = Units.inchesToMeters(49.706);
+    public static final double L3_REEF = Units.inchesToMeters(20.75);
+    public static final double L1_REEF = 0.0;
+    public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
+    public static final double NET = Units.inchesToMeters(49.706);
+    public static final double HUMAN = Units.inchesToMeters(15.9377);
+    public static final double PROCESSOR = 0.0;
   }
   ;
 
@@ -49,13 +57,44 @@ public final class Constants {
   public static class MiscConstants {
     public static final String CANIVORE_NAME = "canivore";
 
-    private MiscConstants() {}
+    private MiscConstants() {} //why is there a constructor here
 
     public static final int[] USED_CONTROLLER_PORTS = {0, 1};
     public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();
 
     public static final int CONFIGURATION_ATTEMPTS = 10;
   }
+
+  public static class AlgaeConstants{
+    public static final int ALGAE_MOTOR_ID = 13;
+    public static final int STALL_MOTOR_CURRENT = 3; //m
+    public static final int FREE_MOTOR_CURRENT = 3; //m
+    public static final double GEAR_RATIO = 3; //m
+    public static final boolean INVERTED = true; //m
+
+    public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
+      "algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE
+    );
+    public static final TunableFFGains FF_GAINS = new TunableFFGains(
+      "algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+  }
+
+  public static class CoralConstants {
+    public static final int CORAL_MOTOR_ID = 12; 
+    public static final boolean INVERTED = false; //m
+    public static final int SLEW_RATE_LIMIT = 1; //m
+    public static final int STALL_MOTOR_CURRENT = 3; //m
+    public static final int FREE_MOTOR_CURRENT = 3; //m
+    public static final double GEAR_RATIO = 3; //m
+
+    //tune 
+   public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
+      "/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+public static final TunableFFGains FF_GAINS =
+  new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+
+  }
+
 
   public static class VisionConstants {
     public static final double CAMERA_MOUNT_ANGLE = 0.0;
@@ -76,5 +115,42 @@ public final class Constants {
             "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains pointTranslationFFGains =
         new TunableFFGains("/drive/gains/pointFFController", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double MAX_VELOCITY = 0.0;
+    public static final double MAX_ACCELERATION = 0.0;
+    public static final double MAX_ANGULAR_VELOCITY = 0.0;
+    public static final double MAX_ANGULAR_ACCELERATION = 0.0;
+    public static final double NOMINAL_VOLTAGE = 12.0;
+  }
+
+  public static class WristConstants {
+    public static final int WRIST_ID = 11;
+    public static final double GEAR_RATIO = 0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT = 0.0; // idk
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+    public static final double WRIST_OFFSET = 0.0; // needs a value
+    public static final double PID_TOLERANCE = 2.0; // idk
+    public static final int WRIST_ENCODER_PORT = 0; // needs a value
+    // a lot of 0s
+    public static final TunablePIDGains WRIST_PID_GAINS =
+        new TunablePIDGains("/pid/wrist/", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+
+    public static final TunableTrapezoidalProfileGains WRIST_TRAP_GAINS =
+        new TunableTrapezoidalProfileGains(
+            "/trapezoidalprofile/wrist",
+            Units.rotationsToRadians(0),
+            Units.rotationsToRadians(0),
+            MiscConstants.TUNING_MODE);
+    public static final double DYNAMIC_OFFSET = Units.degreesToRadians(0);
+
+    public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
+        new TunableArmElevatorFFGains("/feedfoward/wrist/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double L2_REEF = Units.degreesToRadians(138.2326);
+    public static final double L3_REEF = Units.degreesToRadians(138.2326);
+    public static final double L4_REEF = Units.degreesToRadians(118.8490);
+    public static final double PROCESSOR = Units.degreesToRadians(112.5900);
+    public static final double BALL_PICKUP = Units.degreesToRadians(-90.0);
+    public static final double NET = Units.degreesToRadians(30.0);
+    public static final double HUMAN = Units.degreesToRadians(-42.5551);
+    public static final double L1_REEF = Units.degreesToRadians(4.8061);
   }
 }

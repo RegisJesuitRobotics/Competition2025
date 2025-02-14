@@ -15,6 +15,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -40,9 +41,10 @@ public class AlgaeSubsystem extends SubsystemBase {
   private final TunableTelemetryPIDController algaePID =
       new TunableTelemetryPIDController("algae/pid", Constants.AlgaeConstants.PID_GAINS);
   private SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
-
+  private final DigitalInput intakeSwitch = new DigitalInput(Constants.AlgaeConstants.SWITCH_ID);
   public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);
-  SlewRateLimiter limiter = new SlewRateLimiter(0); // deal with later
+  SlewRateLimiter limiter =
+      new SlewRateLimiter(Constants.AlgaeConstants.RATE_LIMIT); // deal with later
   private RelativeEncoder algaeEncoder;
   private EventTelemetryEntry algaeEvent = new EventTelemetryEntry("AlgaeMotor/Event");
 
@@ -124,6 +126,10 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   public double getVelocity() {
     return algaeEncoder.getVelocity();
+  }
+
+  public boolean getSwitchState() {
+    return intakeSwitch.get();
   }
 
   public Command runVelocityCommand(double setpointRadiansSecond) {

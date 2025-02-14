@@ -7,29 +7,36 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSuperstructure extends SubsystemBase {
-  private final IntakeSpinningSubsystem SpinningSubsystem = new IntakeSpinningSubsystem();
-  private final IntakeRotationSubsystem rotationSubsystem = new IntakeRotationSubsystem();
+  private final IntakeSpinningSubsystem intakeSpinningSubsystem;
+  private final IntakeRotationSubsystem intakeRotationSubsystem;
+
+  public IntakeSuperstructure(
+      IntakeSpinningSubsystem intakeSpinningSubsystem,
+      IntakeRotationSubsystem intakeRotationSubsystem) {
+    this.intakeSpinningSubsystem = intakeSpinningSubsystem;
+    this.intakeRotationSubsystem = intakeRotationSubsystem;
+  }
 
   public IntakeRotationSubsystem getIntakeRotationSubsystem() {
-    return rotationSubsystem;
+    return intakeRotationSubsystem;
   }
 
   public IntakeSpinningSubsystem getIntakeSpinningSubsystem() {
-    return SpinningSubsystem;
+    return intakeSpinningSubsystem;
   }
 
   public Command setDownAndRunCommand() {
     return Commands.parallel(
-            SpinningSubsystem.setVoltageCommand(IntakeConstants.SPINNING_VOLTAGE),
-            rotationSubsystem.setRotationGoalCommand(
+            intakeSpinningSubsystem.setVoltageCommand(IntakeConstants.SPINNING_VOLTAGE),
+            intakeRotationSubsystem.setRotationGoalCommand(
                 Rotation2d.fromRadians(IntakeConstants.ROTATION_DOWN_ANGLE)))
         .withName("IntakeSetDownAndRun");
   }
 
   public Command setUpCommand() {
     return Commands.parallel(
-            SpinningSubsystem.setVoltageCommand(0.0),
-            rotationSubsystem.setRotationGoalCommand(
+            intakeSpinningSubsystem.setVoltageCommand(0.0),
+            intakeRotationSubsystem.setRotationGoalCommand(
                 Rotation2d.fromRadians(IntakeConstants.ROTATION_UP_ANGLE)))
         .withName("IntakeSetUp");
   }

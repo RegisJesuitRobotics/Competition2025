@@ -46,6 +46,7 @@ public final class Constants {
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(15.9377);
     public static final double PROCESSOR = 0.0;
+    public static final double GROUND_INTAKE = 0.0;
   }
 
   public static class IntakeConstants {
@@ -105,6 +106,10 @@ public final class Constants {
         new TunablePIDGains("algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+    public static final double RUNNING_VOLTAGE = 10.0;
+    public static final int SWITCH_ID = 0;
+    public static final double RATE_LIMIT = 1.0;
+    public static final double OUTPUT_VOLTAGE = -6.0;
   }
 
   public static class CoralConstants {
@@ -120,6 +125,9 @@ public final class Constants {
         new TunablePIDGains("/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double RUNNING_VOLTAGE = 10.0;
+    public static final int SWITCH_ID = 0;
+    public static final double OUTPUT_VOLTAGE = -6.0;
   }
 
   public static class VisionConstants {
@@ -178,5 +186,6 @@ public final class Constants {
     public static final double NET = Units.degreesToRadians(30.0);
     public static final double HUMAN = Units.degreesToRadians(-42.5551);
     public static final double L1_REEF = Units.degreesToRadians(4.8061);
+    public static final double GROUND_INTAKE = 0.0;
   }
 }

@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorWristCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandNintendoSwitchController;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.*;
+import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
+import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
+import frc.robot.subsystems.Intake.IntakeSuperstructure;
 
 public class RobotContainer {
 
@@ -38,7 +39,13 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final WristSubsystem wristSubsystem = new WristSubsystem();
+  private final IntakeRotationSubsystem intakeRotationSubsystem = new IntakeRotationSubsystem();
+  private final IntakeSpinningSubsystem intakeSpinningSubsystem = new IntakeSpinningSubsystem();
+  private final IntakeSuperstructure intakeSuperstructure =
+      new IntakeSuperstructure(intakeSpinningSubsystem, intakeRotationSubsystem);
+  private final CoralSubsystem coralSubsystem = new CoralSubsystem();
 
+  private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
   // private final NintendoSwitchController joystick = new NintendoSwitchController(0);
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandPS4Controller operator = new CommandPS4Controller(1);
@@ -117,9 +124,31 @@ public class RobotContainer {
         .leftStick()
         .and(joystick.x())
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-    // reset the field-centric heading on left bumper press
     joystick.home().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+    joystick
+        .leftTrigger()
+        .whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE));
+
+    joystick
+        .rightTrigger()
+        .whileTrue(
+            Commands.parallel(
+                    coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE),
+                    algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE))
+                .until(() -> coralSubsystem.getSwitchState() || algaeSubsystem.getSwitchState()));
+    joystick
+        .leftBumper()
+        .whileTrue(
+            Commands.parallel(
+                    ElevatorWristCommands.elevatorWristGroundIntake(
+                        elevatorSubsystem, wristSubsystem),
+                    intakeSuperstructure.setDownAndRunCommand(),
+                    coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE))
+                .until(coralSubsystem::getSwitchState));
+    joystick
+        .a()
+        .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

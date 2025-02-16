@@ -15,6 +15,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -43,7 +44,7 @@ public class CoralSubsystem extends SubsystemBase {
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
   private RelativeEncoder coralEncoder = coralMotor.getEncoder();
   private final EventTelemetryEntry coralEvent = new EventTelemetryEntry("/coral/events");
-
+  private final DigitalInput intakeSwitch = new DigitalInput(Constants.CoralConstants.SWITCH_ID);
   private final TunableTelemetryPIDController coralpid =
       new TunableTelemetryPIDController("/coral/pid", Constants.CoralConstants.PID_GAINS);
   private SimpleMotorFeedforward coralFF = CoralConstants.FF_GAINS.createFeedforward();
@@ -122,6 +123,10 @@ public class CoralSubsystem extends SubsystemBase {
 
   public double getVelocity() {
     return coralEncoder.getVelocity();
+  }
+
+  public boolean getSwitchState() {
+    return intakeSwitch.get();
   }
 
   public Command setVoltageCommand(double voltage) {

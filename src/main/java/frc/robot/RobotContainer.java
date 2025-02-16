@@ -3,7 +3,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +18,7 @@ import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
 
 public class RobotContainer {
-<
+
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate =
@@ -158,4 +157,3 @@ public class RobotContainer {
     return Commands.print("No autonomous command configured");
   }
 }
-

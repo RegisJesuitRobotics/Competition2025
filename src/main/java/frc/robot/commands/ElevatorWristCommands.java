@@ -69,4 +69,11 @@ public class ElevatorWristCommands {
     return Commands.parallel(
         elevatorSubsystem.setPosition(0.0), wristSubsystem.setPositionCommand(0.0));
   }
+
+  public static Command elevatorWristGroundIntake(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.GROUND_INTAKE),
+        wristSubsystem.setPositionCommand(Constants.WristConstants.GROUND_INTAKE));
+  }
 }

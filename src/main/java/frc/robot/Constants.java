@@ -7,7 +7,6 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
@@ -26,7 +25,7 @@ public final class Constants {
     public static final int LEFT_ID = 0;
     public static final int RIGHT_ID = 0;
     public static final int BOTTOM_ID = 0;
-    public static final double SUPPLY_CURRENT_LIMIT = 0.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 50.0;
     public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
     public static final double GEAR_RATIO = 1.0;
     // TODO: inches of gear
@@ -47,17 +46,49 @@ public final class Constants {
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(15.9377);
     public static final double PROCESSOR = 0.0;
+    public static final double GROUND_INTAKE = 0.0;
   }
-  ;
+
+  public static class IntakeConstants {
+    // rotation stuff
+    public static final int ROTATION_MOTOR_ID = 0; // idk
+    public static final int ROTATION_LIMIT_SWITCH_ID = 0; // idk
+    public static final TunablePIDGains ROTATION_PID_GAINS =
+        new TunablePIDGains("/intake/rotation/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
+        new TunableTrapezoidalProfileGains(
+            "/intake/rotation/trap gains", 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableArmElevatorFFGains ROTATION_FF_GAINS =
+        new TunableArmElevatorFFGains(
+            "/intake/rotation/ff/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double GEAR_RATIO_ROTATION = 0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
+    public static final InvertedValue INVERTED_ROTATION = InvertedValue.Clockwise_Positive;
+    public static final double ROTATION_UP_ANGLE = 0; // idk
+    public static final double ROTATION_DOWN_ANGLE = 0; // m
+
+    // spinny stuff
+    public static final int SPINNING_MOTOR_ID = 0; // idk
+    public static final double SPINNING_VOLTAGE = 11.0; // m
+    public static final double RATE_LIMIT = 1.0; // m
+    public static final TunablePIDGains SPINNING_PID_GAINS =
+        new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains SPINNING_FF_GAINS =
+        new TunableFFGains("/intake/spinning/ff/", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+    public static final double GEAR_RATIO_SPINNING = 0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 25.0; // idk
+    public static final InvertedValue INVERTED_SPINNING = InvertedValue.Clockwise_Positive;
+  }
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int BUTTON_BOARD_ID = 0;
   }
 
   public static class MiscConstants {
     public static final String CANIVORE_NAME = "canivore";
 
-    private MiscConstants() {} //why is there a constructor here
+    private MiscConstants() {} // why is there a constructor here
 
     public static final int[] USED_CONTROLLER_PORTS = {0, 1};
     public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();
@@ -65,35 +96,41 @@ public final class Constants {
     public static final int CONFIGURATION_ATTEMPTS = 10;
   }
 
-  public static class AlgaeConstants{
+  public static class AlgaeConstants {
     public static final int ALGAE_MOTOR_ID = 13;
-    public static final int STALL_MOTOR_CURRENT = 3; //m
-    public static final int FREE_MOTOR_CURRENT = 3; //m
-    public static final double GEAR_RATIO = 3; //m
-    public static final boolean INVERTED = true; //m
+    public static final int STALL_MOTOR_CURRENT = 30; // m
+    public static final int FREE_MOTOR_CURRENT = 20; // m
+    public static final double GEAR_RATIO = 3; // m
+    public static final boolean INVERTED = true; // m
 
-    public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
-      "algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE
-    );
-    public static final TunableFFGains FF_GAINS = new TunableFFGains(
-      "algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+    public static final TunablePIDGains PID_GAINS =
+        new TunablePIDGains("algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains FF_GAINS =
+        new TunableFFGains("algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+    public static final double RUNNING_VOLTAGE = 10.0;
+    public static final int SWITCH_ID = 0;
+    public static final double RATE_LIMIT = 1.0;
+    public static final double OUTPUT_VOLTAGE = -6.0;
   }
 
   public static class CoralConstants {
-    public static final int CORAL_MOTOR_ID = 12; 
-    public static final boolean INVERTED = false; //m
-    public static final int SLEW_RATE_LIMIT = 1; //m
-    public static final int STALL_MOTOR_CURRENT = 3; //m
-    public static final int FREE_MOTOR_CURRENT = 3; //m
-    public static final double GEAR_RATIO = 3; //m
+    public static final int CORAL_MOTOR_ID = 12;
+    public static final boolean INVERTED = false; // m
+    public static final int SLEW_RATE_LIMIT = 1; // m
+    public static final int STALL_MOTOR_CURRENT = 30; // m
+    public static final int FREE_MOTOR_CURRENT = 20; // m
+    public static final double GEAR_RATIO = 3; // m
 
-    //tune 
-   public static final TunablePIDGains PID_GAINS = new TunablePIDGains(
-      "/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
-public static final TunableFFGains FF_GAINS =
-  new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
-
+    // tune
+    public static final TunablePIDGains PID_GAINS =
+        new TunablePIDGains("/pid/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains FF_GAINS =
+        new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double RUNNING_VOLTAGE = 10.0;
+    public static final int SWITCH_ID = 0;
+    public static final double OUTPUT_VOLTAGE = -6.0;
   }
+
 
   public static class ClimberConstants{
     public static final int CLIMB_MOTOR_1_ID = 0; //m
@@ -112,7 +149,6 @@ public static final TunableFFGains FF_GAINS =
     public static final int LIMITER = 0; //m
           
   }
-
 
   public static class VisionConstants {
     public static final double CAMERA_MOUNT_ANGLE = 0.0;
@@ -143,7 +179,7 @@ public static final TunableFFGains FF_GAINS =
   public static class WristConstants {
     public static final int WRIST_ID = 11;
     public static final double GEAR_RATIO = 0; // idk
-    public static final double SUPPLY_CURRENT_LIMIT = 0.0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT = 50.0; // idk
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = 0.0; // needs a value
     public static final double PID_TOLERANCE = 2.0; // idk
@@ -170,5 +206,6 @@ public static final TunableFFGains FF_GAINS =
     public static final double NET = Units.degreesToRadians(30.0);
     public static final double HUMAN = Units.degreesToRadians(-42.5551);
     public static final double L1_REEF = Units.degreesToRadians(4.8061);
+    public static final double GROUND_INTAKE = 0.0;
   }
 }

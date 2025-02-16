@@ -12,11 +12,19 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorWristCommands;
 import frc.robot.commands.MiscCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
+
+import frc.robot.subsystems.*;
+import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
+import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
+import frc.robot.subsystems.Intake.IntakeSuperstructure;
+import frc.robot.utils.Reef;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RobotContainer {
 
@@ -36,20 +44,30 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
+  private AtomicBoolean onCoral = new AtomicBoolean(true);
+
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final WristSubsystem wristSubsystem = new WristSubsystem();
   private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-
+  private final IntakeRotationSubsystem intakeRotationSubsystem = new IntakeRotationSubsystem();
+  private final IntakeSpinningSubsystem intakeSpinningSubsystem = new IntakeSpinningSubsystem();
+  private final IntakeSuperstructure intakeSuperstructure =
+      new IntakeSuperstructure(intakeSpinningSubsystem, intakeRotationSubsystem);
+  private final CoralSubsystem coralSubsystem = new CoralSubsystem();
+  private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
   // private final NintendoSwitchController joystick = new NintendoSwitchController(0);
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandPS4Controller operator = new CommandPS4Controller(1);
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final CommandButtonBoard buttonBoard =
+      new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
 
   public RobotContainer() {
     configureBindings();
     configureOperatorBindings();
+    configureBoard();
   }
 
   private void configureOperatorBindings() {
@@ -88,6 +106,70 @@ public class RobotContainer {
         .onTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
   }
 
+  private void configureBoard() {
+
+    buttonBoard
+        .Button1()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.MidUpCoralLeft.value : Reef.MidUpAlgae.value));
+    buttonBoard
+        .Button2()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.MidUpCoralRight.value : Reef.MidUpAlgae.value));
+    buttonBoard
+        .Button3()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.MidCoralLeft.value : Reef.MidAlgae.value));
+    buttonBoard
+        .Button4()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.MidCoralRight.value : Reef.MidAlgae.value));
+    buttonBoard
+        .Button5()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.MidDownCoralLeft.value : Reef.MidDownAlgae.value));
+    buttonBoard
+        .Button6()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.MidDownCoralRight.value : Reef.MidDownAlgae.value));
+    buttonBoard
+        .Button7()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.StationDownCoralRight.value : Reef.StationDownAlgae.value));
+    buttonBoard
+        .Button8()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.StationDownCoralLeft.value : Reef.StationDownAlgae.value));
+    buttonBoard
+        .Button9()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.StationCoralRight.value : Reef.StationAlgae.value));
+    buttonBoard
+        .Button10()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.StationCoralLeft.value : Reef.StationAlgae.value));
+    buttonBoard
+        .Button11()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.StationUpCoralRight.value : Reef.StationUpAlgae.value));
+    buttonBoard
+        .Button12()
+        .whileTrue(
+            drivetrain.autoDriveTrajectory(
+                onCoral.get() ? Reef.StationUpCoralLeft.value : Reef.StationUpAlgae.value));
+  }
+
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -105,6 +187,7 @@ public class RobotContainer {
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
+    joystick.b().onTrue(Commands.runOnce(() -> onCoral.set(!onCoral.get())));
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
     joystick
         .b()
@@ -126,9 +209,31 @@ public class RobotContainer {
         .leftStick()
         .and(joystick.x())
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-    // reset the field-centric heading on left bumper press
     joystick.home().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+    joystick
+        .leftTrigger()
+        .whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE));
+
+    joystick
+        .rightTrigger()
+        .whileTrue(
+            Commands.parallel(
+                    coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE),
+                    algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE))
+                .until(() -> coralSubsystem.getSwitchState() || algaeSubsystem.getSwitchState()));
+    joystick
+        .leftBumper()
+        .whileTrue(
+            Commands.parallel(
+                    ElevatorWristCommands.elevatorWristGroundIntake(
+                        elevatorSubsystem, wristSubsystem),
+                    intakeSuperstructure.setDownAndRunCommand(),
+                    coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE))
+                .until(coralSubsystem::getSwitchState));
+    joystick
+        .a()
+        .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

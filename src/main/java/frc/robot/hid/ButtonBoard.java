@@ -12,18 +12,18 @@ import edu.wpi.first.wpilibj.event.EventLoop;
     public class ButtonBoard extends GenericHID {
        
         public enum Button {
-            Button1(1),
-            Button2(2),
-            Button3(3),
-            Button4(4),
-            Button5(5),
-            Button6(6),
-            Button7(7),
-            Button8(8),
-            Button9(9),
-            Button10(10),
-            Button11(11),
-            Button12(12);
+            K1(1),
+            K2(2),
+            K3(3),
+            K4(4),
+            L1(5),
+            R1(6),
+            L2(7),
+            R2(8),
+            SE(9),
+            ST(10),
+            K11(11),
+            K12(12);
     
             public final int value;
     
@@ -39,15 +39,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 1
 
         public boolean getButton1() {
-            return getRawButton(Button.Button1.value);
+            return getRawButton(Button.K1.value);
           }
         
           public boolean getButton1Pressed() {
-            return getRawButtonPressed(Button.Button1.value);
+            return getRawButtonPressed(Button.K1.value);
           }
       
           public boolean getButton1Released() {
-            return getRawButtonReleased(Button.Button1.value);
+            return getRawButtonReleased(Button.K1.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -59,15 +59,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         // button 2
           
         public boolean getButton2() {
-            return getRawButton(Button.Button2.value);
+            return getRawButton(Button.K2.value);
           }
         
           public boolean getButton2Pressed() {
-            return getRawButtonPressed(Button.Button2.value);
+            return getRawButtonPressed(Button.K2.value);
           }
       
           public boolean getButton2Released() {
-            return getRawButtonReleased(Button.Button2.value);
+            return getRawButtonReleased(Button.K2.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -79,15 +79,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button3
           
         public boolean getButton3() {
-            return getRawButton(Button.Button3.value);
+            return getRawButton(Button.K3.value);
           }
         
           public boolean getButton3Pressed() {
-            return getRawButtonPressed(Button.Button3.value);
+            return getRawButtonPressed(Button.K3.value);
           }
       
           public boolean getButton3Released() {
-            return getRawButtonReleased(Button.Button3.value);
+            return getRawButtonReleased(Button.K3.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -100,15 +100,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button4
           
         public boolean getButton4() {
-            return getRawButton(Button.Button4.value);
+            return getRawButton(Button.K4.value);
           }
         
           public boolean getButton4Pressed() {
-            return getRawButtonPressed(Button.Button4.value);
+            return getRawButtonPressed(Button.K4.value);
           }
       
           public boolean getButton4Released() {
-            return getRawButtonReleased(Button.Button4.value);
+            return getRawButtonReleased(Button.K4.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -120,15 +120,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 5
           
         public boolean getButton5() {
-            return getRawButton(Button.Button5.value);
+            return getRawButton(Button.L1.value);
           }
         
           public boolean getButton5Pressed() {
-            return getRawButtonPressed(Button.Button5.value);
+            return getRawButtonPressed(Button.L1.value);
           }
       
           public boolean getButton5Released() {
-            return getRawButtonReleased(Button.Button5.value);
+            return getRawButtonReleased(Button.L1.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -139,15 +139,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 6
           
         public boolean getButton6() {
-            return getRawButton(Button.Button6.value);
+            return getRawButton(Button.R1.value);
           }
         
           public boolean getButton6Pressed() {
-            return getRawButtonPressed(Button.Button6.value);
+            return getRawButtonPressed(Button.R1.value);
           }
       
           public boolean getButton6Released() {
-            return getRawButtonReleased(Button.Button6.value);
+            return getRawButtonReleased(Button.R1.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -159,15 +159,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 7
           
         public boolean getButton7() {
-            return getRawButton(Button.Button7.value);
+            return getRawButton(Button.L2.value);
           }
         
           public boolean getButton7Pressed() {
-            return getRawButtonPressed(Button.Button7.value);
+            return getRawButtonPressed(Button.L2.value);
           }
       
           public boolean getButton7Released() {
-            return getRawButtonReleased(Button.Button7.value);
+            return getRawButtonReleased(Button.L2.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -179,15 +179,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 8
 
         public boolean getButton8() {
-            return getRawButton(Button.Button8.value);
+            return getRawButton(Button.R2.value);
           }
         
           public boolean getButton8Pressed() {
-            return getRawButtonPressed(Button.Button8.value);
+            return getRawButtonPressed(Button.R2.value);
           }
       
           public boolean getButton8Released() {
-            return getRawButtonReleased(Button.Button8.value);
+            return getRawButtonReleased(Button.R2.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -199,15 +199,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 9
           
         public boolean getButton9() {
-            return getRawButton(Button.Button9.value);
+            return getRawButton(Button.SE.value);
           }
         
           public boolean getButton9Pressed() {
-            return getRawButtonPressed(Button.Button9.value);
+            return getRawButtonPressed(Button.SE.value);
           }
       
           public boolean getButton9Released() {
-            return getRawButtonReleased(Button.Button9.value);
+            return getRawButtonReleased(Button.SE.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -219,15 +219,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 10
 
         public boolean getButton10() {
-            return getRawButton(Button.Button10.value);
+            return getRawButton(Button.ST.value);
           }
         
           public boolean getButton10Pressed() {
-            return getRawButtonPressed(Button.Button10.value);
+            return getRawButtonPressed(Button.ST.value);
           }
       
           public boolean getButton10Released() {
-            return getRawButtonReleased(Button.Button10.value);
+            return getRawButtonReleased(Button.ST.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -239,15 +239,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 11
           
         public boolean getButton11() {
-            return getRawButton(Button.Button11.value);
+            return getRawButton(Button.K11.value);
           }
         
           public boolean getButton11Pressed() {
-            return getRawButtonPressed(Button.Button11.value);
+            return getRawButtonPressed(Button.K11.value);
           }
       
           public boolean getButton11Released() {
-            return getRawButtonReleased(Button.Button11.value);
+            return getRawButtonReleased(Button.K11.value);
           }
     
           @SuppressWarnings("MethodName")
@@ -259,15 +259,15 @@ import edu.wpi.first.wpilibj.event.EventLoop;
         //button 12
           
         public boolean getButton12() {
-            return getRawButton(Button.Button12.value);
+            return getRawButton(Button.K12.value);
           }
         
           public boolean getButton12Pressed() {
-            return getRawButtonPressed(Button.Button12.value);
+            return getRawButtonPressed(Button.K12.value);
           }
       
           public boolean getButton12Released() {
-            return getRawButtonReleased(Button.Button12.value);
+            return getRawButtonReleased(Button.K12.value);
           }
     
           @SuppressWarnings("MethodName")

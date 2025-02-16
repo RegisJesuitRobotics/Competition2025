@@ -3,12 +3,24 @@ package frc.robot.utils;
 import java.util.HashMap;
 
 public enum Reef {
-  MidUp("MID-UP-REEF.path"),
-  Mid("MID-REEF.path"),
-  MidDown("MID-DOWN-REEF.path"),
-  BackUp("STATION-UP-REEF.path"),
-  Back("STATION-REEF.path"),
-  BackDown("STATION-DOWN-REEF.path");
+  MidUpAlgae("MID-UP-REEF-ALGAE.path"),
+  MidAlgae("MID-REEF-ALGAE.path"),
+  MidDownAlgae("MID-DOWN-REEF-ALGAE.path"),
+  StationUpAlgae("STATION-UP-REEF-ALGAE.path"),
+  StationAlgae("STATION-REEF-ALGAE.path"),
+  StationDownAlgae("STATION-DOWN-REEF-ALGAE.path"),
+  MidUpCoralLeft("MID-UP-REEF-LEFT_CORAL.path"),
+  MidUpCoralRight("MID-UP-REEF-RIGHT_Coral.path"),
+  MidCoralLeft("MID-REEF-LEFT_CORAL.path"),
+  MidCoralRight("MID-REEF-RIGHT_CORAL.path"),
+  MidDownCoralLeft("MID-DOWN-REEF-LEFT_CORAL.path"),
+  MidDownCoralRight("MID-DOWN-REEF-RIGHT_CORAL.path"),
+  StationUpCoralLeft("STATION-UP-REEF-LEFT_CORAL.path"),
+  StationUpCoralRight("STATION-UP-REEF-RIGHT_CORAL.path"),
+  StationCoralLeft("STATION-REEF-LEFT_CORAL.path"),
+  StationCoralRight("STATION-REEF-RIGHT_CORAL.path"),
+  StationDownCoralLeft("STATION-DOWN-REEF-LEFT_CORAL.path"),
+  StationDownCoralRight("STATION-DOWN-REEF-RIGHT_CORAL.path");
 
   public final String value;
   private static HashMap<String, Reef> _map = null;

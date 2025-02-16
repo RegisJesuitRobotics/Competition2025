@@ -131,6 +131,25 @@ public final class Constants {
     public static final double OUTPUT_VOLTAGE = -6.0;
   }
 
+
+  public static class ClimberConstants{
+    public static final int CLIMB_MOTOR_1_ID = 0; //m
+    public static final int CLIMB_MOTOR_2_ID = 0;//m
+    public static final TunablePIDGains CLIMB_PID_GAINS = new TunablePIDGains(
+      "/pid/climber", 0, 0, 0, MiscConstants.TUNING_MODE);
+      public static final TunableFFGains CLIMBER_FF_GAINS =
+        new TunableFFGains(
+          "/feedfoward/climber/", 0, 0, 0, MiscConstants.TUNING_MODE);
+          public static final double SUPPLY_CURRENT_LIMIT = 0.0;//m
+          public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; //m
+          public static final double GEAR_RATIO = 0.0; //m
+          public static final boolean INVERTED_1 = false;
+    public static final double CLIMBER_UP_VOLTAGE = 0.0; //m
+    public static final double CLIMBER_DOWN_VOLTAGE = 0.0; //m
+    public static final int LIMITER = 0; //m
+          
+  }
+
   public static class VisionConstants {
     public static final double CAMERA_MOUNT_ANGLE = 0.0;
     public static final double CAMERA_MOUNT_HEIGHT_METERS = 0.0;

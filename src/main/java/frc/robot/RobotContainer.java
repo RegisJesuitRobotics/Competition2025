@@ -10,9 +10,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorWristCommands;
+import frc.robot.commands.MiscCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
+
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
@@ -44,12 +50,12 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final WristSubsystem wristSubsystem = new WristSubsystem();
+  private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
   private final IntakeRotationSubsystem intakeRotationSubsystem = new IntakeRotationSubsystem();
   private final IntakeSpinningSubsystem intakeSpinningSubsystem = new IntakeSpinningSubsystem();
   private final IntakeSuperstructure intakeSuperstructure =
       new IntakeSuperstructure(intakeSpinningSubsystem, intakeRotationSubsystem);
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
-
   private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
   // private final NintendoSwitchController joystick = new NintendoSwitchController(0);
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
@@ -92,6 +98,12 @@ public class RobotContainer {
     operator
         .L2()
         .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
+    operator
+        .L1()
+        .onTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
+    operator
+        .R1()
+        .onTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
   }
 
   private void configureBoard() {

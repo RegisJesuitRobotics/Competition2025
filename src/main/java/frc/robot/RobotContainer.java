@@ -14,15 +14,14 @@ import frc.robot.commands.MiscCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
+import frc.robot.subsystems.*;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.WristSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
-
-import frc.robot.subsystems.*;
 import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
+import frc.robot.subsystems.WristSubsystem;
 import frc.robot.utils.Reef;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -98,12 +97,8 @@ public class RobotContainer {
     operator
         .L2()
         .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
-    operator
-        .L1()
-        .onTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
-    operator
-        .R1()
-        .onTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
+    operator.L1().onTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
+    operator.R1().onTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
   }
 
   private void configureBoard() {
@@ -225,12 +220,17 @@ public class RobotContainer {
     joystick
         .leftBumper()
         .whileTrue(
-            Commands.parallel(
-                    ElevatorWristCommands.elevatorWristGroundIntake(
-                        elevatorSubsystem, wristSubsystem),
-                    intakeSuperstructure.setDownAndRunCommand(),
-                    coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE))
-                .until(coralSubsystem::getSwitchState));
+            Commands.sequence(
+                intakeSuperstructure
+                    .setDownAndRunCommand()
+                    .until(() -> intakeSpinningSubsystem.getSwitchValue()),
+                intakeSuperstructure.setUpCommand(),
+                Commands.parallel(
+                        ElevatorWristCommands.elevatorWristGroundIntake(
+                            elevatorSubsystem, wristSubsystem),
+                        coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE))
+                    .until(() -> coralSubsystem.getSwitchState())));
+
     joystick
         .a()
         .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));

@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -11,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
@@ -28,6 +32,10 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.ElevatorConstants.LEFT_ID,
           "/elevator/motorleft",
           Constants.MiscConstants.TUNING_MODE);
+  private final SysIdRoutine elevatorSysId =
+      new SysIdRoutine(
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
   private final TelemetryTalonFX rightElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.RIGHT_ID,
@@ -168,6 +176,14 @@ public class ElevatorSubsystem extends SubsystemBase {
                 controller.reset(
                     getElevatorPosition(), rightElevatorMotor.getVelocity().getValueAsDouble()))
         .onlyIf(() -> isHomed);
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return elevatorSysId.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return elevatorSysId.dynamic(direction);
   }
 
   @Override

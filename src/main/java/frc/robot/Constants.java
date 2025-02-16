@@ -70,7 +70,7 @@ public final class Constants {
     // spinny stuff
     public static final int SPINNING_MOTOR_ID = 0; // idk
     public static final double SPINNING_VOLTAGE = 11.0; // m
-    public static final int SPINNING_LIMIT_SWITCH_ID = 0; //m
+    public static final int SPINNING_LIMIT_SWITCH_ID = 0; // m
     public static final double RATE_LIMIT = 1.0; // m
     public static final TunablePIDGains SPINNING_PID_GAINS =
         new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
@@ -78,7 +78,7 @@ public final class Constants {
         new TunableFFGains("/intake/spinning/ff/", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final double GEAR_RATIO_SPINNING = 0; // idk
     public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 25.0; // idk
-    public static final boolean INVERTED_SPINNING = false; //m
+    public static final boolean INVERTED_SPINNING = false; // m
     public static final int STALL_MOTOR_CURRENT = 0; // m
     public static final int FREE_MOTOR_CURRENT = 0; // m
   }
@@ -134,23 +134,20 @@ public final class Constants {
     public static final double OUTPUT_VOLTAGE = -6.0;
   }
 
-
-  public static class ClimberConstants{
-    public static final int CLIMB_MOTOR_1_ID = 0; //m
-    public static final int CLIMB_MOTOR_2_ID = 0;//m
-    public static final TunablePIDGains CLIMB_PID_GAINS = new TunablePIDGains(
-      "/pid/climber", 0, 0, 0, MiscConstants.TUNING_MODE);
-      public static final TunableFFGains CLIMBER_FF_GAINS =
-        new TunableFFGains(
-          "/feedfoward/climber/", 0, 0, 0, MiscConstants.TUNING_MODE);
-          public static final double SUPPLY_CURRENT_LIMIT = 0.0;//m
-          public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; //m
-          public static final double GEAR_RATIO = 0.0; //m
-          public static final boolean INVERTED_1 = false;
-    public static final double CLIMBER_UP_VOLTAGE = 0.0; //m
-    public static final double CLIMBER_DOWN_VOLTAGE = 0.0; //m
-    public static final int LIMITER = 0; //m
-          
+  public static class ClimberConstants {
+    public static final int CLIMB_MOTOR_1_ID = 0; // m
+    public static final int CLIMB_MOTOR_2_ID = 0; // m
+    public static final TunablePIDGains CLIMB_PID_GAINS =
+        new TunablePIDGains("/pid/climber", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final TunableFFGains CLIMBER_FF_GAINS =
+        new TunableFFGains("/feedfoward/climber/", 0, 0, 0, MiscConstants.TUNING_MODE);
+    public static final double SUPPLY_CURRENT_LIMIT = 0.0; // m
+    public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; // m
+    public static final double GEAR_RATIO = 0.0; // m
+    public static final boolean INVERTED_1 = false;
+    public static final double CLIMBER_UP_VOLTAGE = 0.0; // m
+    public static final double CLIMBER_DOWN_VOLTAGE = 0.0; // m
+    public static final int LIMITER = 0; // m
   }
 
   public static class VisionConstants {

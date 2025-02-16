@@ -82,6 +82,7 @@ public final class Constants {
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int BUTTON_BOARD_ID = 0;
   }
 
   public static class MiscConstants {

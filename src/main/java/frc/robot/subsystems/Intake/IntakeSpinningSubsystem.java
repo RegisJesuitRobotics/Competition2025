@@ -40,14 +40,19 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
           "/intake/spinning/motor",
           MiscConstants.TUNING_MODE);
 
-  private final Alert intakeSpinningMotorAlert = new Alert("intake spinning motor had a fault", AlertType.ERROR);
+  private final Alert intakeSpinningMotorAlert =
+      new Alert("intake spinning motor had a fault", AlertType.ERROR);
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(IntakeConstants.RATE_LIMIT);
   private RelativeEncoder intakeSpinningEncoder = intakeSpinningMotor.getEncoder();
-  private final EventTelemetryEntry intakeSpinningEvent = new EventTelemetryEntry("/spinning/intake/events");
-  private final DigitalInput intakeSlapdownSwitch = new DigitalInput(Constants.IntakeConstants.SPINNING_LIMIT_SWITCH_ID);
+  private final EventTelemetryEntry intakeSpinningEvent =
+      new EventTelemetryEntry("/spinning/intake/events");
+  private final DigitalInput intakeSlapdownSwitch =
+      new DigitalInput(Constants.IntakeConstants.SPINNING_LIMIT_SWITCH_ID);
   private final TunableTelemetryPIDController intakeSpinningPID =
-      new TunableTelemetryPIDController("intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);
-  private SimpleMotorFeedforward intakeSpinningFF = IntakeConstants.SPINNING_FF_GAINS.createFeedforward();
+      new TunableTelemetryPIDController(
+          "intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);
+  private SimpleMotorFeedforward intakeSpinningFF =
+      IntakeConstants.SPINNING_FF_GAINS.createFeedforward();
 
   private final SysIdRoutine intakeSpinningSysId =
       new SysIdRoutine(
@@ -56,7 +61,8 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
 
   public IntakeSpinningSubsystem() {
     configMotor();
-    setDefaultCommand(setVoltageCommand(0.0).ignoringDisable(true).withName("IntakeSpinningDefault"));
+    setDefaultCommand(
+        setVoltageCommand(0.0).ignoringDisable(true).withName("IntakeSpinningDefault"));
   }
 
   private void configMotor() {
@@ -88,7 +94,9 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecord(
         () -> config.inverted(Constants.IntakeConstants.INVERTED_SPINNING),
-        () -> intakeSpinningMotor.configAccessor.getInverted() == Constants.IntakeConstants.INVERTED_SPINNING,
+        () ->
+            intakeSpinningMotor.configAccessor.getInverted()
+                == Constants.IntakeConstants.INVERTED_SPINNING,
         faultRecorder.run("Inverted"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecord(
@@ -119,6 +127,10 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
 
   public void setVoltage(double voltage) {
     intakeSpinningMotor.setVoltage(voltage);
+  }
+
+  public boolean getSwitchValue() {
+    return intakeSlapdownSwitch.get();
   }
 
   public double getVelocity() {
@@ -156,7 +168,7 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
- //   intakeSpinningMotor.logValues();
+    //   intakeSpinningMotor.logValues();
     // This method will be called once per scheduler run
   }
 }

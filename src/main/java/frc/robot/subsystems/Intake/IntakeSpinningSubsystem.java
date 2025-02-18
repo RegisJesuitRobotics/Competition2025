@@ -6,12 +6,16 @@ package frc.robot.subsystems.Intake;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -20,26 +24,35 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
-import frc.robot.telemetry.wrappers.TelemetryTalonFX;
+import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import frc.robot.utils.Alert;
-import frc.robot.utils.ConfigEquality;
+import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigurationUtils;
+import frc.robot.utils.ConfigurationUtils.StringFaultRecorder;
 
 @Logged
 public class IntakeSpinningSubsystem extends SubsystemBase {
 
-  public final TelemetryTalonFX intakeSpinningMotor =
-      new TelemetryTalonFX(
-          IntakeConstants.SPINNING_MOTOR_ID, "intake/spinning", MiscConstants.TUNING_MODE);
-  SlewRateLimiter rateLimiter = new SlewRateLimiter(IntakeConstants.RATE_LIMIT);
-  public final TunableTelemetryPIDController spinningPid =
-      new TunableTelemetryPIDController("pid/intake/spin", IntakeConstants.SPINNING_PID_GAINS);
-  private SimpleMotorFeedforward spinningff = IntakeConstants.SPINNING_FF_GAINS.createFeedforward();
-  private static final Alert spinningMotorAlert =
-      new Alert("intake spinning motor had a fault initializing", Alert.AlertType.ERROR);
-  private RelativeEncoder intakeSpinningEncoder;
-  private EventTelemetryEntry intakeSpinningEvent =
-      new EventTelemetryEntry("intakeSpinningMotor/Event");
+  private final TelemetryCANSparkFlex intakeSpinningMotor =
+      new TelemetryCANSparkFlex(
+          IntakeConstants.SPINNING_MOTOR_ID,
+          SparkLowLevel.MotorType.kBrushless,
+          "/intake/spinning/motor",
+          MiscConstants.TUNING_MODE);
+
+  private final Alert intakeSpinningMotorAlert =
+      new Alert("intake spinning motor had a fault", AlertType.ERROR);
+  private final SlewRateLimiter rateLimiter = new SlewRateLimiter(IntakeConstants.RATE_LIMIT);
+  private RelativeEncoder intakeSpinningEncoder = intakeSpinningMotor.getEncoder();
+  private final EventTelemetryEntry intakeSpinningEvent =
+      new EventTelemetryEntry("/spinning/intake/events");
+  private final DigitalInput intakeSlapdownSwitch =
+      new DigitalInput(Constants.IntakeConstants.SPINNING_LIMIT_SWITCH_ID);
+  private final TunableTelemetryPIDController intakeSpinningPID =
+      new TunableTelemetryPIDController(
+          "intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);
+  private SimpleMotorFeedforward intakeSpinningFF =
+      IntakeConstants.SPINNING_FF_GAINS.createFeedforward();
 
   private final SysIdRoutine intakeSpinningSysId =
       new SysIdRoutine(
@@ -49,60 +62,87 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
   public IntakeSpinningSubsystem() {
     configMotor();
     setDefaultCommand(
-        setVoltageCommand(0.0).ignoringDisable(true).withName("Default Spinning Intake"));
+        setVoltageCommand(0.0).ignoringDisable(true).withName("IntakeSpinningDefault"));
   }
 
   private void configMotor() {
-    TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
-    motorConfiguration.CurrentLimits.SupplyCurrentLimit =
-        Constants.IntakeConstants.SUPPLY_CURRENT_LIMIT_SPINNING;
-    motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-    motorConfiguration.MotorOutput.Inverted = Constants.IntakeConstants.INVERTED_SPINNING;
-    motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    motorConfiguration.Audio.AllowMusicDurDisable = true;
-    ConfigurationUtils.StringFaultRecorder faultRecorder =
-        new ConfigurationUtils.StringFaultRecorder();
-    ConfigurationUtils.applyCheckRecordCTRE(
-        () -> intakeSpinningMotor.getConfigurator().apply(motorConfiguration),
-        () -> {
-          TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
-          intakeSpinningMotor.getConfigurator().refresh(appliedConfig);
-          return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
-        },
-        faultRecorder.run("Motor configuration"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecordCTRE(
-        intakeSpinningMotor::optimizeBusUtilization,
-        () -> true,
-        faultRecorder.run("Optimize bus utilization"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    intakeSpinningEncoder = intakeSpinningMotor.getEncoder();
+    double conversionFactor = Math.PI * 2 / Constants.IntakeConstants.GEAR_RATIO_SPINNING;
 
+    StringFaultRecorder faultRecorder = new StringFaultRecorder();
+    SparkFlexConfig config = new SparkFlexConfig();
+
+    ConfigurationUtils.applyCheckRecordRev(
+        () -> intakeSpinningMotor.setCANTimeout(250),
+        () -> true,
+        faultRecorder.run("CAN timeout"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecordRev(
+        () ->
+            intakeSpinningMotor.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters),
+        () -> true,
+        faultRecorder.run("Factory defaults"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecord(
+        () ->
+            config.smartCurrentLimit(
+                Constants.IntakeConstants.STALL_MOTOR_CURRENT,
+                Constants.IntakeConstants.FREE_MOTOR_CURRENT),
+        () -> true,
+        faultRecorder.run("Current limits"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecord(
+        () -> config.inverted(Constants.IntakeConstants.INVERTED_SPINNING),
+        () ->
+            intakeSpinningMotor.configAccessor.getInverted()
+                == Constants.IntakeConstants.INVERTED_SPINNING,
+        faultRecorder.run("Inverted"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecord(
+        () -> config.idleMode(IdleMode.kCoast),
+        () -> intakeSpinningMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
+        faultRecorder.run("Idle mode"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecord(
+        () -> config.encoder.positionConversionFactor(conversionFactor / 60),
+        () ->
+            ConfigurationUtils.fpEqual(
+                intakeSpinningMotor.configAccessor.encoder.getVelocityConversionFactor(),
+                conversionFactor / 60),
+        faultRecorder.run("Velocity conversion factor"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecordRev(
+        intakeSpinningMotor::burnFlashWithDelay,
+        () -> true,
+        faultRecorder.run("Burn flash"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.postDeviceConfig(
         faultRecorder.hasFault(),
         intakeSpinningEvent::append,
-        "intake spinning motor fault",
+        "intake spinning motor",
         faultRecorder.getFaultString());
-    spinningMotorAlert.set(faultRecorder.hasFault());
-
-    intakeSpinningMotor.setLoggingPositionConversionFactor(
-        Constants.IntakeConstants.GEAR_RATIO_SPINNING);
-    intakeSpinningMotor.setLoggingVelocityConversionFactor(
-        Constants.IntakeConstants.GEAR_RATIO_SPINNING);
-
-    // Clear reset as this is on startup
-    intakeSpinningMotor.hasResetOccurred();
+    intakeSpinningMotorAlert.set(faultRecorder.hasFault());
   }
 
-  public void setVoltage(Double voltage) {
+  public void setVoltage(double voltage) {
     intakeSpinningMotor.setVoltage(voltage);
   }
 
-  public Command setVoltageCommand(double voltage) {
-    return this.run(() -> setVoltage(voltage)).withName("intake/spinning/voltage");
+  public boolean getSwitchValue() {
+    return intakeSlapdownSwitch.get();
   }
 
   public double getVelocity() {
     return intakeSpinningEncoder.getVelocity();
+  }
+
+  public boolean getSwitchState() {
+    return intakeSlapdownSwitch.get();
+  }
+
+  public Command setVoltageCommand(double voltage) {
+    return this.run(() -> intakeSpinningMotor.setVoltage(voltage));
   }
 
   public Command runVelocityCommand(double setpointRadiansSecond) {
@@ -110,25 +150,25 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
             () -> {
               double rateLimited = rateLimiter.calculate(setpointRadiansSecond);
               setVoltage(
-                  spinningPid.calculate(intakeSpinningEncoder.getVelocity(), rateLimited)
-                      + spinningff.calculate(rateLimited));
+                  intakeSpinningPID.calculate(intakeSpinningEncoder.getVelocity(), rateLimited)
+                      + intakeSpinningFF.calculate(rateLimited));
             })
         .beforeStarting(() -> rateLimiter.reset(intakeSpinningEncoder.getVelocity()))
-        .withName("IntakeRunVelocity");
+        .withName("IntakeSpinningRunVelocity");
   }
 
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+  public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
     return intakeSpinningSysId.quasistatic(direction);
   }
 
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+  public Command sysIDDynamic(SysIdRoutine.Direction direction) {
     return intakeSpinningSysId.dynamic(direction);
   }
 
   @Override
   public void periodic() {
-    if (Constants.IntakeConstants.SPINNING_FF_GAINS.hasChanged()) {
-      spinningff = Constants.IntakeConstants.SPINNING_FF_GAINS.createFeedforward();
-    }
+
+    //   intakeSpinningMotor.logValues();
+    // This method will be called once per scheduler run
   }
 }

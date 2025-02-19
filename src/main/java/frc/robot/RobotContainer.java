@@ -216,20 +216,22 @@ public class RobotContainer {
             Commands.parallel(
                     coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE),
                     algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE))
-                .until(() -> coralSubsystem.getSwitchState() || algaeSubsystem.getSwitchState()));
+                .until(
+                    () ->
+                        (coralSubsystem.getRightSwitchState()) || algaeSubsystem.getSwitchState()));
     joystick
         .leftBumper()
         .whileTrue(
             Commands.sequence(
                 intakeSuperstructure
                     .setDownAndRunCommand()
-                    .until(() -> intakeSpinningSubsystem.getSwitchValue()),
+                    .until(intakeSpinningSubsystem::getSwitchValue),
                 intakeSuperstructure.setUpCommand(),
                 Commands.parallel(
-                        ElevatorWristCommands.elevatorWristGroundIntake(
-                            elevatorSubsystem, wristSubsystem),
-                        coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE))
-                    .until(() -> coralSubsystem.getSwitchState())));
+                    coralSubsystem.runVelolocityCenterCommand(
+                        Constants.CoralConstants.RUNNING_VOLTAGE),
+                    ElevatorWristCommands.elevatorWristGroundIntake(
+                        elevatorSubsystem, wristSubsystem))));
 
     joystick
         .a()

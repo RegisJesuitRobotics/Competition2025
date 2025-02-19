@@ -47,7 +47,7 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
   private final EventTelemetryEntry intakeSpinningEvent =
       new EventTelemetryEntry("/spinning/intake/events");
   private final DigitalInput intakeSlapdownSwitch =
-      new DigitalInput(Constants.IntakeConstants.SPINNING_LIMIT_SWITCH_ID);
+      new DigitalInput(Constants.IntakeConstants.LEFT_BEAM);
   private final TunableTelemetryPIDController intakeSpinningPID =
       new TunableTelemetryPIDController(
           "intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);
@@ -135,10 +135,6 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
 
   public double getVelocity() {
     return intakeSpinningEncoder.getVelocity();
-  }
-
-  public boolean getSwitchState() {
-    return intakeSlapdownSwitch.get();
   }
 
   public Command setVoltageCommand(double voltage) {

@@ -154,10 +154,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Constants.AlgaeConstants.FF_GAINS.hasChanged()) {
-      algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
-    }
-    algaeMotor.logValues();
+      algaeMotor.logValues();
     // This method will be called once per scheduler run
   }
 }

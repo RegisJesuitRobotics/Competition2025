@@ -15,13 +15,9 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
-import frc.robot.subsystems.WristSubsystem;
 import frc.robot.utils.Reef;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -40,6 +36,11 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+                private final SwerveRequest.RobotCentric centricdrive =
+      new SwerveRequest.RobotCentric()
+          .withDeadband(MaxSpeed * 0.1)
+          .withRotationalDeadband(MaxAngularRate * 0.1)
+          .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -97,8 +98,10 @@ public class RobotContainer {
     operator
         .L2()
         .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
-    operator.L1().onTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
-    operator.R1().onTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
+    operator.L1().whileTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
+    operator.R1().whileTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
+    operator.options().whileTrue(intakeRotationSubsystem.homeIntakeCommand());
+    operator.share().whileTrue(elevatorSubsystem.homeElevatorCommand());
   }
 
   private void configureBoard() {
@@ -181,17 +184,24 @@ public class RobotContainer {
                         -joystick.getRightX()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
+    joystick.rightBumper().whileTrue(
+        drivetrain.applyRequest(
+        () -> 
+        centricdrive
+            .withVelocityX(-joystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+            .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
 
     joystick.b().onTrue(Commands.runOnce(() -> onCoral.set(!onCoral.get())));
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick
+    /*joystick
         .b()
         .whileTrue(
             drivetrain.applyRequest(
                 () ->
                     point.withModuleDirection(
                         new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-
+*/
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
     joystick.leftStick().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));

@@ -44,7 +44,10 @@ public class CoralSubsystem extends SubsystemBase {
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
   private RelativeEncoder coralEncoder = coralMotor.getEncoder();
   private final EventTelemetryEntry coralEvent = new EventTelemetryEntry("/coral/events");
-  private final DigitalInput intakeSwitch = new DigitalInput(Constants.CoralConstants.SWITCH_ID);
+  private final DigitalInput intakeLeftBeam =
+      new DigitalInput(Constants.CoralConstants.SWITCH_ID_LEFT);
+  private final DigitalInput intakeRightBeam =
+      new DigitalInput(Constants.CoralConstants.SWITCH_ID_RIGHT);
   private final TunableTelemetryPIDController coralpid =
       new TunableTelemetryPIDController("/coral/pid", Constants.CoralConstants.PID_GAINS);
   private SimpleMotorFeedforward coralFF = CoralConstants.FF_GAINS.createFeedforward();
@@ -125,8 +128,12 @@ public class CoralSubsystem extends SubsystemBase {
     return coralEncoder.getVelocity();
   }
 
-  public boolean getSwitchState() {
-    return intakeSwitch.get();
+  public boolean getLeftSwitchState() {
+    return intakeLeftBeam.get();
+  }
+
+  public boolean getRightSwitchState() {
+    return intakeRightBeam.get();
   }
 
   public Command setVoltageCommand(double voltage) {
@@ -143,6 +150,21 @@ public class CoralSubsystem extends SubsystemBase {
             })
         .beforeStarting(() -> rateLimiter.reset(coralEncoder.getVelocity()))
         .withName("CoralRunVelocity");
+  }
+
+  public Command runVelolocityCenterCommand(double setpointRadiansSecond) {
+    return this.run(
+        () ->
+            runVelocityCommand(setpointRadiansSecond)
+                .until(() -> (getLeftSwitchState() || getRightSwitchState()))
+                .andThen(
+                    () -> {
+                      if (getRightSwitchState()) {
+                        runVelocityCommand(1).until(this::getLeftSwitchState);
+                      } else if (getLeftSwitchState()) {
+                        runVelocityCommand(-1).until(this::getRightSwitchState);
+                      }
+                    }));
   }
 
   public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {

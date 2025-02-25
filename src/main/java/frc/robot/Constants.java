@@ -25,7 +25,7 @@ public final class Constants {
     public static final int LEFT_ID = 9;
     public static final int RIGHT_ID = 10;
     public static final int BOTTOM_ID = 0; //m
-    public static final double SUPPLY_CURRENT_LIMIT = 50.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 40.0;
     public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
     public static final double GEAR_RATIO = 9;
     public static final double METERS_PER_REVOLUTION =
@@ -119,11 +119,13 @@ public final class Constants {
 
   public static class CoralConstants {
     public static final int CORAL_MOTOR_ID = 12;
-    public static final boolean INVERTED = false; // m
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final int SLEW_RATE_LIMIT = 1; 
-    public static final int STALL_MOTOR_CURRENT = 30; 
-    public static final int FREE_MOTOR_CURRENT = 20; 
+    /*public static final int STALL_MOTOR_CURRENT = 30; 
+    public static final int FREE_MOTOR_CURRENT = 20; */
     public static final double GEAR_RATIO = 18.0/16.0;
+    
+    public static final double SUPPLY_CURRENT_LIMIT = 40; 
 
     // tune
     public static final TunablePIDGains PID_GAINS =
@@ -181,7 +183,7 @@ public final class Constants {
   public static class WristConstants {
     public static final int WRIST_ID = 11;
     public static final double GEAR_RATIO = 6.0; 
-    public static final double SUPPLY_CURRENT_LIMIT = 50.0; 
+    public static final double SUPPLY_CURRENT_LIMIT = 40.0; 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = 0.0; // needs a value
     public static final double PID_TOLERANCE = 2.0; 

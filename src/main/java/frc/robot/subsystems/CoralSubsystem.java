@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -25,24 +27,22 @@ import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
+import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
+import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 import frc.robot.utils.ConfigurationUtils.StringFaultRecorder;
 
 @Logged
 public class CoralSubsystem extends SubsystemBase {
 
-  private final TelemetryCANSparkFlex coralMotor =
-      new TelemetryCANSparkFlex(
-          CoralConstants.CORAL_MOTOR_ID,
-          SparkLowLevel.MotorType.kBrushless,
-          "/coral/motor",
-          MiscConstants.TUNING_MODE);
+  private final TelemetryTalonFX coralMotor = 
+  new TelemetryTalonFX(
+    CoralConstants.CORAL_MOTOR_ID, "coral/motor", MiscConstants.TUNING_MODE);
 
   private final Alert coralMotorAlert = new Alert("Coral motor had a fault", AlertType.ERROR);
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
-  private RelativeEncoder coralEncoder = coralMotor.getEncoder();
   private final EventTelemetryEntry coralEvent = new EventTelemetryEntry("/coral/events");
   private final DigitalInput intakeLeftBeam =
       new DigitalInput(Constants.CoralConstants.SWITCH_ID_LEFT);
@@ -63,61 +63,42 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   private void configMotor() {
-    coralEncoder = coralMotor.getEncoder();
-    double conversionFactor = Math.PI * 2 / Constants.CoralConstants.GEAR_RATIO;
+    TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
+    motorConfiguration.CurrentLimits.SupplyCurrentLimit =
+        Constants.CoralConstants.SUPPLY_CURRENT_LIMIT;
+    motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    motorConfiguration.MotorOutput.Inverted = Constants.CoralConstants.INVERTED;
+    motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    motorConfiguration.Audio.AllowMusicDurDisable = true;
+    ConfigurationUtils.StringFaultRecorder faultRecorder =
+        new ConfigurationUtils.StringFaultRecorder();
+    ConfigurationUtils.applyCheckRecordCTRE(
+        () -> coralMotor.getConfigurator().apply(motorConfiguration),
+        () -> {
+          TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
+          coralMotor.getConfigurator().refresh(appliedConfig);
+          return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
+        },
+        faultRecorder.run("Motor configuration"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecordCTRE(
+        coralMotor::optimizeBusUtilization,
+        () -> true,
+        faultRecorder.run("Optimize bus utilization"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
 
-    StringFaultRecorder faultRecorder = new StringFaultRecorder();
-    SparkFlexConfig config = new SparkFlexConfig();
-
-    ConfigurationUtils.applyCheckRecordRev(
-        () -> coralMotor.setCANTimeout(250),
-        () -> true,
-        faultRecorder.run("CAN timeout"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecordRev(
-        () ->
-            coralMotor.configure(
-                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters),
-        () -> true,
-        faultRecorder.run("Factory defaults"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () ->
-            config.smartCurrentLimit(
-                Constants.CoralConstants.STALL_MOTOR_CURRENT,
-                Constants.CoralConstants.FREE_MOTOR_CURRENT),
-        () -> true,
-        faultRecorder.run("Current limits"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () -> config.inverted(Constants.CoralConstants.INVERTED),
-        () -> coralMotor.configAccessor.getInverted() == Constants.CoralConstants.INVERTED,
-        faultRecorder.run("Inverted"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () -> config.idleMode(IdleMode.kCoast),
-        () -> coralMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
-        faultRecorder.run("Idle mode"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () -> config.encoder.positionConversionFactor(conversionFactor / 60),
-        () ->
-            ConfigurationUtils.fpEqual(
-                coralMotor.configAccessor.encoder.getVelocityConversionFactor(),
-                conversionFactor / 60),
-        faultRecorder.run("Velocity conversion factor"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecordRev(
-        coralMotor::burnFlashWithDelay,
-        () -> true,
-        faultRecorder.run("Burn flash"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.postDeviceConfig(
         faultRecorder.hasFault(),
         coralEvent::append,
-        "Shooter motor",
+        "coral motor fault",
         faultRecorder.getFaultString());
     coralMotorAlert.set(faultRecorder.hasFault());
+
+    coralMotor.setLoggingPositionConversionFactor(Constants.CoralConstants.GEAR_RATIO);
+    coralMotor.setLoggingVelocityConversionFactor(Constants.CoralConstants.GEAR_RATIO);
+
+    // Clear reset as this is on startup
+    coralMotor.hasResetOccurred();
   }
 
   public void setVoltage(double voltage) {
@@ -125,7 +106,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public double getVelocity() {
-    return coralEncoder.getVelocity();
+    return coralMotor.getVelocity().getValueAsDouble();
   }
 
   public boolean getLeftSwitchState() {
@@ -145,10 +126,10 @@ public class CoralSubsystem extends SubsystemBase {
             () -> {
               double rateLimited = rateLimiter.calculate(setpointRadiansSecond);
               setVoltage(
-                  coralpid.calculate(coralEncoder.getVelocity(), rateLimited)
+                  coralpid.calculate(getVelocity(), rateLimited)
                       + coralFF.calculate(rateLimited));
             })
-        .beforeStarting(() -> rateLimiter.reset(coralEncoder.getVelocity()))
+        .beforeStarting(() -> rateLimiter.reset(getVelocity()))
         .withName("CoralRunVelocity");
   }
 
@@ -177,9 +158,6 @@ public class CoralSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Constants.CoralConstants.FF_GAINS.hasChanged()) {
-      coralFF = Constants.CoralConstants.FF_GAINS.createFeedforward();
-    }
     coralMotor.logValues();
     // This method will be called once per scheduler run
   }

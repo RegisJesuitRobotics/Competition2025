@@ -115,6 +115,8 @@ public final class Constants {
     public static final int SWITCH_ID = 0;
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
+    public static final int SWITCH_ID_RIGHT = 0;
+    public static final int SWITCH_ID_LEFT = 0;
   }
 
   public static class CoralConstants {

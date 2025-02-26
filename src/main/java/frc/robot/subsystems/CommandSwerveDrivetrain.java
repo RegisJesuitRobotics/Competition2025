@@ -12,7 +12,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +28,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
@@ -183,7 +183,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
    *
-   * @param request Function returning the request to apply
    * @return Command to run
    */
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -250,7 +249,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return this.getState().Pose;
   }
 
-  public Command autoDriveTrajectory(String position) {
+  public Command autoDriveTrajectory(String position, AtomicBoolean shouldFlip) {
     PathConstraints constraints =
         new PathConstraints(
             Constants.AutoConstants.MAX_VELOCITY,
@@ -265,11 +264,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       int pathSize = path.getPathPoses().size();
       PathPoint lastPosition = path.getPoint(pathSize - 1);
       PathPoint firstPosition = path.getPoint(0);
-      boolean flipRotation = this.shouldFlip(new Pose2d(firstPosition.position, firstPosition.rotationTarget.rotation()));
+      boolean flipRotation =
+          this.shouldFlip(
+              new Pose2d(firstPosition.position, firstPosition.rotationTarget.rotation()),
+              shouldFlip);
       if (flipRotation) {
 
-        path.getAllPathPoints().set(pathSize -1, new PathPoint(lastPosition.position ,lastPosition.rotationTarget.flip()));
-        path.getAllPathPoints().set(0, new PathPoint(firstPosition.position ,firstPosition.rotationTarget.flip()));
+        path.getAllPathPoints()
+            .set(
+                pathSize - 1,
+                new PathPoint(lastPosition.position, lastPosition.rotationTarget.flip()));
+        path.getAllPathPoints()
+            .set(0, new PathPoint(firstPosition.position, firstPosition.rotationTarget.flip()));
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -297,12 +303,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_simNotifier.startPeriodic(kSimLoopPeriod);
   }
 
-  public boolean shouldFlip(Pose2d desiredPose){
+  public boolean shouldFlip(Pose2d desiredPose, AtomicBoolean shouldFlip) {
     Pose2d currentPose = this.getPose();
-    return Math.abs(currentPose.getRotation().minus(desiredPose.getRotation()).getRadians()) > Math.abs(desiredPose.getRotation().minus(currentPose.getRotation()).getRadians());
-
-  }
-  public double shouldFlipArm(double desiredAngle){
-
+    boolean flipped =
+        Math.abs(currentPose.getRotation().minus(desiredPose.getRotation()).getRadians())
+            > Math.abs(desiredPose.getRotation().minus(currentPose.getRotation()).getRadians());
+    shouldFlip.set(flipped);
+    return flipped;
   }
 }

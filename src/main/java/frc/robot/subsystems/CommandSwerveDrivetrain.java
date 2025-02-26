@@ -11,6 +11,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -260,6 +262,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     final PathPlannerPath path;
     try {
       path = PathPlannerPath.fromPathFile(position);
+      int pathSize = path.getPathPoses().size();
+      PathPoint lastPosition = path.getPoint(pathSize - 1);
+      PathPoint firstPosition = path.getPoint(0);
+      boolean flipRotation = this.shouldFlip(new Pose2d(firstPosition.position, firstPosition.rotationTarget.rotation()));
+      if (flipRotation) {
+
+        path.getAllPathPoints().set(pathSize -1, new PathPoint(lastPosition.position ,lastPosition.rotationTarget.flip()));
+        path.getAllPathPoints().set(0, new PathPoint(firstPosition.position ,firstPosition.rotationTarget.flip()));
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (ParseException e) {
@@ -284,5 +295,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               updateSimState(deltaTime, RobotController.getBatteryVoltage());
             });
     m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
+  public boolean shouldFlip(Pose2d desiredPose){
+    Pose2d currentPose = this.getPose();
+    return Math.abs(currentPose.getRotation().minus(desiredPose.getRotation()).getRadians()) > Math.abs(desiredPose.getRotation().minus(currentPose.getRotation()).getRadians());
+
+  }
+  public double shouldFlipArm(double desiredAngle){
+
   }
 }

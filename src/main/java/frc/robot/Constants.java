@@ -61,7 +61,7 @@ public final class Constants {
         new TunableArmElevatorFFGains(
             "/intake/rotation/ff/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
 
-    public static final double GEAR_RATIO_ROTATION = 3.0*4.0 * (60.0 / 30.0);
+    public static final double GEAR_RATIO_ROTATION = 3.0 * 4.0 * (60.0 / 30.0);
     public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
     public static final InvertedValue INVERTED_ROTATION = InvertedValue.Clockwise_Positive;
     public static final double ROTATION_UP_ANGLE = 0;
@@ -115,17 +115,19 @@ public final class Constants {
     public static final int SWITCH_ID = 0; //m
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
+    public static final int SWITCH_ID_RIGHT = 0;
+    public static final int SWITCH_ID_LEFT = 0;
   }
 
   public static class CoralConstants {
     public static final int CORAL_MOTOR_ID = 12;
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final int SLEW_RATE_LIMIT = 1; 
-    /*public static final int STALL_MOTOR_CURRENT = 30; 
-    public static final int FREE_MOTOR_CURRENT = 20; */
-    public static final double GEAR_RATIO = 18.0/16.0;
     
     public static final double SUPPLY_CURRENT_LIMIT = 40; 
+    public static final int STALL_MOTOR_CURRENT = 30; // m
+    public static final int FREE_MOTOR_CURRENT = 20; // m
+    public static final double GEAR_RATIO = 18.0 / 16.0;
 
     // tune
     public static final TunablePIDGains PID_GAINS =

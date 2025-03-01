@@ -57,10 +57,13 @@ public class RobotContainer {
       new IntakeSuperstructure(intakeSpinningSubsystem, intakeRotationSubsystem);
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
-  // private final NintendoSwitchController joystick = new NintendoSwitchController(0);
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final Autos autos = new Autos(
+    intakeSpinningSubsystem,intakeSuperstructure,algaeSubsystem,climberSubsystem,
+  drivetrain,coralSubsystem,elevatorSubsystem,wristSubsystem);
+  
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandPS4Controller operator = new CommandPS4Controller(1);
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final CommandButtonBoard buttonBoard =
       new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
 
@@ -251,6 +254,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autos.getAutoChooser().getSelected();
   }
 }

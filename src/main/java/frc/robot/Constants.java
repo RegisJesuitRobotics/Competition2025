@@ -182,7 +182,7 @@ public final class Constants {
 
   public static class WristConstants {
     public static final int WRIST_ID = 11;
-    public static final double GEAR_RATIO = 6.0; 
+    public static final double GEAR_RATIO = 10.0; 
     public static final double SUPPLY_CURRENT_LIMIT = 40.0; 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = 0.0; // needs a value

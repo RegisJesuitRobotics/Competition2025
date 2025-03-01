@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
@@ -48,7 +49,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
       new EventTelemetryEntry("/elevator/motorleft/events");
-  private boolean isHomed = false;
   private final Debouncer debouncer = new Debouncer(0.5);
   private final TunableTelemetryProfiledPIDController controller =
       new TunableTelemetryProfiledPIDController(
@@ -56,6 +56,8 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
+  private boolean isHomed = false;
+  private boolean isHoming = false;
 
   public ElevatorSubsystem() {
     configMotors();
@@ -150,8 +152,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setVoltage(volts);
   }
 
+  public Command setVoltageCommand(double volts){
+    return this.run(()-> rightElevatorMotor.setVoltage(volts));
+  }
+
   public boolean atLimit() {
     return bottomSwitch.get();
+  }
+  public boolean isHomed() {
+    return isHomed;
   }
 
   public Command setPosition(double position) {
@@ -178,6 +187,18 @@ public class ElevatorSubsystem extends SubsystemBase {
         .onlyIf(() -> isHomed);
   }
 
+  public Command homeElevatorCommand() {
+    return setVoltageCommand(-0.75)
+        .until(this::isHomed)
+        .beforeStarting(
+            () -> {
+              isHoming = true;
+              isHomed = false;
+            })
+        .finallyDo(() -> isHoming = false)
+        .withName("HomeElevator");
+  }
+
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return elevatorSysId.quasistatic(direction);
   }
@@ -188,7 +209,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (debouncer.calculate(atLimit())) {
+    if ((atLimit()&& isHoming) || debouncer.calculate(atLimit())) {
       isHomed = true;
       rightElevatorMotor.setPosition(0.0);
     }

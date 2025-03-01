@@ -24,11 +24,10 @@ public final class Constants {
   public static class ElevatorConstants {
     public static final int LEFT_ID = 9;
     public static final int RIGHT_ID = 10;
-    public static final int BOTTOM_ID = 0;
-    public static final double SUPPLY_CURRENT_LIMIT = 50.0;
+    public static final int BOTTOM_ID = 0; //m
+    public static final double SUPPLY_CURRENT_LIMIT = 40.0;
     public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
     public static final double GEAR_RATIO = 9;
-    // TODO: inches of gear
     public static final double METERS_PER_REVOLUTION =
         (Math.PI * Units.inchesToMeters(2.2594)) / GEAR_RATIO;
     public static final boolean LEFT_INVERTED = false;
@@ -41,18 +40,18 @@ public final class Constants {
     public static final double L2_REEF = Units.inchesToMeters(7.9736);
     public static final double L4_REEF = Units.inchesToMeters(49.706);
     public static final double L3_REEF = Units.inchesToMeters(20.75);
-    public static final double L1_REEF = 0.0;
+    public static final double L1_REEF = 0.0; 
     public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(15.9377);
-    public static final double PROCESSOR = 0.0;
-    public static final double GROUND_INTAKE = 0.0;
+    public static final double PROCESSOR = 0.0; 
+    public static final double GROUND_INTAKE = 0.0; 
   }
 
   public static class IntakeConstants {
     // rotation stuff
     public static final int ROTATION_MOTOR_ID = 15;
-    public static final int ROTATION_LIMIT_SWITCH_ID = 0; // idk
+    public static final int ROTATION_LIMIT_SWITCH_ID = 0; // m
     public static final TunablePIDGains ROTATION_PID_GAINS =
         new TunablePIDGains("/intake/rotation/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
@@ -65,24 +64,24 @@ public final class Constants {
     public static final double GEAR_RATIO_ROTATION = 3.0 * 4.0 * (60.0 / 30.0);
     public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
     public static final InvertedValue INVERTED_ROTATION = InvertedValue.Clockwise_Positive;
-    public static final double ROTATION_UP_ANGLE = 0; // idk
-    public static final double ROTATION_DOWN_ANGLE = 0; // m
+    public static final double ROTATION_UP_ANGLE = 0;
+    public static final double ROTATION_DOWN_ANGLE = Units.degreesToRadians(100); 
 
     // spinny stuff
-    public static final int SPINNING_MOTOR_ID = 14; // idk
-    public static final double SPINNING_VOLTAGE = 11.0; // m
-    public static final int LEFT_BEAM = 0; // m
-    public static final double RATE_LIMIT = 1.0; // m
+    public static final int SPINNING_MOTOR_ID = 14; 
+    public static final double SPINNING_VOLTAGE = 11.0; 
+    public static final int LEFT_SWITCH = 0; // m
+    public static final double RATE_LIMIT = 1.0; 
     public static final TunablePIDGains SPINNING_PID_GAINS =
         new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains SPINNING_FF_GAINS =
         new TunableFFGains("/intake/spinning/ff/", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final double GEAR_RATIO_SPINNING = 1;
-    public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 25.0; // idk
+    public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 25.0; 
     public static final boolean INVERTED_SPINNING = false; // m
-    public static final int STALL_MOTOR_CURRENT = 30; // m
-    public static final int FREE_MOTOR_CURRENT = 25; // m
-    public static final int RIGHT_BEAM = 0;
+    public static final int STALL_MOTOR_CURRENT = 30; 
+    public static final int FREE_MOTOR_CURRENT = 25; 
+    public static final int RIGHT_SWITCH = 0; //m
   }
 
   public static class OperatorConstants {
@@ -103,9 +102,9 @@ public final class Constants {
 
   public static class AlgaeConstants {
     public static final int ALGAE_MOTOR_ID = 13;
-    public static final int STALL_MOTOR_CURRENT = 30; // m
-    public static final int FREE_MOTOR_CURRENT = 20; // m
-    public static final double GEAR_RATIO = 36.0 / 18.0;
+    public static final int STALL_MOTOR_CURRENT = 30; 
+    public static final int FREE_MOTOR_CURRENT = 20; 
+    public static final double GEAR_RATIO = 36.0/18.0;
     public static final boolean INVERTED = true; // m
 
     public static final TunablePIDGains PID_GAINS =
@@ -113,7 +112,7 @@ public final class Constants {
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final double RUNNING_VOLTAGE = 10.0;
-    public static final int SWITCH_ID = 0;
+    public static final int SWITCH_ID = 0; //m
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
     public static final int SWITCH_ID_RIGHT = 0;
@@ -122,8 +121,10 @@ public final class Constants {
 
   public static class CoralConstants {
     public static final int CORAL_MOTOR_ID = 12;
-    public static final boolean INVERTED = false; // m
-    public static final int SLEW_RATE_LIMIT = 1; // m
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+    public static final int SLEW_RATE_LIMIT = 1; 
+    
+    public static final double SUPPLY_CURRENT_LIMIT = 40; 
     public static final int STALL_MOTOR_CURRENT = 30; // m
     public static final int FREE_MOTOR_CURRENT = 20; // m
     public static final double GEAR_RATIO = 18.0 / 16.0;
@@ -134,32 +135,32 @@ public final class Constants {
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final double RUNNING_VOLTAGE = 10.0;
-    public static final int SWITCH_ID_LEFT = 0;
+    public static final int SWITCH_ID_LEFT = 0; //m
     public static final double OUTPUT_VOLTAGE = -6.0;
-    public static final int SWITCH_ID_RIGHT = 0;
+    public static final int SWITCH_ID_RIGHT = 0; //m
   }
 
   public static class ClimberConstants {
-    public static final int CLIMB_MOTOR_1_ID = 16; // m
-    public static final int CLIMB_MOTOR_2_ID = 17; // m
+    public static final int CLIMB_MOTOR_1_ID = 16; 
+    public static final int CLIMB_MOTOR_2_ID = 17; 
     public static final TunablePIDGains CLIMB_PID_GAINS =
         new TunablePIDGains("/pid/climber", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains CLIMBER_FF_GAINS =
         new TunableFFGains("/feedfoward/climber/", 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final double SUPPLY_CURRENT_LIMIT = 50.0; // m
-    public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; // m
+    public static final double SUPPLY_CURRENT_LIMIT = 50.0; 
+    public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; 
     public static final double GEAR_RATIO = 0.0; // m
     public static final boolean INVERTED_1 = false;
-    public static final double CLIMBER_UP_VOLTAGE = 0.0; // m
+    public static final double CLIMBER_UP_VOLTAGE = -2.0; 
     public static final double CLIMBER_DOWN_VOLTAGE = 0.0; // m
     public static final int LIMITER = 0; // m
   }
 
   public static class VisionConstants {
-    public static final double CAMERA_MOUNT_ANGLE = 0.0;
-    public static final double CAMERA_MOUNT_HEIGHT_METERS = 0.0;
+    public static final double CAMERA_MOUNT_ANGLE = Units.degreesToRadians(8.0);
+    public static final double CAMERA_MOUNT_HEIGHT_METERS = Units.inchesToMeters(10.0);
 
-    public static final double CORAL_HEIGHT = 0.0;
+    public static final double CORAL_HEIGHT = 0.0; //m
     public static final String APRIL_LIMELIGHT = "limelight1";
     public static final String OBJECT_LIMELIGHT = "limelight2";
     public static final double CONFIDENCE_THRESHOLD = 80.0;
@@ -183,11 +184,11 @@ public final class Constants {
 
   public static class WristConstants {
     public static final int WRIST_ID = 11;
-    public static final double GEAR_RATIO = 6.0; // idk
-    public static final double SUPPLY_CURRENT_LIMIT = 50.0; // idk
+    public static final double GEAR_RATIO = 10.0; 
+    public static final double SUPPLY_CURRENT_LIMIT = 40.0; 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = 0.0; // needs a value
-    public static final double PID_TOLERANCE = 2.0; // idk
+    public static final double PID_TOLERANCE = 2.0; 
     public static final int WRIST_ENCODER_PORT = 0; // needs a value
     // a lot of 0s
     public static final TunablePIDGains WRIST_PID_GAINS =

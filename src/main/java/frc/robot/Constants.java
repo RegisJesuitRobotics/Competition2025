@@ -112,11 +112,9 @@ public final class Constants {
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final double RUNNING_VOLTAGE = 10.0;
-    public static final int SWITCH_ID = 0; //m
+    public static final int SWITCH_ID = 9;
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
-    public static final int SWITCH_ID_RIGHT = 0;
-    public static final int SWITCH_ID_LEFT = 0;
   }
 
   public static class CoralConstants {
@@ -135,10 +133,10 @@ public final class Constants {
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final double RUNNING_VOLTAGE = 10.0;
-    public static final int SWITCH_ID_LEFT = 0; //m
+    public static final int LEFT_BEAM = 6; 
     public static final double OUTPUT_VOLTAGE = -6.0;
-    public static final int SWITCH_ID_RIGHT = 0; //m
-  }
+    public static final int RIGHT_BEAM = 8; 
+    }
 
   public static class ClimberConstants {
     public static final int CLIMB_MOTOR_1_ID = 16; 

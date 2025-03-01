@@ -70,7 +70,7 @@ public final class Constants {
     // spinny stuff
     public static final int SPINNING_MOTOR_ID = 14; 
     public static final double SPINNING_VOLTAGE = 11.0; 
-    public static final int LEFT_BEAM = 0; // m
+    public static final int LEFT_SWITCH = 0; // m
     public static final double RATE_LIMIT = 1.0; 
     public static final TunablePIDGains SPINNING_PID_GAINS =
         new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
@@ -81,7 +81,7 @@ public final class Constants {
     public static final boolean INVERTED_SPINNING = false; // m
     public static final int STALL_MOTOR_CURRENT = 30; 
     public static final int FREE_MOTOR_CURRENT = 25; 
-    public static final int RIGHT_BEAM = 0; //m
+    public static final int RIGHT_SWITCH = 0; //m
   }
 
   public static class OperatorConstants {

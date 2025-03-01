@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -35,6 +36,8 @@ public class Autos {
     ElevatorSubsystem elevatorSubsystem,
     WristSubsystem wristSubsystem
   ) {
+
+//    NamedCommands.registerCommand("scoreL4");
 
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
     if (MiscConstants.TUNING_MODE) {

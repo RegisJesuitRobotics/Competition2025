@@ -221,6 +221,7 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             Commands.sequence(
+                    elevatorSubsystem.setPosition(Constants.ElevatorConstants.HANDOFF),
                 intakeSuperstructure
                     .setDownAndRunCommand()
                     .until(() -> intakeSpinningSubsystem.getSwitchValue()),

@@ -47,6 +47,7 @@ public final class Constants {
     public static final double HUMAN = Units.inchesToMeters(15.9377);
     public static final double PROCESSOR = 0.0;
     public static final double GROUND_INTAKE = 0.0;
+    public static final double HANDOFF = Units.inchesToMeters(3.0);
   }
 
   public static class IntakeConstants {

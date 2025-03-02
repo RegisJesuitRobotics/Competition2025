@@ -43,36 +43,36 @@ public class DoubleTelemetryEntry extends PrimitiveTelemetryEntry {
 
   public void append(Temperature value) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'append'");
+   // throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 
   public void append(Double value) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'append'");
+   // throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 
   public void append(Current value) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'append'");
+   // throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 
   public void append(Angle value) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'append'");
+    //throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 
   public void append(AngularVelocity value) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'append'");
+    //throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 
   public void append(LinearAcceleration value) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'append'");
+   // throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 
   public void append(Voltage value) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'append'");
+   // throw new UnsupportedOperationException("Unimplemented method 'append'");
   }
 }

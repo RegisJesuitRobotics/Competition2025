@@ -109,5 +109,20 @@ public SendableChooser<Command> getAutoChooser() {
     .withName("ScoreCoral");
   }
 
+  private Command IntakeUntilSwtich(IntakeSpinningSubsystem intakeSpinningSubsystem, 
+  CoralSubsystem coralSubsystem, IntakeSuperstructure intakeSuperstructure,
+   ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem){
+    return Commands.sequence(
+      intakeSuperstructure
+          .setDownAndRunCommand()
+          .until(intakeSpinningSubsystem::getSwitchValue),
+      intakeSuperstructure.setUpCommand(),
+      Commands.parallel(
+          coralSubsystem.runVelolocityCenterCommand(
+              Constants.CoralConstants.RUNNING_VOLTAGE),
+              Commands.parallel(
+                elevatorSubsystem.setPosition(Constants.ElevatorConstants.GROUND_INTAKE),
+                wristSubsystem.setPositionCommand(Constants.WristConstants.GROUND_INTAKE))));
+  }
 
 }

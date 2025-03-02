@@ -42,7 +42,7 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1)
           .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  //private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private AtomicBoolean onCoral = new AtomicBoolean(true);
 
@@ -61,7 +61,7 @@ public class RobotContainer {
   private final Autos autos = new Autos(
     intakeSpinningSubsystem,intakeSuperstructure,algaeSubsystem,climberSubsystem,
   drivetrain,coralSubsystem,elevatorSubsystem,wristSubsystem);
-  
+
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandPS4Controller operator = new CommandPS4Controller(1);
   private final CommandButtonBoard buttonBoard =

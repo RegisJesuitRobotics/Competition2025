@@ -45,9 +45,9 @@ public class CoralSubsystem extends SubsystemBase {
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
   private final EventTelemetryEntry coralEvent = new EventTelemetryEntry("/coral/events");
   private final DigitalInput intakeLeftBeam =
-      new DigitalInput(Constants.CoralConstants.LEFT_BEAM);
+      new DigitalInput(Constants.CoralConstants.BEAM_ID_LEFT);
   private final DigitalInput intakeRightBeam =
-      new DigitalInput(Constants.CoralConstants.RIGHT_BEAM);
+      new DigitalInput(Constants.CoralConstants.BEAM_ID_RIGHT);
   private final TunableTelemetryPIDController coralpid =
       new TunableTelemetryPIDController("/coral/pid", Constants.CoralConstants.PID_GAINS);
   private SimpleMotorFeedforward coralFF = CoralConstants.FF_GAINS.createFeedforward();

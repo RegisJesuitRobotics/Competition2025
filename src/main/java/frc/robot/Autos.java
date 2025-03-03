@@ -5,9 +5,12 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.MiscConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,6 +19,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
+import frc.robot.utils.RaiderUtils;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
@@ -38,7 +42,26 @@ public class Autos {
   ) {
 
 //    NamedCommands.registerCommand("scoreL4");
-
+RobotConfig robotConfig = new RobotConfig(52, 26, null, null);
+AutoBuilder.configure(
+  drivetrain::getPose ,
+        false,
+        null, 
+  , null, 
+  robotConfig, RaiderUtils::shouldFlip, drivetrain);
+  AutoBuilder.configureHolonomic(
+        drivetrain::getPose,
+        drivetrain::resetOdometry,
+        drivetrain::getCurrentChassisSpeeds,
+        (speeds) -> drivetrain.setChassisSpeeds(speeds, false),
+        new HolonomicPathFollowerConfig(
+            AutoConstants.TRANSLATION_POSITION_GAINS.createPIDConstants(),
+            AutoConstants.ANGULAR_POSITION_PID_GAINS.createPIDConstants(),
+            AutoConstants.MAX_AUTO_VELOCITY_METERS_SECOND,
+            SwerveConstants.WHEELBASE_RADIUS,
+            new ReplanningConfig()),
+        RaiderUtils::shouldFlip,
+        drivetrain);
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
     if (MiscConstants.TUNING_MODE) {
       autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));

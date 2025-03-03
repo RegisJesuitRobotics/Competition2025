@@ -59,18 +59,19 @@ public class ElevatorSubsystem extends SubsystemBase {
   private boolean isHoming = false;
 
   public ElevatorSubsystem() {
-    configMotors();
+    configRightMotor();
+    configLeftMotor();
   }
 
-  private void configMotors() {
+  private void configRightMotor() {
     TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
     motorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
     motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     motorConfiguration.MotorOutput.Inverted = Constants.ElevatorConstants.INVERTED_RIGHT;
-
     motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfiguration.Audio.AllowMusicDurDisable = true;
+
     ConfigurationUtils.StringFaultRecorder faultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -100,7 +101,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Clear reset as this is on startup
     rightElevatorMotor.hasResetOccurred();
-
+      }
+      private void configLeftMotor(){
     TalonFXConfiguration leftMotorConfiguration = new TalonFXConfiguration();
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
@@ -109,11 +111,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
-        () -> leftElevatorMotor.getConfigurator().apply(motorConfiguration),
+        () -> leftElevatorMotor.getConfigurator().apply(leftMotorConfiguration),
         () -> {
           TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
           leftElevatorMotor.getConfigurator().refresh(appliedConfig);
-          return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
+          return ConfigEquality.isTalonConfigurationEqual(leftMotorConfiguration, appliedConfig);
         },
         leftFaultRecorder.run("Motor configuration 2"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
@@ -128,7 +130,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftEventEntry::append,
         "left elevator motor fault",
         leftFaultRecorder.getFaultString());
-    leftMotorAlert.set(faultRecorder.hasFault());
+    leftMotorAlert.set(leftFaultRecorder.hasFault());
 
     leftElevatorMotor.setLoggingPositionConversionFactor(
         Constants.ElevatorConstants.METERS_PER_REVOLUTION);

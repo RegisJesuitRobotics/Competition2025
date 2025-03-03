@@ -146,11 +146,11 @@ public final class Constants {
         new TunableFFGains("/feedfoward/climber/", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final double SUPPLY_CURRENT_LIMIT = 50.0; 
     public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; 
-    public static final double GEAR_RATIO = 0.0; // m
+    public static final double GEAR_RATIO = 1.0; // m
     public static final boolean INVERTED_1 = false;
     public static final double CLIMBER_UP_VOLTAGE = -2.0; 
     public static final double CLIMBER_DOWN_VOLTAGE = 0.0; // m
-    public static final int LIMITER = 0; // m
+    public static final int LIMITER = 2; // m
   }
 
   public static class VisionConstants {

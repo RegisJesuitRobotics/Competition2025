@@ -5,9 +5,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PathFollowingController;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -15,6 +19,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.MiscConstants;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.fasterxml.jackson.databind.Module;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -46,16 +51,37 @@ public class Autos {
     WristSubsystem wristSubsystem
   ) {
 
+    final PathFollowingController pathFollowingController = new PathFollowingController() {
+      @Override
+      public ChassisSpeeds calculateRobotRelativeSpeeds(Pose2d currentPose, PathPlannerTrajectoryState targetState) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'calculateRobotRelativeSpeeds'");
+      }
+      @Override
+      public void reset(Pose2d currentPose, ChassisSpeeds currentSpeeds) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'reset'");
+      }
+      @Override
+      public boolean isHolonomic() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isHolonomic'");
+      }
+    };
 
-    AutoBuilder.configure(
-       drivetrain::getPose, 
-       (pose) -> drivetrain.resetPose(pose), 
+       AutoBuilder.configure(
+       drivetrain::getPose,
+      (pose) -> drivetrain.resetPose(pose), 
       () -> drivetrain.getState().Speeds, 
       (chassisSpeeds, feedforward) -> {
         drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds()
             .withSpeeds(chassisSpeeds));}, 
-            null,
-       null, RaiderUtils::shouldFlip, drivetrain);
+       pathFollowingController, null /*new RobotConfig(
+        74, 6.883, null 
+        new ModuleConfig(
+          2.0, 5.45, 
+          1.2, null, 60, 4), null)*/, 
+        RaiderUtils::shouldFlip, drivetrain);
 
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
     if (MiscConstants.TUNING_MODE) {

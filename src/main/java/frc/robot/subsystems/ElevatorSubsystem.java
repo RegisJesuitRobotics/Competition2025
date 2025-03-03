@@ -61,6 +61,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     configRightMotor();
     configLeftMotor();
+    setDefaultCommand(setVoltageCommand(0.0));
   }
 
   private void configRightMotor() {

@@ -25,7 +25,7 @@ public final class Constants {
     public static final int LEFT_ID = 9;
     public static final int RIGHT_ID = 10;
     public static final int BOTTOM_ID = 2; 
-    public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 20.0;
     public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
     public static final double GEAR_RATIO = 9;
     public static final double METERS_PER_REVOLUTION =
@@ -62,7 +62,7 @@ public final class Constants {
             "/intake/rotation/ff/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
 
     public static final double GEAR_RATIO_ROTATION = 24.0;
-    public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
+    public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 10.0;
     public static final InvertedValue INVERTED_ROTATION = InvertedValue.Clockwise_Positive;
     public static final double ROTATION_UP_ANGLE = 0;
     public static final double ROTATION_DOWN_ANGLE = Units.degreesToRadians(100); 

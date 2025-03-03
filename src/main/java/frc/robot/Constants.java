@@ -177,6 +177,17 @@ public final class Constants {
     public static final double MAX_ANGULAR_VELOCITY = 0.0;
     public static final double MAX_ANGULAR_ACCELERATION = 0.0;
     public static final double NOMINAL_VOLTAGE = 12.0;
+
+    public static final TunablePIDGains translationGains =
+    new TunablePIDGains(
+        "/drive/gains/pointTranslationController", 0, 0, 0, MiscConstants.TUNING_MODE);
+ public static final TunablePIDGains AngularGains =
+        new TunablePIDGains(
+            "/drive/gains/pointTranslationController", 0, 0, 0, MiscConstants.TUNING_MODE);
+            public static final TunablePIDGains rotationGains =
+            new TunablePIDGains(
+                "/drive/gains/pointTranslationController", 0, 0, 0, MiscConstants.TUNING_MODE);
+        
   }
 
   public static class WristConstants {

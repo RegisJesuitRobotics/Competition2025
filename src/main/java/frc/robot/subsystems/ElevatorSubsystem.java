@@ -16,8 +16,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
@@ -82,7 +80,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           rightElevatorMotor.getConfigurator().refresh(appliedConfig);
           return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
         },
-        faultRecorder.run("Motor configuration"),
+        faultRecorder.run("Motor configuration 1"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecordCTRE(
         rightElevatorMotor::optimizeBusUtilization,
@@ -117,7 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           leftElevatorMotor.getConfigurator().refresh(appliedConfig);
           return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
         },
-        leftFaultRecorder.run("Motor configuration"),
+        leftFaultRecorder.run("Motor configuration 2"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecordCTRE(
         leftElevatorMotor::optimizeBusUtilization,

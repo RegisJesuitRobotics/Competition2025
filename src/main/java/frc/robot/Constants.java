@@ -61,7 +61,7 @@ public final class Constants {
         new TunableArmElevatorFFGains(
             "/intake/rotation/ff/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
 
-    public static final double GEAR_RATIO_ROTATION = 3.0 * 4.0 * (60.0 / 30.0);
+    public static final double GEAR_RATIO_ROTATION = 24.0;
     public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
     public static final InvertedValue INVERTED_ROTATION = InvertedValue.Clockwise_Positive;
     public static final double ROTATION_UP_ANGLE = 0;

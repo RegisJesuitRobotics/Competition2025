@@ -22,6 +22,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.tunable.gains.TunablePIDGains;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
@@ -44,8 +45,9 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   private static final Alert rotationIntakeMotorAlert =
       new Alert("Intake rotation motor had a fault initializing", Alert.AlertType.ERROR);
+      //
   private final TunableTelemetryProfiledPIDController rotationPid =
-      new TunableTelemetryProfiledPIDController("profiled/pid/intake", null, null);
+      new TunableTelemetryProfiledPIDController("profiled/pid/intake", IntakeConstants.ROTATION_PID_GAINS, IntakeConstants.ROTATION_TRAP_GAINS);
   private EventTelemetryEntry intakeRotationEntry =
       new EventTelemetryEntry("intake/rotation/entry");
   private final ArmFeedforward rotationFF =
@@ -89,18 +91,16 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     ConfigurationUtils.postDeviceConfig(
         faultRecorder.hasFault(),
         intakeRotationEntry::append,
-        "intake rotation motor fault",
+        "Intake rotation motor fault",
         faultRecorder.getFaultString());
     rotationIntakeMotorAlert.set(faultRecorder.hasFault());
 
-    intakeRotationMotor.setLoggingPositionConversionFactor(
-        Constants.IntakeConstants.GEAR_RATIO_ROTATION);
-    intakeRotationMotor.setLoggingVelocityConversionFactor(
-        Constants.IntakeConstants.GEAR_RATIO_ROTATION);
+    intakeRotationMotor.setLoggingPositionConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
+    intakeRotationMotor.setLoggingVelocityConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
 
     // Clear reset as this is on startup
     intakeRotationMotor.hasResetOccurred();
-  }
+      }
 
   public void setRotationVoltage(double voltage) {
     intakeRotationMotor.setVoltage(voltage);

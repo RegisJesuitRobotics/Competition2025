@@ -46,7 +46,7 @@ public class ClimberSubsystem extends SubsystemBase {
       new EventTelemetryEntry("/climber/motor2/events");
 
   private final TunableTelemetryPIDController climbPID =
-      new TunableTelemetryPIDController("pid/climb", ClimberConstants.CLIMB_PID_GAINS);
+      new TunableTelemetryPIDController("/pid/climb", ClimberConstants.CLIMB_PID_GAINS);
   private SimpleMotorFeedforward climberff = ClimberConstants.CLIMBER_FF_GAINS.createFeedforward();
 
   private final SysIdRoutine climberSysId =

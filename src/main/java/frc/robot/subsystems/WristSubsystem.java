@@ -45,7 +45,7 @@ public class WristSubsystem extends SubsystemBase {
 
   private final TunableTelemetryProfiledPIDController wristpid =
       new TunableTelemetryProfiledPIDController(
-          "wrist/profiledpid", WristConstants.WRIST_PID_GAINS, WristConstants.WRIST_TRAP_GAINS);
+          "/wrist/profiledpid", WristConstants.WRIST_PID_GAINS, WristConstants.WRIST_TRAP_GAINS);
   private final ArmFeedforward wristff =
       Constants.WristConstants.WRIST_FF_GAINS.createArmFeedforward();
   private final DutyCycleEncoder wristEncoder =

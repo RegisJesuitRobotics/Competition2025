@@ -45,7 +45,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   private static final Alert rotationIntakeMotorAlert =
       new Alert("Intake rotation motor had a fault initializing", Alert.AlertType.ERROR);
   private final TunableTelemetryProfiledPIDController rotationPid =
-      new TunableTelemetryProfiledPIDController("profiled/pid/intake", null, null);
+      new TunableTelemetryProfiledPIDController("/profiled/pid/intake", null, null);
   private EventTelemetryEntry intakeRotationEntry =
       new EventTelemetryEntry("intake/rotation/entry");
   private final ArmFeedforward rotationFF =

@@ -39,7 +39,7 @@ public class AlgaeSubsystem extends SubsystemBase {
           Constants.MiscConstants.TUNING_MODE);
 
   private final TunableTelemetryPIDController algaePID =
-      new TunableTelemetryPIDController("algae/pid", Constants.AlgaeConstants.PID_GAINS);
+      new TunableTelemetryPIDController("/algae/pid", Constants.AlgaeConstants.PID_GAINS);
   private SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
   private final DigitalInput intakeSwitch = new DigitalInput(Constants.AlgaeConstants.SWITCH_ID);
   public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);

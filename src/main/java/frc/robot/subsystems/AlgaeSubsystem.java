@@ -86,15 +86,15 @@ public class AlgaeSubsystem extends SubsystemBase {
         faultRecorder.run("Current limits"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecord(
-        () -> config.inverted(Constants.AlgaeConstants.INVERTED),
-        () -> algaeMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
-        faultRecorder.run("Inverted"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
         () -> config.idleMode(IdleMode.kCoast),
         () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
         faultRecorder.run("Idle mode"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecord(
+            () -> algaeMotor.setInverted(Constants.AlgaeConstants.INVERTED),
+            () -> algaeMotor.getInverted() == Constants.AlgaeConstants.INVERTED,
+            faultRecorder.run("Inverted"),
+    Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecord(
         () -> config.encoder.positionConversionFactor(conversionFactor / 60),
         () ->

@@ -25,13 +25,13 @@ public final class Constants {
     public static final int LEFT_ID = 9;
     public static final int RIGHT_ID = 10;
     public static final int BOTTOM_ID = 0;
-    public static final double SUPPLY_CURRENT_LIMIT = 50.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
     public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
     public static final double GEAR_RATIO = 9;
     // TODO: inches of gear
     public static final double METERS_PER_REVOLUTION =
         (Math.PI * Units.inchesToMeters(2.2594)) / GEAR_RATIO;
-    public static final boolean LEFT_INVERTED = false;
+    public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
     public static final TunablePIDGains PID_GAINS =
         new TunablePIDGains("/elevator/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
@@ -80,8 +80,8 @@ public final class Constants {
     public static final double GEAR_RATIO_SPINNING = 1;
     public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 25.0; // idk
     public static final boolean INVERTED_SPINNING = false; //m
-    public static final int STALL_MOTOR_CURRENT = 30; // m
-    public static final int FREE_MOTOR_CURRENT = 25; // m
+    public static final int STALL_MOTOR_CURRENT = 20; // m
+    public static final int FREE_MOTOR_CURRENT = 20; // m
   }
 
   public static class OperatorConstants {
@@ -105,7 +105,7 @@ public final class Constants {
     public static final int STALL_MOTOR_CURRENT = 30; // m
     public static final int FREE_MOTOR_CURRENT = 20; // m
     public static final double GEAR_RATIO = 1;
-    public static final boolean INVERTED = true; // m
+    public static final boolean INVERTED = false; // m
 
     public static final TunablePIDGains PID_GAINS =
         new TunablePIDGains("algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
@@ -147,7 +147,7 @@ public final class Constants {
           public static final double SUPPLY_CURRENT_LIMIT = 50.0;//m
           public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; //m
           public static final double GEAR_RATIO = 0.0; //m
-          public static final boolean INVERTED_1 = false;
+          public static final InvertedValue INVERTED_1 = InvertedValue.Clockwise_Positive;
     public static final double CLIMBER_UP_VOLTAGE = 0.0; //m
     public static final double CLIMBER_DOWN_VOLTAGE = 0.0; //m
     public static final int LIMITER = 0; //m

@@ -129,7 +129,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     climbMotor1.setControl(
         new Follower(
-            Constants.ClimberConstants.CLIMB_MOTOR_2_ID, Constants.ClimberConstants.INVERTED_1));
+            Constants.ClimberConstants.CLIMB_MOTOR_2_ID, false));
     // Clear reset as this is on startup
     climbMotor1.hasResetOccurred();
   }

@@ -105,6 +105,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     leftMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    leftMotorConfiguration.MotorOutput.Inverted = Constants.ElevatorConstants.LEFT_INVERTED;
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -136,7 +137,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leftElevatorMotor.setControl(
         new Follower(
-            Constants.ElevatorConstants.RIGHT_ID, Constants.ElevatorConstants.LEFT_INVERTED));
+            Constants.ElevatorConstants.RIGHT_ID, false));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
   }

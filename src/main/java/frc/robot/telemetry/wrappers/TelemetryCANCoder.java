@@ -90,7 +90,7 @@ public class TelemetryCANCoder extends CANcoder {
     velocityEntry.append(velocitySignal.getValueAsDouble() * loggingVelocityConversionFactor);
     absolutePositionEntry.append(
         absolutePositionSignal.getValueAsDouble() * loggingPositionConversionFactor);
-    supplyVoltageEntry.append(supplyVoltageSignal.getValue());
+    supplyVoltageEntry.append(supplyVoltageSignal.getValueAsDouble());
     magnetHealthEntry.append(magnetHealthSignal.getValue().value);
     faultEntry.append(faultSignal.getValue());
     stickyFaultEntry.append(stickyFaultSignal.getValue());

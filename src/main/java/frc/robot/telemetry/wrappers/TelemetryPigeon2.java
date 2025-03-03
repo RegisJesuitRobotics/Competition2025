@@ -115,17 +115,17 @@ public class TelemetryPigeon2 extends Pigeon2 {
         faultSignal,
         stickyFaultSignal);
 
-    yawEntry.append(yawSignal.getValue());
-    pitchEntry.append(pitchSignal.getValue());
-    rollEntry.append(rollSignal.getValue());
-    angularVelocityXEntry.append(angularVelocityXSignal.getValue());
-    angularVelocityYEntry.append(angularVelocityYSignal.getValue());
-    angularVelocityZEntry.append(angularVelocityZSignal.getValue());
-    accelXEntry.append(accelXSignal.getValue());
-    accelYEntry.append(accelYSignal.getValue());
-    accelZEntry.append(accelZSignal.getValue());
-    supplyVoltageEntry.append(supplyVoltageSignal.getValue());
-    temperatureEntry.append(temperatureSignal.getValue());
+    yawEntry.append(yawSignal.getValueAsDouble());
+    pitchEntry.append(pitchSignal.getValueAsDouble());
+    rollEntry.append(rollSignal.getValueAsDouble());
+    angularVelocityXEntry.append(angularVelocityXSignal.getValueAsDouble());
+    angularVelocityYEntry.append(angularVelocityYSignal.getValueAsDouble());
+    angularVelocityZEntry.append(angularVelocityZSignal.getValueAsDouble());
+    accelXEntry.append(accelXSignal.getValueAsDouble());
+    accelYEntry.append(accelYSignal.getValueAsDouble());
+    accelZEntry.append(accelZSignal.getValueAsDouble());
+    supplyVoltageEntry.append(supplyVoltageSignal.getValueAsDouble());
+    temperatureEntry.append(temperatureSignal.getValueAsDouble());
     faultEntry.append(faultSignal.getValue());
     stickyFaultEntry.append(stickyFaultSignal.getValue());
   }

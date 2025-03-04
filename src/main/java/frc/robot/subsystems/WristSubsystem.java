@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.WristConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.types.DoubleTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
@@ -50,6 +51,7 @@ public class WristSubsystem extends SubsystemBase {
       Constants.WristConstants.WRIST_FF_GAINS.createArmFeedforward();
   private final DutyCycleEncoder wristEncoder =
       new DutyCycleEncoder(WristConstants.WRIST_ENCODER_PORT);
+  private DoubleTelemetryEntry wristPosition = new DoubleTelemetryEntry("/wrist/position", true);
   private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
   private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wrist/motor/events");
 
@@ -148,5 +150,6 @@ public class WristSubsystem extends SubsystemBase {
   public void periodic() {
     // wristMotor.logValues(); maybe if we need it
     // This method will be called once per scheduler run
+    wristPosition.append(getPosition());
   }
 }

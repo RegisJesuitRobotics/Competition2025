@@ -46,8 +46,9 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
   private RelativeEncoder intakeSpinningEncoder = intakeSpinningMotor.getEncoder();
   private final EventTelemetryEntry intakeSpinningEvent =
       new EventTelemetryEntry("/spinning/intake/events");
+
   private final DigitalInput intakeSlapdownSwitch =
-      new DigitalInput(Constants.IntakeConstants.LEFT_BEAM);
+      new DigitalInput(IntakeConstants.SWITCH_ID);
   private final TunableTelemetryPIDController intakeSpinningPID =
       new TunableTelemetryPIDController(
           "intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);

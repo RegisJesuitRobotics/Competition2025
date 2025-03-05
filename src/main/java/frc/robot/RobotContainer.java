@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -48,6 +49,8 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  public AtomicBoolean scoringFlipped = new AtomicBoolean(false);
+
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final WristSubsystem wristSubsystem = new WristSubsystem();
   private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
@@ -71,33 +74,51 @@ public class RobotContainer {
     configureBindings();
     configureOperatorBindings();
     configureBoard();
+
+    SmartDashboard.putData("Auto", autos.getAutoChooser());
   }
 
   private void configureOperatorBindings() {
     operator
         .povDown()
-        .onTrue(ElevatorWristCommands.elevatorWristL2(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristL2(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .povRight()
-        .onTrue(ElevatorWristCommands.elevatorWristL3(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristL3(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .povUp()
-        .onTrue(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristL4(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .povLeft()
-        .onTrue(ElevatorWristCommands.elevatorWristL1(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristL1(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .cross()
-        .onTrue(ElevatorWristCommands.elevatorWristProcessor(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristProcessor(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .circle()
-        .onTrue(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristBallLow(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .square()
-        .onTrue(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristNet(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .R2()
-        .onTrue(ElevatorWristCommands.elevatorWristHuman(elevatorSubsystem, wristSubsystem));
+        .onTrue(
+            ElevatorWristCommands.elevatorWristHuman(
+                elevatorSubsystem, wristSubsystem, scoringFlipped));
     operator
         .L2()
         .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
@@ -113,62 +134,71 @@ public class RobotContainer {
         .Button1()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidUpCoralLeft.value : Reef.MidUpAlgae.value));
+                onCoral.get() ? Reef.MidUpCoralLeft.value : Reef.MidUpAlgae.value, scoringFlipped));
     buttonBoard
         .Button2()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidUpCoralRight.value : Reef.MidUpAlgae.value));
+                onCoral.get() ? Reef.MidUpCoralRight.value : Reef.MidUpAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button3()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidCoralLeft.value : Reef.MidAlgae.value));
+                onCoral.get() ? Reef.MidCoralLeft.value : Reef.MidAlgae.value, scoringFlipped));
     buttonBoard
         .Button4()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidCoralRight.value : Reef.MidAlgae.value));
+                onCoral.get() ? Reef.MidCoralRight.value : Reef.MidAlgae.value, scoringFlipped));
     buttonBoard
         .Button5()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidDownCoralLeft.value : Reef.MidDownAlgae.value));
+                onCoral.get() ? Reef.MidDownCoralLeft.value : Reef.MidDownAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button6()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidDownCoralRight.value : Reef.MidDownAlgae.value));
+                onCoral.get() ? Reef.MidDownCoralRight.value : Reef.MidDownAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button7()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationDownCoralRight.value : Reef.StationDownAlgae.value));
+                onCoral.get() ? Reef.StationDownCoralRight.value : Reef.StationDownAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button8()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationDownCoralLeft.value : Reef.StationDownAlgae.value));
+                onCoral.get() ? Reef.StationDownCoralLeft.value : Reef.StationDownAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button9()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationCoralRight.value : Reef.StationAlgae.value));
+                onCoral.get() ? Reef.StationCoralRight.value : Reef.StationAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button10()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationCoralLeft.value : Reef.StationAlgae.value));
+                onCoral.get() ? Reef.StationCoralLeft.value : Reef.StationAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button11()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationUpCoralRight.value : Reef.StationUpAlgae.value));
+                onCoral.get() ? Reef.StationUpCoralRight.value : Reef.StationUpAlgae.value,
+                scoringFlipped));
     buttonBoard
         .Button12()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationUpCoralLeft.value : Reef.StationUpAlgae.value));
+                onCoral.get() ? Reef.StationUpCoralLeft.value : Reef.StationUpAlgae.value,
+                scoringFlipped));
   }
 
   private void configureBindings() {

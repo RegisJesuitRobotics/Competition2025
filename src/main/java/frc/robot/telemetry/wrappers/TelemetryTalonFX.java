@@ -93,10 +93,10 @@ public class TelemetryTalonFX extends TalonFX {
         faultsSignal,
         stickyFaultsSignal);
 
-    outputAmpsEntry.append(outputAmpsSignal.getValue());
-    inputAmpsEntry.append(inputAmpsSignal.getValue());
+    outputAmpsEntry.append(outputAmpsSignal.getValueAsDouble());
+    inputAmpsEntry.append(inputAmpsSignal.getValueAsDouble());
     outputPercentEntry.append(outputPercentSignal.getValue());
-    temperatureEntry.append(temperatureSignal.getValue());
+    temperatureEntry.append(temperatureSignal.getValueAsDouble());
     positionEntry.append(positionSignal.getValueAsDouble() * loggingPositionConversionFactor);
     velocityEntry.append(velocitySignal.getValueAsDouble() * loggingVelocityConversionFactor);
     faultsEntry.append(faultsSignal.getValue());

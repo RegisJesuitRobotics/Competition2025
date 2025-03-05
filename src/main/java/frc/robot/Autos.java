@@ -91,13 +91,8 @@ public class Autos {
           drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds()
               .withSpeeds(chassisSpeeds));
         },
-        pathFollowingController, config /*
-                                       * new RobotConfig(
-                                       * 74, 6.883, null
-                                       * new ModuleConfig(
-                                       * 2.0, 5.45,
-                                       * 1.2, null, 60, 4), null)
-                                       */,
+        pathFollowingController,
+        config,
         RaiderUtils::shouldFlip, drivetrain);
 
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");

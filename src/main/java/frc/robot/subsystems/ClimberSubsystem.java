@@ -55,12 +55,11 @@ public class ClimberSubsystem extends SubsystemBase {
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
 
   public ClimberSubsystem() {
-    configMotor1();
-    configMotor2();
+    configMotors();
     setDefaultCommand(setVoltageCommand(0));
   }
 
-  private void configMotor1() {
+  private void configMotors() {
     TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
     motorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.ClimberConstants.SUPPLY_CURRENT_LIMIT;
@@ -98,8 +97,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // Clear reset as this is on startup
     climbMotor2.hasResetOccurred();
-      }
-      private void configMotor2(){
+
     TalonFXConfiguration leftMotorConfiguration = new TalonFXConfiguration();
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.ClimberConstants.SUPPLY_CURRENT_LIMIT;
@@ -108,11 +106,11 @@ public class ClimberSubsystem extends SubsystemBase {
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
-        () -> climbMotor1.getConfigurator().apply(leftMotorConfiguration),
+        () -> climbMotor1.getConfigurator().apply(motorConfiguration),
         () -> {
           TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
           climbMotor1.getConfigurator().refresh(appliedConfig);
-          return ConfigEquality.isTalonConfigurationEqual(leftMotorConfiguration, appliedConfig);
+          return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
         },
         leftFaultRecorder.run("Motor configuration"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
@@ -127,7 +125,7 @@ public class ClimberSubsystem extends SubsystemBase {
         climbMotor1Entry::append,
         "climb motor 1 fault",
         leftFaultRecorder.getFaultString());
-    climbMotor1Alert.set(leftFaultRecorder.hasFault());
+    climbMotor1Alert.set(faultRecorder.hasFault());
 
     climbMotor1.setControl(
         new Follower(

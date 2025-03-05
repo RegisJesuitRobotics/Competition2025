@@ -44,9 +44,8 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   private static final Alert rotationIntakeMotorAlert =
       new Alert("Intake rotation motor had a fault initializing", Alert.AlertType.ERROR);
-      //
   private final TunableTelemetryProfiledPIDController rotationPid =
-      new TunableTelemetryProfiledPIDController("profiled/pid/intake", IntakeConstants.ROTATION_PID_GAINS, IntakeConstants.ROTATION_TRAP_GAINS);
+      new TunableTelemetryProfiledPIDController("/profiled/pid/intake", null, null);
   private EventTelemetryEntry intakeRotationEntry =
       new EventTelemetryEntry("intake/rotation/entry");
   private final ArmFeedforward rotationFF =
@@ -90,16 +89,18 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     ConfigurationUtils.postDeviceConfig(
         faultRecorder.hasFault(),
         intakeRotationEntry::append,
-        "Intake rotation motor fault",
+        "intake rotation motor fault",
         faultRecorder.getFaultString());
     rotationIntakeMotorAlert.set(faultRecorder.hasFault());
 
-    intakeRotationMotor.setLoggingPositionConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
-    intakeRotationMotor.setLoggingVelocityConversionFactor(Constants.IntakeConstants.GEAR_RATIO_ROTATION);
+    intakeRotationMotor.setLoggingPositionConversionFactor(
+        Constants.IntakeConstants.GEAR_RATIO_ROTATION);
+    intakeRotationMotor.setLoggingVelocityConversionFactor(
+        Constants.IntakeConstants.GEAR_RATIO_ROTATION);
 
     // Clear reset as this is on startup
     intakeRotationMotor.hasResetOccurred();
-      }
+  }
 
   public void setRotationVoltage(double voltage) {
     intakeRotationMotor.setVoltage(voltage);

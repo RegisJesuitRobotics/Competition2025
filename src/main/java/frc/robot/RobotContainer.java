@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -16,9 +15,13 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
+import frc.robot.subsystems.WristSubsystem;
 import frc.robot.utils.Reef;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -37,19 +40,12 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-                private final SwerveRequest.RobotCentric centricdrive =
-      new SwerveRequest.RobotCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1)
-          .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private AtomicBoolean onCoral = new AtomicBoolean(true);
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-
-  public AtomicBoolean scoringFlipped = new AtomicBoolean(false);
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   private final WristSubsystem wristSubsystem = new WristSubsystem();
@@ -60,13 +56,10 @@ public class RobotContainer {
       new IntakeSuperstructure(intakeSpinningSubsystem, intakeRotationSubsystem);
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final Autos autos = new Autos(
-    intakeSpinningSubsystem,intakeSuperstructure,algaeSubsystem,climberSubsystem,
-  drivetrain,coralSubsystem,elevatorSubsystem,wristSubsystem);
-  
+  // private final NintendoSwitchController joystick = new NintendoSwitchController(0);
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandPS4Controller operator = new CommandPS4Controller(1);
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final CommandButtonBoard buttonBoard =
       new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
 
@@ -74,58 +67,38 @@ public class RobotContainer {
     configureBindings();
     configureOperatorBindings();
     configureBoard();
-
-    SmartDashboard.putData("Auto", autos.getAutoChooser());
   }
 
   private void configureOperatorBindings() {
     operator
         .povDown()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristL2(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristL2(elevatorSubsystem, wristSubsystem));
     operator
         .povRight()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristL3(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristL3(elevatorSubsystem, wristSubsystem));
     operator
         .povUp()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristL4(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem));
     operator
         .povLeft()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristL1(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristL1(elevatorSubsystem, wristSubsystem));
     operator
         .cross()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristProcessor(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristProcessor(elevatorSubsystem, wristSubsystem));
     operator
         .circle()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristBallLow(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem));
     operator
         .square()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristNet(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem));
     operator
         .R2()
-        .onTrue(
-            ElevatorWristCommands.elevatorWristHuman(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+        .onTrue(ElevatorWristCommands.elevatorWristHuman(elevatorSubsystem, wristSubsystem));
     operator
         .L2()
         .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
-    operator.L1().whileTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
-    operator.R1().whileTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
-    operator.options().whileTrue(intakeRotationSubsystem.homeIntakeCommand());
-    operator.share().whileTrue(elevatorSubsystem.homeElevatorCommand());
+    operator.L1().onTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
+    operator.R1().onTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
   }
 
   private void configureBoard() {
@@ -134,71 +107,62 @@ public class RobotContainer {
         .Button1()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidUpCoralLeft.value : Reef.MidUpAlgae.value, scoringFlipped));
+                onCoral.get() ? Reef.MidUpCoralLeft.value : Reef.MidUpAlgae.value));
     buttonBoard
         .Button2()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidUpCoralRight.value : Reef.MidUpAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.MidUpCoralRight.value : Reef.MidUpAlgae.value));
     buttonBoard
         .Button3()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidCoralLeft.value : Reef.MidAlgae.value, scoringFlipped));
+                onCoral.get() ? Reef.MidCoralLeft.value : Reef.MidAlgae.value));
     buttonBoard
         .Button4()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidCoralRight.value : Reef.MidAlgae.value, scoringFlipped));
+                onCoral.get() ? Reef.MidCoralRight.value : Reef.MidAlgae.value));
     buttonBoard
         .Button5()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidDownCoralLeft.value : Reef.MidDownAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.MidDownCoralLeft.value : Reef.MidDownAlgae.value));
     buttonBoard
         .Button6()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.MidDownCoralRight.value : Reef.MidDownAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.MidDownCoralRight.value : Reef.MidDownAlgae.value));
     buttonBoard
         .Button7()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationDownCoralRight.value : Reef.StationDownAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.StationDownCoralRight.value : Reef.StationDownAlgae.value));
     buttonBoard
         .Button8()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationDownCoralLeft.value : Reef.StationDownAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.StationDownCoralLeft.value : Reef.StationDownAlgae.value));
     buttonBoard
         .Button9()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationCoralRight.value : Reef.StationAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.StationCoralRight.value : Reef.StationAlgae.value));
     buttonBoard
         .Button10()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationCoralLeft.value : Reef.StationAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.StationCoralLeft.value : Reef.StationAlgae.value));
     buttonBoard
         .Button11()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationUpCoralRight.value : Reef.StationUpAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.StationUpCoralRight.value : Reef.StationUpAlgae.value));
     buttonBoard
         .Button12()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? Reef.StationUpCoralLeft.value : Reef.StationUpAlgae.value,
-                scoringFlipped));
+                onCoral.get() ? Reef.StationUpCoralLeft.value : Reef.StationUpAlgae.value));
   }
 
   private void configureBindings() {
@@ -217,24 +181,17 @@ public class RobotContainer {
                         -joystick.getRightX()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
-    joystick.rightBumper().whileTrue(
-        drivetrain.applyRequest(
-        () -> 
-        centricdrive
-            .withVelocityX(-joystick.getLeftY() * MaxSpeed)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
 
     joystick.b().onTrue(Commands.runOnce(() -> onCoral.set(!onCoral.get())));
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    /*joystick
+    joystick
         .b()
         .whileTrue(
             drivetrain.applyRequest(
                 () ->
                     point.withModuleDirection(
                         new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-*/
+
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
     joystick.leftStick().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -259,9 +216,7 @@ public class RobotContainer {
             Commands.parallel(
                     coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE),
                     algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE))
-                .until(
-                    () ->
-                        (coralSubsystem.getRightSwitchState()) || algaeSubsystem.getSwitchState()));
+                .until(() -> coralSubsystem.getSwitchState() || algaeSubsystem.getSwitchState()));
     joystick
         .leftBumper()
         .whileTrue(
@@ -269,13 +224,13 @@ public class RobotContainer {
                     elevatorSubsystem.setPosition(Constants.ElevatorConstants.HANDOFF),
                 intakeSuperstructure
                     .setDownAndRunCommand()
-                    .until(intakeSpinningSubsystem::getSwitchValue),
+                    .until(() -> intakeSpinningSubsystem.getSwitchValue()),
                 intakeSuperstructure.setUpCommand(),
                 Commands.parallel(
-                    coralSubsystem.runVelolocityCenterCommand(
-                        Constants.CoralConstants.RUNNING_VOLTAGE),
-                    ElevatorWristCommands.elevatorWristGroundIntake(
-                        elevatorSubsystem, wristSubsystem))));
+                        ElevatorWristCommands.elevatorWristGroundIntake(
+                            elevatorSubsystem, wristSubsystem),
+                        coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE))
+                    .until(() -> coralSubsystem.getSwitchState())));
 
     joystick
         .a()
@@ -285,6 +240,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autos.getAutoChooser().getSelected();
+    return Commands.print("No autonomous command configured");
   }
 }

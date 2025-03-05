@@ -41,8 +41,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   private final TunableTelemetryPIDController algaePID =
       new TunableTelemetryPIDController("/algae/pid", Constants.AlgaeConstants.PID_GAINS);
   private SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
-  private final DigitalInput intakeSwitch =
-      new DigitalInput(Constants.AlgaeConstants.SWITCH_ID);
+  private final DigitalInput intakeSwitch = new DigitalInput(Constants.AlgaeConstants.SWITCH_ID);
   public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);
   SlewRateLimiter limiter =
       new SlewRateLimiter(Constants.AlgaeConstants.RATE_LIMIT); // deal with later
@@ -155,7 +154,10 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-      algaeMotor.logValues();
+    if (Constants.AlgaeConstants.FF_GAINS.hasChanged()) {
+      algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
+    }
+    algaeMotor.logValues();
     // This method will be called once per scheduler run
   }
 }

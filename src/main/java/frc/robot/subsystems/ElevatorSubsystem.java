@@ -48,6 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
       new EventTelemetryEntry("/elevator/motorleft/events");
+  private boolean isHomed = false;
   private final Debouncer debouncer = new Debouncer(0.5);
   private final TunableTelemetryProfiledPIDController controller =
       new TunableTelemetryProfiledPIDController(
@@ -55,24 +56,20 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
-  private boolean isHomed = false;
-  private boolean isHoming = false;
 
   public ElevatorSubsystem() {
-    configRightMotor();
-    configLeftMotor();
-    setDefaultCommand(setVoltageCommand(0.0));
+    configMotors();
   }
 
-  private void configRightMotor() {
+  private void configMotors() {
     TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
     motorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
     motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     motorConfiguration.MotorOutput.Inverted = Constants.ElevatorConstants.INVERTED_RIGHT;
+
     motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfiguration.Audio.AllowMusicDurDisable = true;
-
     ConfigurationUtils.StringFaultRecorder faultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -82,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           rightElevatorMotor.getConfigurator().refresh(appliedConfig);
           return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
         },
-        faultRecorder.run("Motor configuration 1"),
+        faultRecorder.run("Motor configuration"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecordCTRE(
         rightElevatorMotor::optimizeBusUtilization,
@@ -102,8 +99,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Clear reset as this is on startup
     rightElevatorMotor.hasResetOccurred();
-      }
-      private void configLeftMotor(){
+
     TalonFXConfiguration leftMotorConfiguration = new TalonFXConfiguration();
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
@@ -113,13 +109,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
-        () -> leftElevatorMotor.getConfigurator().apply(leftMotorConfiguration),
+        () -> leftElevatorMotor.getConfigurator().apply(motorConfiguration),
         () -> {
           TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
           leftElevatorMotor.getConfigurator().refresh(appliedConfig);
-          return ConfigEquality.isTalonConfigurationEqual(leftMotorConfiguration, appliedConfig);
+          return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
         },
-        leftFaultRecorder.run("Motor configuration 2"),
+        leftFaultRecorder.run("Motor configuration"),
         Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.applyCheckRecordCTRE(
         leftElevatorMotor::optimizeBusUtilization,
@@ -132,7 +128,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftEventEntry::append,
         "left elevator motor fault",
         leftFaultRecorder.getFaultString());
-    leftMotorAlert.set(leftFaultRecorder.hasFault());
+    leftMotorAlert.set(faultRecorder.hasFault());
 
     leftElevatorMotor.setLoggingPositionConversionFactor(
         Constants.ElevatorConstants.METERS_PER_REVOLUTION);
@@ -155,15 +151,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setVoltage(volts);
   }
 
-  public Command setVoltageCommand(double volts){
-    return this.run(()-> rightElevatorMotor.setVoltage(volts));
-  }
-
   public boolean atLimit() {
     return bottomSwitch.get();
-  }
-  public boolean isHomed() {
-    return isHomed;
   }
 
   public Command setPosition(double position) {
@@ -190,18 +179,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         .onlyIf(() -> isHomed);
   }
 
-  public Command homeElevatorCommand() {
-    return setVoltageCommand(-0.75)
-        .until(this::isHomed)
-        .beforeStarting(
-            () -> {
-              isHoming = true;
-              isHomed = false;
-            })
-        .finallyDo(() -> isHoming = false)
-        .withName("HomeElevator");
-  }
-
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return elevatorSysId.quasistatic(direction);
   }
@@ -212,7 +189,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if ((atLimit()&& isHoming) || debouncer.calculate(atLimit())) {
+    if (debouncer.calculate(atLimit())) {
       isHomed = true;
       rightElevatorMotor.setPosition(0.0);
     }

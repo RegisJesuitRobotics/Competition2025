@@ -43,8 +43,6 @@ public class AlgaeSubsystem extends SubsystemBase {
   private SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
   private final DigitalInput intakeSwitchRight =
       new DigitalInput(Constants.AlgaeConstants.SWITCH_ID_RIGHT);
-  private final DigitalInput intakeSwitchLeft =
-      new DigitalInput(Constants.AlgaeConstants.SWITCH_ID_LEFT);
   public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);
   SlewRateLimiter limiter =
       new SlewRateLimiter(Constants.AlgaeConstants.RATE_LIMIT); // deal with later
@@ -132,7 +130,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public boolean getSwitchState() {
-    return intakeSwitchRight.get() || intakeSwitchLeft.get();
+    return intakeSwitchRight.get();
   }
 
   public Command runVelocityCommand(double setpointRadiansSecond) {

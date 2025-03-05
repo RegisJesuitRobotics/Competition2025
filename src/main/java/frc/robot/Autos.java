@@ -5,10 +5,17 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.MiscConstants;
+
+import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.autoCommands.ToPointCommand;
@@ -16,6 +23,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
+import frc.robot.utils.RaiderUtils;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
@@ -36,6 +44,16 @@ public class Autos {
     ElevatorSubsystem elevatorSubsystem,
     WristSubsystem wristSubsystem
   ) {
+    RobotConfig config = null;
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    AutoBuilder.configure(drivetrain::getPose, drivetrain::resetPose, drivetrain::getSpeeds, (ChassisSpeeds, FF) -> drivetrain.setControl(new SwerveRequest.FieldCentric().withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond)), 
+    new PPHolonomicDriveController(Constants.AutoConstants.pointTranslationGains.createPIDConstants(), Constants.AutoConstants.ROTATION_PID_GAINS), config, RaiderUtils::shouldFlip, drivetrain);
 
 //    NamedCommands.registerCommand("scoreL4");
 
@@ -81,7 +99,6 @@ public class Autos {
       autoChooser.addOption("drive df", drivetrain.sysIdDynamic(Direction.kForward));
       autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
     }
-    throw new UnsupportedOperationException("This is a utility class!");
 }
 public SendableChooser<Command> getAutoChooser() {
   return autoChooser;

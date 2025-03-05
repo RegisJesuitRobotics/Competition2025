@@ -49,8 +49,6 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
 
   private final DigitalInput intakeSlapdownSwitchLeft =
       new DigitalInput(IntakeConstants.LEFT_SWITCH);
-  private final DigitalInput intakeSlapdownSwitchRight =
-      new DigitalInput(IntakeConstants.RIGHT_SWITCH);
   private final TunableTelemetryPIDController intakeSpinningPID =
       new TunableTelemetryPIDController(
           "intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);
@@ -133,7 +131,7 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
   }
 
   public boolean getSwitchValue() {
-    return intakeSlapdownSwitchLeft.get() || intakeSlapdownSwitchRight.get();
+    return intakeSlapdownSwitchLeft.get();
   }
 
   public double getVelocity() {

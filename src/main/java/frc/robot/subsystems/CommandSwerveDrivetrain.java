@@ -12,15 +12,19 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
+import com.pathplanner.lib.path.RotationTarget;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -189,6 +193,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return run(() -> this.setControl(requestSupplier.get()));
   }
 
+  public ChassisSpeeds getSpeeds(){
+    return this.getSpeeds();
+  }
+
   /**
    * Runs the SysId Quasistatic test in the given direction for the routine specified by {@link
    * #m_sysIdRoutineToApply}.
@@ -224,7 +232,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         0);
     // i<3 nick
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight1");
+    if (mt2 != null){
     this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+    }
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -249,6 +259,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return this.getState().Pose;
   }
 
+  public void resetPose() {
+    this.resetPose();
+  }
+
   public Command autoDriveTrajectory(String position, AtomicBoolean shouldFlip) {
     PathConstraints constraints =
         new PathConstraints(
@@ -262,20 +276,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     try {
       path = PathPlannerPath.fromPathFile(position);
       int pathSize = path.getPathPoses().size();
+      System.out.println(path.getAllPathPoints());
       PathPoint lastPosition = path.getPoint(pathSize - 1);
       PathPoint firstPosition = path.getPoint(0);
       boolean flipRotation =
           this.shouldFlip(
-              new Pose2d(firstPosition.position, firstPosition.rotationTarget.rotation()),
+              new Pose2d(firstPosition.position, firstPosition.position.getAngle()),
               shouldFlip);
       if (flipRotation) {
 
         path.getAllPathPoints()
             .set(
                 pathSize - 1,
-                new PathPoint(lastPosition.position, lastPosition.rotationTarget.flip()));
+                new PathPoint(lastPosition.position, new RotationTarget(lastPosition.position.getNorm(), lastPosition.position.getAngle())));
         path.getAllPathPoints()
-            .set(0, new PathPoint(firstPosition.position, firstPosition.rotationTarget.flip()));
+            .set(0, new PathPoint(firstPosition.position, new RotationTarget(firstPosition.position.getNorm(), firstPosition.position.getAngle())));
       }
     } catch (IOException e) {
       throw new RuntimeException(e);

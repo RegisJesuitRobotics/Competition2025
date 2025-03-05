@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.types.DoubleTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
@@ -31,7 +32,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TelemetryTalonFX leftElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.LEFT_ID,
-          "/elevator/motorleft",
+          "/elevator/motorleft", Constants.MiscConstants.CANIVORE_NAME,
           Constants.MiscConstants.TUNING_MODE);
   private final SysIdRoutine elevatorSysId =
       new SysIdRoutine(
@@ -40,7 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TelemetryTalonFX rightElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.RIGHT_ID,
-          "/elevator/motorright",
+          "/elevator/motorright", Constants.MiscConstants.CANIVORE_NAME,
           Constants.MiscConstants.TUNING_MODE);
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
@@ -56,6 +57,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
+  private final DoubleTelemetryEntry elevatorPosition = new DoubleTelemetryEntry("/elevator/position", true);
   private boolean isHomed = false;
   private boolean isHoming = false;
 
@@ -138,7 +140,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leftElevatorMotor.setControl(
         new Follower(
-            Constants.ElevatorConstants.RIGHT_ID, Constants.ElevatorConstants.LEFT_INVERTED));
+            Constants.ElevatorConstants.RIGHT_ID, false));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
   }
@@ -215,5 +217,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
+    elevatorPosition.append(getElevatorPosition());
   }
 }

@@ -39,25 +39,29 @@ public class Autos {
   private final SendableChooser<Command> autoChooser;
 
   public Autos(
-    IntakeSpinningSubsystem intakeSpinningSubsystem,
-    IntakeSuperstructure intakeSuperstructure,
-    AlgaeSubsystem algaeSubsystem,
-    ClimberSubsystem climberSubsystem,
-    CommandSwerveDrivetrain drivetrain,
-    CoralSubsystem coralSubsystem,
-    ElevatorSubsystem elevatorSubsystem,
-    WristSubsystem wristSubsystem
-  ) {
+      IntakeSpinningSubsystem intakeSpinningSubsystem,
+      IntakeSuperstructure intakeSuperstructure,
+      AlgaeSubsystem algaeSubsystem,
+      ClimberSubsystem climberSubsystem,
+      CommandSwerveDrivetrain drivetrain,
+      CoralSubsystem coralSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
+      WristSubsystem wristSubsystem) {
     RobotConfig config = null;
-    try{
+    try {
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
       // Handle exception as needed
       e.printStackTrace();
     }
 
-    AutoBuilder.configure(drivetrain::getPose, drivetrain::resetPose, drivetrain::getSpeeds, (ChassisSpeeds, FF) -> drivetrain.setControl(new SwerveRequest.FieldCentric().withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond)), 
-    new PPHolonomicDriveController(Constants.AutoConstants.pointTranslationGains.createPIDConstants(), Constants.AutoConstants.ROTATION_PID_GAINS), config, RaiderUtils::shouldFlip, drivetrain);
+    AutoBuilder.configure(drivetrain::getPose, drivetrain::resetPose, drivetrain::getSpeeds,
+        (ChassisSpeeds,
+            FF) -> drivetrain.setControl(new SwerveRequest.FieldCentric().withVelocityX(ChassisSpeeds.vxMetersPerSecond)
+                .withVelocityY(ChassisSpeeds.vyMetersPerSecond)),
+        new PPHolonomicDriveController(Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
+            Constants.AutoConstants.ROTATION_PID_GAINS),
+        config, RaiderUtils::shouldFlip, drivetrain);
 
     final PathFollowingController pathFollowingController = new PathFollowingController() {
       @Override
@@ -65,11 +69,13 @@ public class Autos {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'calculateRobotRelativeSpeeds'");
       }
+
       @Override
       public void reset(Pose2d currentPose, ChassisSpeeds currentSpeeds) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'reset'");
       }
+
       @Override
       public boolean isHolonomic() {
         // TODO Auto-generated method stub
@@ -77,18 +83,21 @@ public class Autos {
       }
     };
 
-       AutoBuilder.configure(
-       drivetrain::getPose,
-      (pose) -> drivetrain.resetPose(pose), 
-      () -> drivetrain.getState().Speeds, 
-      (chassisSpeeds, feedforward) -> {
-        drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds()
-            .withSpeeds(chassisSpeeds));}, 
-       pathFollowingController, null /*new RobotConfig(
-        74, 6.883, null 
-        new ModuleConfig(
-          2.0, 5.45, 
-          1.2, null, 60, 4), null)*/, 
+    AutoBuilder.configure(
+        drivetrain::getPose,
+        (pose) -> drivetrain.resetPose(pose),
+        () -> drivetrain.getState().Speeds,
+        (chassisSpeeds, feedforward) -> {
+          drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds()
+              .withSpeeds(chassisSpeeds));
+        },
+        pathFollowingController, config /*
+                                       * new RobotConfig(
+                                       * 74, 6.883, null
+                                       * new ModuleConfig(
+                                       * 2.0, 5.45,
+                                       * 1.2, null, 60, 4), null)
+                                       */,
         RaiderUtils::shouldFlip, drivetrain);
 
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
@@ -103,10 +112,14 @@ public class Autos {
       autoChooser.addOption("wrist df", wristSubsystem.sysIdDynamic(Direction.kForward));
       autoChooser.addOption("wrist dr", wristSubsystem.sysIdDynamic(Direction.kReverse));
 
-      autoChooser.addOption("intake rotation qf",intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kForward));
-      autoChooser.addOption("intake rotation qr",intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kReverse));
-      autoChooser.addOption("intake rotation df",intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kForward));
-      autoChooser.addOption("intake rotation dr",intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kReverse));
+      autoChooser.addOption("intake rotation qf",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kForward));
+      autoChooser.addOption("intake rotation qr",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kReverse));
+      autoChooser.addOption("intake rotation df",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kForward));
+      autoChooser.addOption("intake rotation dr",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kReverse));
 
       autoChooser.addOption("intakeSpinning qf", intakeSpinningSubsystem.sysIDQuasistatic(Direction.kForward));
       autoChooser.addOption("intakeSpinning qr", intakeSpinningSubsystem.sysIDQuasistatic(Direction.kReverse));
@@ -133,10 +146,12 @@ public class Autos {
       autoChooser.addOption("drive df", drivetrain.sysIdDynamic(Direction.kForward));
       autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
     }
-}
-public SendableChooser<Command> getAutoChooser() {
-  return autoChooser;
-}
+  }
+
+  public SendableChooser<Command> getAutoChooser() {
+    return autoChooser;
+  }
+
   public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
     return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
   }
@@ -146,22 +161,21 @@ public SendableChooser<Command> getAutoChooser() {
       return Commands.print("Probed!");
     }
     return Commands.parallel(
-            elevatorSubsystem.homeElevatorCommand(),
-            intakeSuperstructure.getIntakeRotationSubsystem().homeIntakeCommand())
+        elevatorSubsystem.homeElevatorCommand(),
+        intakeSuperstructure.getIntakeRotationSubsystem().homeIntakeCommand())
         .withName("AutoStart");
   }
 
-  private Command toL4(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem){
+  private Command toL4(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
     return Commands.parallel(
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF),
         wristSubsystem.setPositionCommand(Constants.WristConstants.L4_REEF))
         .withName("ElevatorWristToL4");
   }
 
-  private Command Score(CoralSubsystem coralSubsystem){
+  private Command Score(CoralSubsystem coralSubsystem) {
     return coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE)
-    .withName("ScoreCoral");
+        .withName("ScoreCoral");
   }
-
 
 }

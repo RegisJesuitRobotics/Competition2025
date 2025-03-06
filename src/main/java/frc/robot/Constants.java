@@ -31,7 +31,7 @@ public final class Constants {
     public static final int RIGHT_ID = 10;
     public static final int BOTTOM_ID = 2;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
-    public static final InvertedValue INVERTED_RIGHT = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue INVERTED_RIGHT = InvertedValue.CounterClockwise_Positive;
     public static final double GEAR_RATIO = 9;
     // TODO: inches of gear
     public static final double METERS_PER_REVOLUTION =
@@ -119,7 +119,6 @@ public final class Constants {
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final double RUNNING_VOLTAGE = 10.0;
-    public static final int SWITCH_ID = 0;
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
     public static final int SWITCH_ID_RIGHT = 9;
@@ -167,8 +166,8 @@ public final class Constants {
     public static final double CAMERA_MOUNT_HEIGHT_METERS = 0.0;
 
     public static final double CORAL_HEIGHT = 0.0;
-    public static final String APRIL_LIMELIGHT = "limelight1";
-    public static final String OBJECT_LIMELIGHT = "limelight2";
+    public static final String APRIL_LIMELIGHT = "limelight-april";
+    public static final String OBJECT_LIMELIGHT = "limelight-coral";
     public static final double CONFIDENCE_THRESHOLD = 80.0;
   }
 
@@ -195,7 +194,7 @@ public final class Constants {
     public static final double GEAR_RATIO = 10.0; 
     public static final double SUPPLY_CURRENT_LIMIT = 40.0; 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
-    public static final double WRIST_OFFSET = 0.0; // needs a value
+    public static final double WRIST_OFFSET = -0.6188132649157726; 
     public static final double PID_TOLERANCE = 2.0; // idk
     public static final int WRIST_ENCODER_PORT = 4; // needs a value
     // a lot of 0s

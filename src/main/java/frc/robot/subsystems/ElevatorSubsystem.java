@@ -140,7 +140,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leftElevatorMotor.setControl(
         new Follower(
-            Constants.ElevatorConstants.RIGHT_ID, false));
+            Constants.ElevatorConstants.RIGHT_ID, true));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
   }

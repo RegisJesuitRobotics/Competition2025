@@ -23,6 +23,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
+import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import frc.robot.utils.Alert;
@@ -49,11 +50,13 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
 
   private final DigitalInput intakeSlapdownSwitchLeft =
       new DigitalInput(IntakeConstants.LEFT_SWITCH);
+
   private final TunableTelemetryPIDController intakeSpinningPID =
       new TunableTelemetryPIDController(
           "intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);
   private SimpleMotorFeedforward intakeSpinningFF =
       IntakeConstants.SPINNING_FF_GAINS.createFeedforward();
+    private final BooleanTelemetryEntry limit = new BooleanTelemetryEntry("/intake", true);
 
   private final SysIdRoutine intakeSpinningSysId =
       new SysIdRoutine(
@@ -131,7 +134,7 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
   }
 
   public boolean getSwitchValue() {
-    return intakeSlapdownSwitchLeft.get();
+    return !intakeSlapdownSwitchLeft.get();
   }
 
   public double getVelocity() {
@@ -164,6 +167,7 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    limit.append(getSwitchValue());
 
     //   intakeSpinningMotor.logValues();
     // This method will be called once per scheduler run

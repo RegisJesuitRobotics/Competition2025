@@ -114,7 +114,7 @@ public class WristSubsystem extends SubsystemBase {
 
   public double getPosition() {
     return MathUtil.angleModulus(
-        Units.rotationsToRadians(wristEncoder.get()) + WristConstants.WRIST_OFFSET);
+        Units.rotationsToRadians(wristEncoder.get()/Constants.WristConstants.GEAR_RATIO) + WristConstants.WRIST_OFFSET);
     // should be just .get() this year instead of .getAbsolutePosition()
   }
 

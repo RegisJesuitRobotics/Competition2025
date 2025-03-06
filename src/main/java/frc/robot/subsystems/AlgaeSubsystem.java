@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
+import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import frc.robot.utils.Alert;
@@ -48,6 +49,7 @@ public class AlgaeSubsystem extends SubsystemBase {
       new SlewRateLimiter(Constants.AlgaeConstants.RATE_LIMIT); // deal with later
   private RelativeEncoder algaeEncoder;
   private EventTelemetryEntry algaeEvent = new EventTelemetryEntry("AlgaeMotor/Event");
+  private BooleanTelemetryEntry limit = new BooleanTelemetryEntry("/algae/limit", true);
 
   private final SysIdRoutine algaeSysId =
       new SysIdRoutine(
@@ -130,7 +132,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public boolean getSwitchState() {
-    return intakeSwitchRight.get();
+    return !intakeSwitchRight.get();
   }
 
   public Command runVelocityCommand(double setpointRadiansSecond) {
@@ -156,6 +158,6 @@ public class AlgaeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
       algaeMotor.logValues();
-    // This method will be called once per scheduler run
-  }
+      limit.append(getSwitchState());
+    }
 }

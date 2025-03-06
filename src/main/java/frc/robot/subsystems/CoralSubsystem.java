@@ -25,6 +25,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
+import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
@@ -51,6 +52,8 @@ public class CoralSubsystem extends SubsystemBase {
   private final TunableTelemetryPIDController coralpid =
       new TunableTelemetryPIDController("/coral/pid", Constants.CoralConstants.PID_GAINS);
   private SimpleMotorFeedforward coralFF = CoralConstants.FF_GAINS.createFeedforward();
+  private BooleanTelemetryEntry rightBeam = new BooleanTelemetryEntry("/coral/right", true);
+  private BooleanTelemetryEntry leftBeam = new BooleanTelemetryEntry("/coral/left", true);
 
   private final SysIdRoutine coralSysId =
       new SysIdRoutine(
@@ -159,6 +162,7 @@ public class CoralSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     coralMotor.logValues();
-    // This method will be called once per scheduler run
+    rightBeam.append(getRightSwitchState());
+    leftBeam.append(getLeftSwitchState());
   }
 }

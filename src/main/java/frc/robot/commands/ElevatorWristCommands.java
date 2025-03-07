@@ -115,5 +115,4 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.GROUND_INTAKE),
         wristSubsystem.setPositionCommand(Constants.WristConstants.GROUND_INTAKE));
   }
-
 }

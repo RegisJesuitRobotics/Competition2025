@@ -127,9 +127,7 @@ public class ClimberSubsystem extends SubsystemBase {
         leftFaultRecorder.getFaultString());
     climbMotor1Alert.set(faultRecorder.hasFault());
 
-    climbMotor1.setControl(
-        new Follower(
-            Constants.ClimberConstants.CLIMB_MOTOR_2_ID, false));
+    climbMotor1.setControl(new Follower(Constants.ClimberConstants.CLIMB_MOTOR_2_ID, false));
     // Clear reset as this is on startup
     climbMotor1.hasResetOccurred();
   }

@@ -157,7 +157,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-      algaeMotor.logValues();
-      limit.append(getSwitchState());
-    }
+    algaeMotor.logValues();
+    limit.append(getSwitchState());
+  }
 }

@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
@@ -33,16 +32,22 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TelemetryTalonFX leftElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.LEFT_ID,
-          "/elevator/motorleft", Constants.MiscConstants.CANIVORE_NAME,
+          "/elevator/motorleft",
+          Constants.MiscConstants.CANIVORE_NAME,
           Constants.MiscConstants.TUNING_MODE);
   private final SysIdRoutine elevatorSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, (state) -> SignalLogger.writeString("elevator", state.toString())),
+          new SysIdRoutine.Config(
+              Volts.per(Second).of(.5),
+              Volts.of(2),
+              null,
+              (state) -> SignalLogger.writeString("elevator", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
   private final TelemetryTalonFX rightElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.RIGHT_ID,
-          "/elevator/motorright", Constants.MiscConstants.CANIVORE_NAME,
+          "/elevator/motorright",
+          Constants.MiscConstants.CANIVORE_NAME,
           Constants.MiscConstants.TUNING_MODE);
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
@@ -58,7 +63,8 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
-  private final DoubleTelemetryEntry elevatorPosition = new DoubleTelemetryEntry("/elevator/position", true);
+  private final DoubleTelemetryEntry elevatorPosition =
+      new DoubleTelemetryEntry("/elevator/position", true);
   private boolean isHomed = false;
   private boolean isHoming = false;
 
@@ -139,9 +145,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.setLoggingVelocityConversionFactor(
         Constants.ElevatorConstants.METERS_PER_REVOLUTION);
 
-    leftElevatorMotor.setControl(
-        new Follower(
-            Constants.ElevatorConstants.RIGHT_ID, true));
+    leftElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.RIGHT_ID, true));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
   }
@@ -155,13 +159,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setVoltage(volts);
   }
 
-  public Command setVoltageCommand(double volts){
-    return this.run(()-> rightElevatorMotor.setVoltage(volts));
+  public Command setVoltageCommand(double volts) {
+    return this.run(() -> rightElevatorMotor.setVoltage(volts));
   }
 
   public boolean atLimit() {
     return bottomSwitch.get();
   }
+
   public boolean isHomed() {
     return isHomed;
   }
@@ -212,7 +217,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if ((atLimit()&& isHoming) || debouncer.calculate(atLimit())) {
+    if ((atLimit() && isHoming) || debouncer.calculate(atLimit())) {
       isHomed = true;
       rightElevatorMotor.setPosition(0.0);
     }

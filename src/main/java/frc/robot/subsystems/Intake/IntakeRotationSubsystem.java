@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -36,11 +35,18 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   public static final TelemetryTalonFX intakeRotationMotor =
       new TelemetryTalonFX(
-          IntakeConstants.ROTATION_MOTOR_ID, "motor/intake/rotation", Constants.MiscConstants.CANIVORE_NAME, MiscConstants.TUNING_MODE);
+          IntakeConstants.ROTATION_MOTOR_ID,
+          "motor/intake/rotation",
+          Constants.MiscConstants.CANIVORE_NAME,
+          MiscConstants.TUNING_MODE);
 
   private final SysIdRoutine intakeRotationSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(3), Seconds.of(5), (state) -> SignalLogger.writeString("slapdown", state.toString())),
+          new SysIdRoutine.Config(
+              Volts.per(Second).of(0.5),
+              Volts.of(3),
+              Seconds.of(5),
+              (state) -> SignalLogger.writeString("slapdown", state.toString())),
           new SysIdRoutine.Mechanism(
               (voltage) -> setRotationVoltage(voltage.in(Volts)),
               null, // No log consumer, since data is recorded by URCL
@@ -49,7 +55,10 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   private static final Alert rotationIntakeMotorAlert =
       new Alert("Intake rotation motor had a fault initializing", Alert.AlertType.ERROR);
   private final TunableTelemetryProfiledPIDController rotationPid =
-      new TunableTelemetryProfiledPIDController("profiled/pid/intake", Constants.IntakeConstants.ROTATION_PID_GAINS, Constants.IntakeConstants.ROTATION_TRAP_GAINS);
+      new TunableTelemetryProfiledPIDController(
+          "profiled/pid/intake",
+          Constants.IntakeConstants.ROTATION_PID_GAINS,
+          Constants.IntakeConstants.ROTATION_TRAP_GAINS);
   private EventTelemetryEntry intakeRotationEntry =
       new EventTelemetryEntry("intake/rotation/entry");
   private final ArmFeedforward rotationFF =

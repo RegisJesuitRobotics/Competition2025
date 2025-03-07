@@ -8,12 +8,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -27,20 +21,17 @@ import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
-import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
-import frc.robot.utils.ConfigurationUtils.StringFaultRecorder;
 
 @Logged
 public class CoralSubsystem extends SubsystemBase {
 
-  private final TelemetryTalonFX coralMotor = 
-  new TelemetryTalonFX(
-    CoralConstants.CORAL_MOTOR_ID, "coral/motor", MiscConstants.TUNING_MODE);
+  private final TelemetryTalonFX coralMotor =
+      new TelemetryTalonFX(CoralConstants.CORAL_MOTOR_ID, "coral/motor", MiscConstants.TUNING_MODE);
 
   private final Alert coralMotorAlert = new Alert("Coral motor had a fault", AlertType.ERROR);
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
@@ -129,8 +120,7 @@ public class CoralSubsystem extends SubsystemBase {
             () -> {
               double rateLimited = rateLimiter.calculate(setpointRadiansSecond);
               setVoltage(
-                  coralpid.calculate(getVelocity(), rateLimited)
-                      + coralFF.calculate(rateLimited));
+                  coralpid.calculate(getVelocity(), rateLimited) + coralFF.calculate(rateLimited));
             })
         .beforeStarting(() -> rateLimiter.reset(getVelocity()))
         .withName("CoralRunVelocity");

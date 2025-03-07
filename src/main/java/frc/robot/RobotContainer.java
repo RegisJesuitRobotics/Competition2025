@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,7 +36,7 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-                private final SwerveRequest.RobotCentric centricdrive =
+  private final SwerveRequest.RobotCentric centricdrive =
       new SwerveRequest.RobotCentric()
           .withDeadband(MaxSpeed * 0.1)
           .withRotationalDeadband(MaxAngularRate * 0.1)
@@ -61,10 +60,17 @@ public class RobotContainer {
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final Autos autos = new Autos(
-    intakeSpinningSubsystem,intakeSuperstructure,algaeSubsystem,climberSubsystem,
-  drivetrain,coralSubsystem,elevatorSubsystem,wristSubsystem);
-  
+  private final Autos autos =
+      new Autos(
+          intakeSpinningSubsystem,
+          intakeSuperstructure,
+          algaeSubsystem,
+          climberSubsystem,
+          drivetrain,
+          coralSubsystem,
+          elevatorSubsystem,
+          wristSubsystem);
+
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandPS4Controller operator = new CommandPS4Controller(1);
   private final CommandButtonBoard buttonBoard =
@@ -75,7 +81,7 @@ public class RobotContainer {
     configureOperatorBindings();
     configureBoard();
 
-     SmartDashboard.putData("Auto", autos.getAutoChooser());
+    SmartDashboard.putData("Auto", autos.getAutoChooser());
   }
 
   private void configureOperatorBindings() {
@@ -217,24 +223,26 @@ public class RobotContainer {
                         -joystick.getRightX()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
-    joystick.rightBumper().whileTrue(
-        drivetrain.applyRequest(
-        () -> 
-        centricdrive
-            .withVelocityX(-joystick.getLeftY() * MaxSpeed)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
+    joystick
+        .rightBumper()
+        .whileTrue(
+            drivetrain.applyRequest(
+                () ->
+                    centricdrive
+                        .withVelocityX(-joystick.getLeftY() * MaxSpeed)
+                        .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
 
     joystick.b().onTrue(Commands.runOnce(() -> onCoral.set(!onCoral.get())));
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
     /*joystick
-        .b()
-        .whileTrue(
-            drivetrain.applyRequest(
-                () ->
-                    point.withModuleDirection(
-                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-*/
+            .b()
+            .whileTrue(
+                drivetrain.applyRequest(
+                    () ->
+                        point.withModuleDirection(
+                            new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    */
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
     joystick.leftStick().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));

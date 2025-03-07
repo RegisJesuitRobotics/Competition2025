@@ -56,7 +56,7 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
           "intake/spinning/pid", Constants.IntakeConstants.SPINNING_PID_GAINS);
   private SimpleMotorFeedforward intakeSpinningFF =
       IntakeConstants.SPINNING_FF_GAINS.createFeedforward();
-    private final BooleanTelemetryEntry limit = new BooleanTelemetryEntry("/intake", true);
+  private final BooleanTelemetryEntry limit = new BooleanTelemetryEntry("/intake", true);
 
   private final SysIdRoutine intakeSpinningSysId =
       new SysIdRoutine(

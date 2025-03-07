@@ -98,6 +98,8 @@ public class Autos {
       autoChooser.addOption("drive qr", drivetrain.sysIdQuasistatic(Direction.kReverse));
       autoChooser.addOption("drive df", drivetrain.sysIdDynamic(Direction.kForward));
       autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
+
+      autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
     }
 }
 public SendableChooser<Command> getAutoChooser() {

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -36,7 +37,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.MiscConstants.TUNING_MODE);
   private final SysIdRoutine elevatorSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, (state) -> SignalLogger.writeString("elevator", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
   private final TelemetryTalonFX rightElevatorMotor =
       new TelemetryTalonFX(
@@ -146,7 +147,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getElevatorPosition() {
-    return rightElevatorMotor.getPosition().getValueAsDouble()
+    return leftElevatorMotor.getPosition().getValueAsDouble()
         * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
   }
 
@@ -202,11 +203,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return elevatorSysId.quasistatic(direction);
+    return elevatorSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return elevatorSysId.dynamic(direction);
+    return elevatorSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
   @Override

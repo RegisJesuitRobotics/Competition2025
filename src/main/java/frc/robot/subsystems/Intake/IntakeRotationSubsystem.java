@@ -6,6 +6,7 @@ package frc.robot.subsystems.Intake;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -39,7 +40,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   private final SysIdRoutine intakeRotationSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(3), Seconds.of(5), null),
+          new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(3), Seconds.of(5), (state) -> SignalLogger.writeString("slapdown", state.toString())),
           new SysIdRoutine.Mechanism(
               (voltage) -> setRotationVoltage(voltage.in(Volts)),
               null, // No log consumer, since data is recorded by URCL
@@ -159,11 +160,11 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return intakeRotationSysId.quasistatic(direction);
+    return intakeRotationSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return intakeRotationSysId.dynamic(direction);
+    return intakeRotationSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
   @Override

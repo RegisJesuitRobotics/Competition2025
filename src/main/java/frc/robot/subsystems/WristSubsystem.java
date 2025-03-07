@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
@@ -28,6 +29,7 @@ import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
+
 import java.util.function.DoubleSupplier;
 
 @Logged
@@ -41,8 +43,10 @@ public class WristSubsystem extends SubsystemBase {
 
   private final SysIdRoutine wristSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
-          new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), 
+          Volts.of(2), null, 
+          (state) -> SignalLogger.writeString("wristState", state.toString())),
+          new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this)); 
 
   private final TunableTelemetryProfiledPIDController wristpid =
       new TunableTelemetryProfiledPIDController(
@@ -54,12 +58,16 @@ public class WristSubsystem extends SubsystemBase {
   private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
   private final EventTelemetryEntry wristEventEntry = new EventTelemetryEntry("wrist/motor/events");
   private DoubleTelemetryEntry wrisTelemetryEntry = new DoubleTelemetryEntry("/wrist/encoder", true);
+  private final DoubleTelemetryEntry wristAbs = new DoubleTelemetryEntry("/wrist/absEncoder", true);
+  private double wristPosition = 0;
 
   public WristSubsystem() {
     configMotor();
     wristpid.setTolerance(Units.degreesToRadians(WristConstants.PID_TOLERANCE));
     setDefaultCommand(setVoltageCommand(0));
-  }
+    wristEncoder.setDutyCycleRange(1.0/1025.0, 1024.0 / 1025.0);
+    wristMotor.setPosition(0);
+  } 
 
   private void configMotor() {
     TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
@@ -113,9 +121,12 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-    return MathUtil.angleModulus(
-        Units.rotationsToRadians(wristEncoder.get()/Constants.WristConstants.GEAR_RATIO) + WristConstants.WRIST_OFFSET);
+    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / -10.0));
     // should be just .get() this year instead of .getAbsolutePosition()
+  }
+
+  public double testPos(){
+    return wristEncoder.get();
   }
 
   public Command setPositionCommand(double desiredPositionRadians) {
@@ -139,15 +150,18 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return wristSysId.quasistatic(direction);
+    
+    return wristSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return wristSysId.dynamic(direction);
+    return wristSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
   @Override
   public void periodic() {
     wrisTelemetryEntry.append(getPosition());
+    wristAbs.append(wristEncoder.get());
+    wristPosition = getPosition();
   }
 }

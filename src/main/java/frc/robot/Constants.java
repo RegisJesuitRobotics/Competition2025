@@ -191,15 +191,15 @@ public final class Constants {
 
   public static class WristConstants {
     public static final int WRIST_ID = 11;
-    public static final double GEAR_RATIO = 10.0; 
+    public static final double GEAR_RATIO = 5.0; 
     public static final double SUPPLY_CURRENT_LIMIT = 40.0; 
-    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
-    public static final double WRIST_OFFSET = -0.6188132649157726; 
+    public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+    public static final double WRIST_OFFSET = Units.degreesToRadians(90-85.55177013879425); 
     public static final double PID_TOLERANCE = 2.0; // idk
     public static final int WRIST_ENCODER_PORT = 4; // needs a value
     // a lot of 0s
     public static final TunablePIDGains WRIST_PID_GAINS =
-        new TunablePIDGains("/pid/wrist/", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/pid/wrist/", 0.12788, 0.0, 0.0, MiscConstants.TUNING_MODE);
 
     public static final TunableTrapezoidalProfileGains WRIST_TRAP_GAINS =
         new TunableTrapezoidalProfileGains(
@@ -210,7 +210,8 @@ public final class Constants {
     public static final double DYNAMIC_OFFSET = Units.degreesToRadians(0);
 
     public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
-        new TunableArmElevatorFFGains("/feedfoward/wrist/", 0, 0, 0, 0, MiscConstants.TUNING_MODE);
+        new TunableArmElevatorFFGains("/feedfoward/wrist/", 0.5565, 0.10022, 0.095519, 0.067838, MiscConstants.TUNING_MODE);
+
     public static final double L2_REEF = Units.degreesToRadians(138.2326);
     public static final double L3_REEF = Units.degreesToRadians(138.2326);
     public static final double L4_REEF = Units.degreesToRadians(118.8490);

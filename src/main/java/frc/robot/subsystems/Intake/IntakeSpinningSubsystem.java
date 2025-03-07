@@ -60,7 +60,8 @@ public class IntakeSpinningSubsystem extends SubsystemBase {
 
   private final SysIdRoutine intakeSpinningSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), 
+          Volts.of(2), null, null),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
 
   public IntakeSpinningSubsystem() {

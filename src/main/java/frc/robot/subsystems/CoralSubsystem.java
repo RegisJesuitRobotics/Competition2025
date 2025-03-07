@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
@@ -48,7 +49,8 @@ public class CoralSubsystem extends SubsystemBase {
 
   private final SysIdRoutine coralSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), 
+          null, (state) -> SignalLogger.writeString("coral", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
 
   public CoralSubsystem() {
@@ -142,11 +144,11 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
-    return coralSysId.quasistatic(direction);
+    return coralSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
   }
 
   public Command sysIDDynamic(SysIdRoutine.Direction direction) {
-    return coralSysId.dynamic(direction);
+    return coralSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
   @Override

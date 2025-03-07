@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -51,7 +52,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final SysIdRoutine climberSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), 
+          null, (state) -> SignalLogger.writeString("climber", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
 
   public ClimberSubsystem() {
@@ -157,11 +159,11 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
-    return climberSysId.quasistatic(direction);
+    return climberSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
   }
 
   public Command sysIDDynamic(SysIdRoutine.Direction direction) {
-    return climberSysId.dynamic(direction);
+    return climberSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
   @Override

@@ -110,7 +110,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public boolean getRightSwitchState() {
-    return intakeRightBeam.get();
+    return !intakeRightBeam.get();
   }
 
   public Command setVoltageCommand(double voltage) {

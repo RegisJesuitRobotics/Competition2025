@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
@@ -52,6 +53,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
   private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
+  
   private final EventTelemetryEntry rightEventEntry =
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
@@ -65,6 +67,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
   private final DoubleTelemetryEntry elevatorPosition =
       new DoubleTelemetryEntry("/elevator/position", true);
+  private final DoubleTelemetryEntry elevatorGoal = new DoubleTelemetryEntry("/elevator/goalPos", true);
+  private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top", true);
   private boolean isHomed = false;
   private boolean isHoming = false;
 
@@ -181,7 +185,7 @@ public class ElevatorSubsystem extends SubsystemBase {
               double positionClamped =
                   MathUtil.clamp(
                       position.getAsDouble(),
-                      Constants.ElevatorConstants.L2_REEF,
+                      0,
                       Constants.ElevatorConstants.L4_REEF);
               controller.setGoal(positionClamped);
               double feedback = controller.calculate(getElevatorPosition());
@@ -219,10 +223,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     if ((atLimit() && isHoming) || debouncer.calculate(atLimit())) {
       isHomed = true;
-      rightElevatorMotor.setPosition(0.0);
+      leftElevatorMotor.setPosition(0.0);
     }
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
+    elevatorGoal.append(controller.getGoal().position);
+    topSwitch.append(atLimit());
   }
 }

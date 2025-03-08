@@ -60,6 +60,7 @@ public class WristSubsystem extends SubsystemBase {
   private DoubleTelemetryEntry wrisTelemetryEntry =
       new DoubleTelemetryEntry("/wrist/encoder", true);
   private final DoubleTelemetryEntry wristAbs = new DoubleTelemetryEntry("/wrist/absEncoder", true);
+  private final DoubleTelemetryEntry velocityGoal = new DoubleTelemetryEntry("/wrist/velocity", true);
   private double wristPosition = 0;
 
   public WristSubsystem() {
@@ -122,7 +123,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / -10.0));
+    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / 10.0));
     // should be just .get() this year instead of .getAbsolutePosition()
   }
 
@@ -162,7 +163,9 @@ public class WristSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     wrisTelemetryEntry.append(getPosition());
-    wristAbs.append(wristEncoder.get());
+    wristAbs.append(wristpid.getGoal().position);
+    velocityGoal.append(wristMotor.getMotorVoltage().getValueAsDouble()
+    );
     wristPosition = getPosition();
   }
 }

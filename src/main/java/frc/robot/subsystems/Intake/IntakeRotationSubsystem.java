@@ -24,6 +24,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.types.BooleanTelemetryEntry;
+import frc.robot.telemetry.types.DoubleTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
@@ -65,9 +67,11 @@ public class IntakeRotationSubsystem extends SubsystemBase {
       IntakeConstants.ROTATION_FF_GAINS.createArmFeedforward();
   private boolean isHomed = false;
   private boolean isHoming = false;
+  private DoubleTelemetryEntry position = new DoubleTelemetryEntry("/intake/position", true);
   private final Debouncer debouncer = new Debouncer(0.5);
   private final DigitalInput rotationLimitSwitch =
       new DigitalInput(IntakeConstants.ROTATION_LIMIT_SWITCH_ID);
+  private final BooleanTelemetryEntry rotationSwitchEntry = new BooleanTelemetryEntry("/intake/switch", true);
 
   public IntakeRotationSubsystem() {
     configMotor();
@@ -106,6 +110,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
         faultRecorder.getFaultString());
     rotationIntakeMotorAlert.set(faultRecorder.hasFault());
 
+
     intakeRotationMotor.setLoggingPositionConversionFactor(
         Constants.IntakeConstants.GEAR_RATIO_ROTATION);
     intakeRotationMotor.setLoggingVelocityConversionFactor(
@@ -120,8 +125,8 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   }
 
   private double getPosition() {
-    return MathUtil.angleModulus(
-        Units.rotationsToRadians(intakeRotationMotor.getPosition().getValueAsDouble()));
+    
+        return Units.rotationsToRadians(intakeRotationMotor.getPosition().getValueAsDouble() / 24.0);
   }
 
   private boolean atLimit() {
@@ -182,6 +187,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
       intakeRotationMotor.setPosition(IntakeConstants.ROTATION_UP_ANGLE);
       isHomed = true;
     }
-    // This method will be called once per scheduler run
+    rotationSwitchEntry.append(atLimit());
+    position.append(getPosition());
   }
 }

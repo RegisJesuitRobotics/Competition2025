@@ -23,7 +23,7 @@ public enum Reef {
   StationDownCoralRight("STATION-DOWN-REEF-RIGHT_CORAL");
 
   public final String value;
-  private static HashMap<String, Reef> _map = null;
+  private static HashMap<String, Reef> _map;
 
   private Reef(String value) {
     this.value = value;

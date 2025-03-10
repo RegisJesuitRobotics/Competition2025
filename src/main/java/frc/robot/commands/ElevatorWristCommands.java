@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -18,7 +19,7 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.L2_REEF
-                        : -Constants.WristConstants.L2_REEF)));
+                        : -Constants.WristConstants.L2_REEF).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristL3(
@@ -30,7 +31,7 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.L3_REEF
-                        : -Constants.WristConstants.L3_REEF)));
+                        : -Constants.WristConstants.L3_REEF).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristL4(
@@ -42,7 +43,7 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.L4_REEF
-                        : -Constants.WristConstants.L4_REEF)));
+                        : -Constants.WristConstants.L4_REEF).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristHuman(
@@ -54,7 +55,7 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.HUMAN
-                        : -Constants.WristConstants.HUMAN)));
+                        : -Constants.WristConstants.HUMAN).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristBallLow(
@@ -88,7 +89,7 @@ public class ElevatorWristCommands {
         Commands.deferredProxy(
             () ->
                 wristSubsystem.setPositionCommand(
-                    flipped.get() ? Constants.WristConstants.NET : -Constants.WristConstants.NET)));
+                    flipped.get() ? Constants.WristConstants.NET : -Constants.WristConstants.NET).beforeStarting(Commands.waitSeconds(.5))));
   }
 
   public static Command elevatorWristProcessor(

@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ChassisConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.commands.autoCommands.ToPointCommand;
@@ -83,18 +84,18 @@ public class Autos {
       // autoChooser.addOption("wrist df", wristSubsystem.sysIdDynamic(Direction.kForward));
       // autoChooser.addOption("wrist dr", wristSubsystem.sysIdDynamic(Direction.kReverse));
 
-      // autoChooser.addOption(
-      //     "intake rotation qf",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kForward));
-      // autoChooser.addOption(
-      //     "intake rotation qr",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kReverse));
-      // autoChooser.addOption(
-      //     "intake rotation df",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kForward));
-      // autoChooser.addOption(
-      //     "intake rotation dr",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kReverse));
+      autoChooser.addOption(
+          "intake rotation qf",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kForward));
+      autoChooser.addOption(
+          "intake rotation qr",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kReverse));
+      autoChooser.addOption(
+          "intake rotation df",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kForward));
+      autoChooser.addOption(
+          "intake rotation dr",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kReverse));
 
       // autoChooser.addOption(
       //     "intakeSpinning qf", intakeSpinningSubsystem.sysIDQuasistatic(Direction.kForward));
@@ -125,10 +126,10 @@ public class Autos {
       // autoChooser.addOption("drive df", drivetrain.sysIdDynamic(Direction.kForward));
       // autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
       autoChooser.addOption("wrist", wristSubsystem.setPositionCommand(Units.degreesToRadians(240)));
-      autoChooser.addOption("elevator", elevatorSubsystem.setPosition(Units.inchesToMeters(45)));
-      autoChooser.addOption("slapdown", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(10))));
-
+      autoChooser.addOption("elevator", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
+      autoChooser.addOption("slapdown", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(Constants.IntakeConstants.ROTATION_DOWN_ANGLE))));
       autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
+      autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE));
     }
   }
 
@@ -149,18 +150,5 @@ public class Autos {
             elevatorSubsystem.homeElevatorCommand(),
             intakeSuperstructure.getIntakeRotationSubsystem().homeIntakeCommand())
         .withName("AutoStart");
-  }
-
-  private Command toL4(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
-    return Commands.parallel(
-            elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF),
-            wristSubsystem.setPositionCommand(Constants.WristConstants.L4_REEF))
-        .withName("ElevatorWristToL4");
-  }
-
-  private Command Score(CoralSubsystem coralSubsystem) {
-    return coralSubsystem
-        .setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE)
-        .withName("ScoreCoral");
   }
 }

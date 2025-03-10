@@ -9,11 +9,14 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
 import com.pathplanner.lib.path.RotationTarget;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,6 +32,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.telemetry.types.DoubleTelemetryEntry;
+import frc.robot.utils.RaiderUtils;
+import frc.robot.utils.Reef;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -57,6 +64,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
+      private final SwerveRequest.ApplyRobotSpeeds chassisSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+
+
+  private final DoubleTelemetryEntry pigeonEntry = new DoubleTelemetryEntry("/drive/pigeon", true);
+  private String autoTraj = Reef.MidAlgae.value;
 
   private final Pigeon2 pigeon2 = this.getPigeon2();
   /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
@@ -123,6 +135,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public CommandSwerveDrivetrain(
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
     super(drivetrainConstants, modules);
+    RobotConfig config = null;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    AutoBuilder.configure(
+        this::getPose,
+        this::resetPose,
+        this::getSpeeds,
+        (ChassisSpeeds, FF) ->
+            this.setControl(chassisSpeeds.withSpeeds(ChassisSpeeds).withWheelForceFeedforwardsX(FF.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(FF.robotRelativeForcesY())),
+        new PPHolonomicDriveController(
+            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
+            Constants.AutoConstants.ROTATION_PID_GAINS),
+        config,
+        RaiderUtils::shouldFlip,
+        this);
+
     if (Utils.isSimulation()) {
       startSimThread();
     }
@@ -147,6 +180,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    RobotConfig config = null;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    AutoBuilder.configure(
+        this::getPose,
+        this::resetPose,
+        this::getSpeeds,
+        (ChassisSpeeds, FF) ->
+            this.setControl(chassisSpeeds.withSpeeds(ChassisSpeeds).withWheelForceFeedforwardsX(FF.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(FF.robotRelativeForcesY())),
+        new PPHolonomicDriveController(
+            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
+            Constants.AutoConstants.ROTATION_PID_GAINS),
+        config,
+        RaiderUtils::shouldFlip,
+        this);
   }
 
   /**
@@ -180,6 +233,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    RobotConfig config = null;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    AutoBuilder.configure(
+        this::getPose,
+        this::resetPose,
+        this::getSpeeds,
+        (ChassisSpeeds, FF) ->
+            this.setControl(chassisSpeeds.withSpeeds(ChassisSpeeds).withWheelForceFeedforwardsX(FF.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(FF.robotRelativeForcesY())),
+        new PPHolonomicDriveController(
+            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
+            Constants.AutoConstants.ROTATION_PID_GAINS),
+        config,
+        RaiderUtils::shouldFlip,
+        this);
   }
 
   /**
@@ -192,7 +265,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public ChassisSpeeds getSpeeds() {
-    return this.getKinematics().toChassisSpeeds();
+    return this.getState().Speeds;
   }
 
   /**
@@ -219,19 +292,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   @Override
   public void periodic() {
+    pigeonEntry.append(pigeon2.getYaw().getValueAsDouble());
     // TODO: if needed add in the rest of these values
     LimelightHelpers.SetRobotOrientation(
         Constants.VisionConstants.APRIL_LIMELIGHT,
-        pigeon2.getYaw().getValue().baseUnitMagnitude(),
+        getPose().getRotation().getDegrees(),
         0,
         0,
         0,
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight1");
-    if (mt2 != null) {
-      this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.VisionConstants.APRIL_LIMELIGHT);
+
+    if (mt2 != null && mt2.tagCount > 0) {
+      // this.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999));
+      this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
+      
     }
     /*
      * Periodically try to apply the operator perspective.
@@ -261,6 +338,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     this.resetPose();
   }
 
+  
+
   public Command autoDriveTrajectory(String position, AtomicBoolean shouldFlip) {
     PathConstraints constraints =
         new PathConstraints(
@@ -270,40 +349,39 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             Constants.AutoConstants.MAX_ANGULAR_ACCELERATION,
             Constants.AutoConstants.NOMINAL_VOLTAGE);
 
-    final PathPlannerPath path;
+    PathPlannerPath path;
     try {
       path = PathPlannerPath.fromPathFile(position);
       int pathSize = path.getPathPoses().size();
-      System.out.println(path.getAllPathPoints());
       PathPoint lastPosition = path.getPoint(pathSize - 1);
       PathPoint firstPosition = path.getPoint(0);
       boolean flipRotation =
           this.shouldFlip(
               new Pose2d(firstPosition.position, firstPosition.position.getAngle()), shouldFlip);
-      if (flipRotation) {
+      // if (flipRotation) {
 
-        path.getAllPathPoints()
-            .set(
-                pathSize - 1,
-                new PathPoint(
-                    lastPosition.position,
-                    new RotationTarget(
-                        lastPosition.position.getNorm(), lastPosition.position.getAngle())));
-        path.getAllPathPoints()
-            .set(
-                0,
-                new PathPoint(
-                    firstPosition.position,
-                    new RotationTarget(
-                        firstPosition.position.getNorm(), firstPosition.position.getAngle())));
-      }
+      //   path.getAllPathPoints()
+      //       .set(
+      //           pathSize - 1,
+      //           new PathPoint(
+      //               lastPosition.position,
+      //               new RotationTarget(
+      //                   lastPosition.position.getAngle().getRadians(), lastPosition.position.getAngle())));
+      //   path.getAllPathPoints()
+      //       .set(
+      //           0,
+      //           new PathPoint(
+      //               firstPosition.position,
+      //               new RotationTarget(
+      //                   firstPosition.position.getAngle().getRadians(), firstPosition.position.getAngle())));
+      // }
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (ParseException e) {
       throw new RuntimeException(e);
     }
 
-    return this.run(() -> AutoBuilder.pathfindThenFollowPath(path, constraints));
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
 
   private void startSimThread() {
@@ -331,4 +409,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     shouldFlip.set(flipped);
     return flipped;
   }
+  
 }

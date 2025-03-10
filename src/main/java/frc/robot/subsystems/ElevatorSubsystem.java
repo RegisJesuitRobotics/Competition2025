@@ -12,6 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,8 +53,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.MiscConstants.TUNING_MODE);
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
-  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
-  
+  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);  
   private final EventTelemetryEntry rightEventEntry =
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
@@ -74,6 +74,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     configMotors();
+    controller.setTolerance(Units.inchesToMeters(.4));
   }
 
   private void configMotors() {
@@ -166,6 +167,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command setVoltageCommand(double volts) {
     return this.run(() -> rightElevatorMotor.setVoltage(volts));
   }
+  public boolean atGoal(){
+    return controller.atGoal();
+  }
 
   public boolean atLimit() {
     return bottomSwitch.get();
@@ -200,7 +204,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command homeElevatorCommand() {
-    return setVoltageCommand(-0.75)
+    return setVoltageCommand(-0.02)
         .until(this::isHomed)
         .beforeStarting(
             () -> {

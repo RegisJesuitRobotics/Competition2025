@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
@@ -17,6 +18,8 @@ public class VisionSubsystem extends SubsystemBase {
 private final CommandSwerveDrivetrain drivetrain;
   private VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
+    LimelightHelpers.setCameraPose_RobotSpace(Constants.VisionConstants.APRIL_LIMELIGHT, Units.inchesToMeters(-10.5000), Units.inchesToMeters(-9.7500), .018, 0, 0, -60);
+    
   }
 
   public OptionalDouble getTargetVerticalOffset() {

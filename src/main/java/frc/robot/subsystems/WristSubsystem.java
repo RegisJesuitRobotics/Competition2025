@@ -11,6 +11,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -69,6 +70,7 @@ public class WristSubsystem extends SubsystemBase {
     setDefaultCommand(setVoltageCommand(0));
     wristEncoder.setDutyCycleRange(1.0 / 1025.0, 1024.0 / 1025.0);
     wristMotor.setPosition(0);
+
   }
 
   private void configMotor() {

@@ -4,9 +4,25 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
@@ -153,6 +169,30 @@ public final class Constants {
     public static final double CLIMBER_UP_VOLTAGE = 0.0; // m
     public static final double CLIMBER_DOWN_VOLTAGE = 0.0; // m
     public static final int LIMITER = 0; // m
+  }
+
+  public static class ChassisConstants{
+    public static final Distance WHEEL_RADIUS =  Distance.ofBaseUnits(0.048, Meters);
+    public static final LinearVelocity MAX_SPEED = LinearVelocity.ofBaseUnits(5.450, MetersPerSecond);
+    public static final Current MAX_CURRENT = Current.ofBaseUnits(60, Amps);
+    public static final RobotConfig PP_CONFIG = new RobotConfig(
+      Mass.ofBaseUnits(74, Kilogram),
+      MomentOfInertia.ofBaseUnits(6.883, KilogramSquareMeters),
+
+      new ModuleConfig(
+        WHEEL_RADIUS,
+        MAX_SPEED,
+         1.2,
+          DCMotor.getKrakenX60(1),
+          MAX_CURRENT ,
+           1),
+    new Translation2d(0.273,0.273),
+    new Translation2d(0.273,-0.273),
+    new Translation2d(-0.273,0.273),
+    new Translation2d(-0.273,-0.273)
+    
+      
+    );
   }
 
   public static class VisionConstants {

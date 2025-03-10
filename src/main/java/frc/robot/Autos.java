@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
@@ -14,7 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.ChassisConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
@@ -22,7 +23,6 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
 import frc.robot.subsystems.VisionSubsystem;
@@ -42,7 +42,10 @@ public class Autos {
       CoralSubsystem coralSubsystem,
       ElevatorSubsystem elevatorSubsystem,
       WristSubsystem wristSubsystem) {
-    RobotConfig config = null;
+    
+    RobotConfig config = Robot.isSimulation()? 
+      ChassisConstants.PP_CONFIG:
+      null;
     try {
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {

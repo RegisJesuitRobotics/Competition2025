@@ -24,13 +24,12 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    DataLogManager.start();
     Epilogue.bind(this);
   }
 
   @Override
   public void robotInit(){
-    DataLogManager.logNetworkTables(false);
+    DataLogManager.logNetworkTables(MiscConstants.TUNING_MODE);
     DataLogManager.start();
     DataLogManager.log("*****START*****");
 

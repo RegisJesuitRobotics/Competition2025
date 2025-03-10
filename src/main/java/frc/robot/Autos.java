@@ -42,30 +42,7 @@ public class Autos {
       CoralSubsystem coralSubsystem,
       ElevatorSubsystem elevatorSubsystem,
       WristSubsystem wristSubsystem) {
-    RobotConfig config = null;
-    try {
-      config = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      // Handle exception as needed
-      e.printStackTrace();
-    }
-
-    AutoBuilder.configure(
-        drivetrain::getPose,
-        drivetrain::resetPose,
-        drivetrain::getSpeeds,
-        (ChassisSpeeds, FF) ->
-            drivetrain.setControl(
-                new SwerveRequest.RobotCentric()
-                    .withVelocityX(ChassisSpeeds.vxMetersPerSecond)
-                    .withVelocityY(ChassisSpeeds.vyMetersPerSecond)),
-        new PPHolonomicDriveController(
-            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
-            Constants.AutoConstants.ROTATION_PID_GAINS),
-        config,
-        RaiderUtils::shouldFlip,
-        drivetrain);
-
+    
     //    NamedCommands.registerCommand("scoreL4");
 
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
@@ -80,18 +57,18 @@ public class Autos {
       // autoChooser.addOption("wrist df", wristSubsystem.sysIdDynamic(Direction.kForward));
       // autoChooser.addOption("wrist dr", wristSubsystem.sysIdDynamic(Direction.kReverse));
 
-      // autoChooser.addOption(
-      //     "intake rotation qf",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kForward));
-      // autoChooser.addOption(
-      //     "intake rotation qr",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kReverse));
-      // autoChooser.addOption(
-      //     "intake rotation df",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kForward));
-      // autoChooser.addOption(
-      //     "intake rotation dr",
-      //     intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kReverse));
+      autoChooser.addOption(
+          "intake rotation qf",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kForward));
+      autoChooser.addOption(
+          "intake rotation qr",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kReverse));
+      autoChooser.addOption(
+          "intake rotation df",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kForward));
+      autoChooser.addOption(
+          "intake rotation dr",
+          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kReverse));
 
       // autoChooser.addOption(
       //     "intakeSpinning qf", intakeSpinningSubsystem.sysIDQuasistatic(Direction.kForward));
@@ -122,10 +99,10 @@ public class Autos {
       // autoChooser.addOption("drive df", drivetrain.sysIdDynamic(Direction.kForward));
       // autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
       autoChooser.addOption("wrist", wristSubsystem.setPositionCommand(Units.degreesToRadians(240)));
-      autoChooser.addOption("elevator", elevatorSubsystem.setPosition(Units.inchesToMeters(45)));
-      autoChooser.addOption("slapdown", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(10))));
-
+      autoChooser.addOption("elevator", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
+      autoChooser.addOption("slapdown", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(Constants.IntakeConstants.ROTATION_DOWN_ANGLE))));
       autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
+      autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE));
     }
   }
 

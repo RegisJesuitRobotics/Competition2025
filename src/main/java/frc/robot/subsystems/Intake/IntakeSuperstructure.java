@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Intake;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,10 +27,11 @@ public class IntakeSuperstructure extends SubsystemBase {
   }
 
   public Command setDownAndRunCommand() {
-    return Commands.parallel(
-            intakeSpinningSubsystem.setVoltageCommand(IntakeConstants.SPINNING_VOLTAGE),
-            intakeRotationSubsystem.setRotationGoalCommand(
-                Rotation2d.fromRadians(IntakeConstants.ROTATION_DOWN_ANGLE)))
+    return Commands.sequence(
+      intakeRotationSubsystem.setRotationGoalCommand(
+                Rotation2d.fromRadians(Units.degreesToRadians(IntakeConstants.ROTATION_DOWN_ANGLE))).until(intakeRotationSubsystem::atGoal),
+            intakeSpinningSubsystem.setVoltageCommand(IntakeConstants.SPINNING_VOLTAGE))
+            
         .withName("IntakeSetDownAndRun");
   }
 

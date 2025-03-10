@@ -6,6 +6,8 @@ package frc.robot.subsystems.Intake;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.lang.ModuleLayer.Controller;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -72,10 +74,14 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   private final DigitalInput rotationLimitSwitch =
       new DigitalInput(IntakeConstants.ROTATION_LIMIT_SWITCH_ID);
   private final BooleanTelemetryEntry rotationSwitchEntry = new BooleanTelemetryEntry("/intake/switch", true);
+  private final DoubleTelemetryEntry rotationGoal = new DoubleTelemetryEntry("/intake/goal", true);
+  private final DoubleTelemetryEntry voltageGoal = new DoubleTelemetryEntry("/intake/goalVolt", true);
+  private final BooleanTelemetryEntry atGoal = new BooleanTelemetryEntry("intake/atGoal", true);
 
   public IntakeRotationSubsystem() {
     configMotor();
     setDefaultCommand(setVoltageCommand(0.0).withName("IntakeRotationDefault"));
+    rotationPid.setTolerance(Units.degreesToRadians(10));
   }
 
   private void configMotor() {
@@ -137,6 +143,10 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     return isHomed;
   }
 
+  public boolean atGoal(){
+    return rotationPid.atGoal();
+  }
+
   public Command setRotationGoalCommand(Rotation2d goal) {
     return this.run(
             () -> {
@@ -189,5 +199,8 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     }
     rotationSwitchEntry.append(atLimit());
     position.append(getPosition());
+    rotationGoal.append(rotationPid.getSetpoint().position);
+    voltageGoal.append(intakeRotationMotor.getMotorVoltage().getValueAsDouble());
+    atGoal.append(rotationPid.atGoal());
   }
 }

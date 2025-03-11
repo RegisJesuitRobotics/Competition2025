@@ -223,6 +223,7 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(5);
     public static final double NOMINAL_VOLTAGE = 12.0;
     public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(.2, 0, 0.5);
+    public static final double RATE_LIMIT = 10.0;
   }
 
   public static class WristConstants {

@@ -71,6 +71,7 @@ public class RobotContainer {
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
   private final Autos autos =
       new Autos(
           intakeSpinningSubsystem,
@@ -80,7 +81,9 @@ public class RobotContainer {
           drivetrain,
           coralSubsystem,
           elevatorSubsystem,
-          wristSubsystem);
+          wristSubsystem,
+              scoringFlipped,
+             visionSubsystem );
 
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandXboxPlaystationController operator = new CommandXboxPlaystationController(1);
@@ -152,70 +155,70 @@ public class RobotContainer {
         .Button1()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "MID-UP-REEF-LEFT_CORAL" :"MID-UP-REEF-ALGAE", scoringFlipped));
+                onCoral.get() ? "Blue-1A" :"Blue-12L1A-Algae", scoringFlipped));
     buttonBoard
         .Button2()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "MID-UP-REEF-RIGHT_CORAL" : "MID-UP-REEF-ALGAE",
+                onCoral.get() ? "Blue-2B" : "Blue-2B3C-Algae",
                 scoringFlipped));
     buttonBoard
         .Button3()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "MID-REEF-LEFT_CORAL" : "MID-REEF-ALGAE", scoringFlipped));
+                onCoral.get() ? "Blue-3C" : "Blue-2B3C-Algae", scoringFlipped));
     buttonBoard
         .Button4()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "MID-REEF-RIGHT_CORAL" : "MID-REEF-ALGAE", scoringFlipped));
+                onCoral.get() ? "Blue-4D" : "Blue-4D5E-Algae", scoringFlipped));
     buttonBoard
         .Button5()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "MID-DOWN-REEF-LEFT_CORAL" : "MID-DOWN-REEF-ALGAE",
+                onCoral.get() ? "Blue-5E" : "Blue-4D5E-Algae",
                 scoringFlipped));
     buttonBoard
         .Button6()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "MID-DOWN-REEF-RIGHT_CORAL" : "MID-DOWN-REEF-ALGAE",
+                onCoral.get() ? "Blue-6F" : "Blue-6F7G-Algae",
                 scoringFlipped));
     buttonBoard
         .Button7()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "STATION-DOWN-REEF-RIGHT_CORAL" : "STATION-DOWN-REEF-ALGAE",
+                onCoral.get() ? "Blue-7G" : "Blue-6F7G-Algae",
                 scoringFlipped));
     buttonBoard
         .Button8()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "STATION-DOWN-REEF-LEFT_CORAL" : "STATION-DOWN-REEF-ALGAE",
+                onCoral.get() ? "Blue-8H" : "Blue-8H9I-Algae",
                 scoringFlipped));
     buttonBoard
         .Button9()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "STATION-REEF-RIGHT_CORAL" : "STATION-REEF-ALGAE",
+                onCoral.get() ? "Blue-9I" : "Blue-8H9I-Algae",
                 scoringFlipped));
     buttonBoard
         .Button10()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "STATION-REEF-LEFT_CORAL" : "STATION-REEF-ALGAE",
+                onCoral.get() ? "Blue-10J" : "Blue-10J11K-Algae",
                 scoringFlipped));
     buttonBoard
         .Button11()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "STATION-UP-REEF-RIGHT_CORAL" : "STATION-UP-REEF-ALGAE",
+                onCoral.get() ? "Blue-11K" : "Blue-10J11K-Algae",
                 scoringFlipped));
     buttonBoard
         .Button12()
         .whileTrue(
             drivetrain.autoDriveTrajectory(
-                onCoral.get() ? "STATION-UP-REEF-LEFT_CORAL" : "STATION-UP-REEF-ALGAE",
+                onCoral.get() ? "Blue-12L" : "Blue-12L1A-Algae",
                 scoringFlipped));
   }
 
@@ -223,7 +226,7 @@ public class RobotContainer {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
+
         drivetrain.applyRequest(
             () ->
             {

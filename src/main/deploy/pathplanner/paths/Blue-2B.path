@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8768914473684206,
-        "y": 4.010383752893518
+        "x": 5.695265151515152,
+        "y": 2.463787878787879
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1268914473684206,
-        "y": 4.010383752893518
+        "x": 5.5695875828584995,
+        "y": 2.6799016190649665
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.184786184210526,
-        "y": 4.010383752893518
+        "x": 5.311184210526315,
+        "y": 3.0243421052631576
       },
       "prevControl": {
-        "x": 2.934786184210526,
-        "y": 4.010383752893518
+        "x": 5.432594943320974,
+        "y": 2.8058027862327735
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BLUE-STATION-REEF"
+      "linkedName": "2B"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 29.999999999999996
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": true
 }

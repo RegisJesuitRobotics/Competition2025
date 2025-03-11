@@ -227,10 +227,12 @@ public class ElevatorSubsystem extends SubsystemBase {
               isHoming = true;
               isHomed = false;
             })
-        .finallyDo(() -> {
-          isHoming = false;
-          isHomed = true;
-          leftElevatorMotor.setPosition(0);
+        .finallyDo((interupt) -> {
+          if(!interupt){
+            isHoming = false;
+            isHomed = true;
+            leftElevatorMotor.setPosition(0);
+          }
         })
         .withName("HomeElevator");
   }
@@ -247,7 +249,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
    
     isHomedTelemetry.append(isHomed);
-    isHomingTelemetry.append(isHomed);
+    isHomingTelemetry.append(isHoming);
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());

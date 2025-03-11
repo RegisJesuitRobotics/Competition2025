@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
@@ -53,7 +54,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.MiscConstants.TUNING_MODE);
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
-  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);  
+  private final DigitalInput limitSwitch = new DigitalInput(Constants.ElevatorConstants.LIMIT_SWITCH_ID);  
   private final EventTelemetryEntry rightEventEntry =
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
@@ -69,12 +70,24 @@ public class ElevatorSubsystem extends SubsystemBase {
       new DoubleTelemetryEntry("/elevator/position", true);
   private final DoubleTelemetryEntry elevatorGoal = new DoubleTelemetryEntry("/elevator/goalPos", true);
   private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top", true);
+
   private boolean isHomed = false;
   private boolean isHoming = false;
+
+  private final BooleanTelemetryEntry isHomedTelemetry = new BooleanTelemetryEntry("/elevator/isHomed", true);
+  private final BooleanTelemetryEntry isHomingTelemetry = new BooleanTelemetryEntry("/elevator/isHoming", true);
 
   public ElevatorSubsystem() {
     configMotors();
     controller.setTolerance(Units.inchesToMeters(.4));
+
+
+    setDefaultCommand(
+      homeElevatorCommand()
+      .onlyWhile(()->!isHomed).alongWith(
+        setPosition(()->ElevatorConstants.HANDOFF)
+      )
+    );
   }
 
   private void configMotors() {
@@ -153,6 +166,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.RIGHT_ID, true));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
+
+
+    
   }
 
   public double getElevatorPosition() {
@@ -172,7 +188,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atLimit() {
-    return bottomSwitch.get();
+    return limitSwitch.get();
   }
 
   public boolean isHomed() {
@@ -205,13 +221,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command homeElevatorCommand() {
     return setVoltageCommand(-0.02)
-        .until(this::isHomed)
+        .until(()->debouncer.calculate(atLimit()))
         .beforeStarting(
             () -> {
               isHoming = true;
               isHomed = false;
             })
-        .finallyDo(() -> isHoming = false)
+        .finallyDo(() -> {
+          isHoming = false;
+          isHomed = true;
+          leftElevatorMotor.setPosition(0);
+        })
         .withName("HomeElevator");
   }
 
@@ -225,10 +245,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if ((atLimit() && isHoming) || debouncer.calculate(atLimit())) {
-      isHomed = true;
-      leftElevatorMotor.setPosition(0.0);
-    }
+   
+    isHomedTelemetry.append(isHomed);
+    isHomingTelemetry.append(isHomed);
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());

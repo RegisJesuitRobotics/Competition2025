@@ -27,7 +27,7 @@ public final class Constants {
   public static class ElevatorConstants {
     public static final int LEFT_ID = 9;
     public static final int RIGHT_ID = 10;
-    public static final int BOTTOM_ID = 2;
+    public static final int LIMIT_SWITCH_ID = 2;
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
     public static final InvertedValue INVERTED_RIGHT = InvertedValue.CounterClockwise_Positive;
     public static final double GEAR_RATIO = 9;

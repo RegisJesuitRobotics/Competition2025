@@ -84,7 +84,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     setDefaultCommand(
       homeElevatorCommand()
-      .onlyWhile(()->!isHomed).alongWith(
+      .onlyWhile(()->!isHomed)
+      .andThen(
         setPosition(()->ElevatorConstants.HANDOFF)
       )
     );

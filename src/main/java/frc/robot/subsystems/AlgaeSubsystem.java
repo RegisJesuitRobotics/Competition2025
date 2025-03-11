@@ -44,7 +44,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   private SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
   private final DigitalInput intakeSwitchRight =
       new DigitalInput(Constants.AlgaeConstants.SWITCH_ID_RIGHT);
-  public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);
+  public Alert algaeMotorAlert = new Alert("Algae motor had a fault", AlertType.ERROR);
   SlewRateLimiter limiter =
       new SlewRateLimiter(Constants.AlgaeConstants.RATE_LIMIT); // deal with later
   private RelativeEncoder algaeEncoder;

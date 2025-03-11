@@ -27,6 +27,7 @@ import frc.robot.utils.RaiderMathUtils;
 import frc.robot.utils.RaiderUtils;
 import frc.robot.utils.Reef;
 import frc.robot.utils.VectorRateLimiter;
+import frc.robot.utils.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -92,6 +93,7 @@ public class RobotContainer {
     configureBoard();
 
     SmartDashboard.putData("Auto", autos.getAutoChooser());
+    SmartDashboard.putData("Alerts", Alert.getDefaultGroup());
   }
 
   private void configureOperatorBindings() {
@@ -99,22 +101,22 @@ public class RobotContainer {
         .povDown()
         .onTrue(
             ElevatorWristCommands.elevatorWristL2(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+                elevatorSubsystem, wristSubsystem, scoringFlipped).andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(() -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState())));
     operator
         .povRight()
         .onTrue(
             ElevatorWristCommands.elevatorWristL3(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+                elevatorSubsystem, wristSubsystem, scoringFlipped).andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(() -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState())));
     operator
         .povUp()
         .onTrue(
             ElevatorWristCommands.elevatorWristL4(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+                elevatorSubsystem, wristSubsystem, scoringFlipped).andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(() -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState())));
     operator
         .povLeft()
         .onTrue(
             ElevatorWristCommands.elevatorWristL1(
-                elevatorSubsystem, wristSubsystem, scoringFlipped));
+                elevatorSubsystem, wristSubsystem, scoringFlipped).andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(() -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState())));
     operator
         .x()
         .onTrue(

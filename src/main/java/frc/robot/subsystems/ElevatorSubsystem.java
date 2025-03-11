@@ -69,6 +69,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       new DoubleTelemetryEntry("/elevator/position", true);
   private final DoubleTelemetryEntry elevatorGoal = new DoubleTelemetryEntry("/elevator/goalPos", true);
   private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top", true);
+  private final BooleanTelemetryEntry homed = new BooleanTelemetryEntry("/elevator/homed", true);
   private boolean isHomed = false;
   private boolean isHoming = false;
 
@@ -234,5 +235,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
     topSwitch.append(atLimit());
+    homed.append(isHomed());
   }
 }

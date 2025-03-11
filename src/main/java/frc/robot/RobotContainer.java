@@ -70,6 +70,7 @@ public class RobotContainer {
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
   private final Autos autos =
       new Autos(
           intakeSpinningSubsystem,
@@ -79,7 +80,9 @@ public class RobotContainer {
           drivetrain,
           coralSubsystem,
           elevatorSubsystem,
-          wristSubsystem);
+          wristSubsystem,
+              scoringFlipped,
+             visionSubsystem );
 
   private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
   private final CommandXboxPlaystationController operator = new CommandXboxPlaystationController(1);
@@ -221,7 +224,7 @@ public class RobotContainer {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
+
         drivetrain.applyRequest(
             () ->
             {

@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.MiscConstants;
+import frc.robot.commands.ElevatorWristCommands;
 import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -29,22 +31,28 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.utils.RaiderUtils;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Autos {
   /** Example static factory for an autonomous command. */
   private final SendableChooser<Command> autoChooser;
 
   public Autos(
-      IntakeSpinningSubsystem intakeSpinningSubsystem,
-      IntakeSuperstructure intakeSuperstructure,
-      AlgaeSubsystem algaeSubsystem,
-      ClimberSubsystem climberSubsystem,
-      CommandSwerveDrivetrain drivetrain,
-      CoralSubsystem coralSubsystem,
-      ElevatorSubsystem elevatorSubsystem,
-      WristSubsystem wristSubsystem) {
+          IntakeSpinningSubsystem intakeSpinningSubsystem,
+          IntakeSuperstructure intakeSuperstructure,
+          AlgaeSubsystem algaeSubsystem,
+          ClimberSubsystem climberSubsystem,
+          CommandSwerveDrivetrain drivetrain,
+          CoralSubsystem coralSubsystem,
+          ElevatorSubsystem elevatorSubsystem,
+          WristSubsystem wristSubsystem,
+          AtomicBoolean flipped,
+          VisionSubsystem visionSubsystem) {
     
-    //    NamedCommands.registerCommand("scoreL4");
-
+        NamedCommands.registerCommand("L4_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(()  -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState()).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
+        NamedCommands.registerCommand("coralSearch_Drive", detectAndMoveTarget(visionSubsystem, drivetrain));
+        NamedCommands.registerCommand("AlgaePickup", Commands.sequence(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE).until(algaeSubsystem::getSwitchState)));
+        NamedCommands.registerCommand("AlgaeNet", Commands.sequence(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE).until(() -> !algaeSubsystem.getSwitchState())));
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
     if (MiscConstants.TUNING_MODE) {
       // autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));

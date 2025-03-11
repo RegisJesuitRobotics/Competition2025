@@ -5,13 +5,11 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorWristCommands;
 import frc.robot.commands.MiscCommands;
@@ -24,8 +22,6 @@ import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
 import frc.robot.utils.RaiderMathUtils;
-import frc.robot.utils.RaiderUtils;
-import frc.robot.utils.Reef;
 import frc.robot.utils.VectorRateLimiter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -298,6 +294,10 @@ public class RobotContainer {
         .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    joystick
+        .b()
+        .onTrue(elevatorSubsystem.homeElevatorCommand());
   }
 
   public Command getAutonomousCommand() {

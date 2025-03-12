@@ -211,18 +211,18 @@ public final class Constants {
 
     public static final TunablePIDGains pointTranslationGains =
         new TunablePIDGains(
-            "/drive/gains/pointTranslationController", 0.1, 0, 0, MiscConstants.TUNING_MODE);
+            "/drive/gains/pointTranslationController", 10, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
         new TunableTrapezoidalProfileGains(
             "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains pointTranslationFFGains =
         new TunableFFGains("/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
-    public static final double MAX_VELOCITY = 5.45;
-    public static final double MAX_ACCELERATION = 3.6;
-    public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(10);
-    public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(5);
+    public static final double MAX_VELOCITY = 1.0;
+    public static final double MAX_ACCELERATION = .5;
+    public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(100);
+    public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(80);
     public static final double NOMINAL_VOLTAGE = 12.0;
-    public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(.2, 0, 0.5);
+    public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(.01, 0, 0);
     public static final double RATE_LIMIT = 10.0;
   }
 

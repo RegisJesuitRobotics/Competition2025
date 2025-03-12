@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -64,8 +65,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
-      private final SwerveRequest.ApplyRobotSpeeds chassisSpeeds = new SwerveRequest.ApplyRobotSpeeds();
-
+    private final SwerveRequest.FieldCentric swerveRequest = new SwerveRequest.FieldCentric();
+    
 
   private final DoubleTelemetryEntry pigeonEntry = new DoubleTelemetryEntry("/drive/pigeon", true);
   private String autoTraj = Reef.MidAlgae.value;
@@ -148,7 +149,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this::resetPose,
         this::getSpeeds,
         (ChassisSpeeds, FF) ->
-            this.setControl(chassisSpeeds.withSpeeds(ChassisSpeeds).withWheelForceFeedforwardsX(FF.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(FF.robotRelativeForcesY())),
+            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
         new PPHolonomicDriveController(
             Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
             Constants.AutoConstants.ROTATION_PID_GAINS),
@@ -157,6 +158,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this);
 
     if (Utils.isSimulation()) {
+      
       startSimThread();
     }
   }
@@ -193,7 +195,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this::resetPose,
         this::getSpeeds,
         (ChassisSpeeds, FF) ->
-            this.setControl(chassisSpeeds.withSpeeds(ChassisSpeeds).withWheelForceFeedforwardsX(FF.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(FF.robotRelativeForcesY())),
+            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
         new PPHolonomicDriveController(
             Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
             Constants.AutoConstants.ROTATION_PID_GAINS),
@@ -246,7 +248,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this::resetPose,
         this::getSpeeds,
         (ChassisSpeeds, FF) ->
-            this.setControl(chassisSpeeds.withSpeeds(ChassisSpeeds).withWheelForceFeedforwardsX(FF.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(FF.robotRelativeForcesY())),
+            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
         new PPHolonomicDriveController(
             Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
             Constants.AutoConstants.ROTATION_PID_GAINS),
@@ -254,6 +256,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RaiderUtils::shouldFlip,
         this);
   }
+
+ 
+  
 
   /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
@@ -279,6 +284,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return m_sysIdRoutineToApply.quasistatic(direction);
   }
 
+  public Command nothing(){
+return Commands.none();
+  }
+
   /**
    * Runs the SysId Dynamic test in the given direction for the routine specified by {@link
    * #m_sysIdRoutineToApply}.
@@ -296,17 +305,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // TODO: if needed add in the rest of these values
     LimelightHelpers.SetRobotOrientation(
         Constants.VisionConstants.APRIL_LIMELIGHT,
-        getPose().getRotation().getDegrees(),
+        this.getState().Pose.getRotation().getDegrees(),
         0,
         0,
         0,
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.VisionConstants.APRIL_LIMELIGHT);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
 
     if (mt2 != null && mt2.tagCount > 0) {
-      // this.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999));
+      this.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999));
       this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
       
     }
@@ -334,9 +343,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return this.getState().Pose;
   }
 
-  public void resetPose() {
-    this.resetPose();
-  }
+
 
   
 
@@ -352,29 +359,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     PathPlannerPath path;
     try {
       path = PathPlannerPath.fromPathFile(position);
-      int pathSize = path.getPathPoses().size();
-      PathPoint lastPosition = path.getPoint(pathSize - 1);
-      PathPoint firstPosition = path.getPoint(0);
-      boolean flipRotation =
-          this.shouldFlip(
-              new Pose2d(firstPosition.position, firstPosition.position.getAngle()), shouldFlip);
-      // if (flipRotation) {
-
-      //   path.getAllPathPoints()
-      //       .set(
-      //           pathSize - 1,
-      //           new PathPoint(
-      //               lastPosition.position,
-      //               new RotationTarget(
-      //                   lastPosition.position.getAngle().getRadians(), lastPosition.position.getAngle())));
-      //   path.getAllPathPoints()
-      //       .set(
-      //           0,
-      //           new PathPoint(
-      //               firstPosition.position,
-      //               new RotationTarget(
-      //                   firstPosition.position.getAngle().getRadians(), firstPosition.position.getAngle())));
-      // }
+     
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (ParseException e) {

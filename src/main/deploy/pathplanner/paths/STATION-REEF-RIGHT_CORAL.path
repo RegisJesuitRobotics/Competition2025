@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.780674342105263,
+        "y": 3.678618421052631
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.030674342105263,
+        "y": 3.678618421052631
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.2040296052631576,
+        "y": 3.678618421052631
+      },
+      "prevControl": {
+        "x": 2.9541595766782325,
+        "y": 3.6866787445553704
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BLUE-STATION-RIGHT_CORAL"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 0.5,
+    "maxAngularVelocity": 100.0,
+    "maxAngularAcceleration": 80.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

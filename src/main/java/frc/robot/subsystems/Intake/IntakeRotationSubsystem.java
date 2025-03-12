@@ -77,6 +77,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
   private final DoubleTelemetryEntry rotationGoal = new DoubleTelemetryEntry("/intake/goal", true);
   private final DoubleTelemetryEntry voltageGoal = new DoubleTelemetryEntry("/intake/goalVolt", true);
   private final BooleanTelemetryEntry atGoal = new BooleanTelemetryEntry("intake/atGoal", true);
+  private final  BooleanTelemetryEntry homed = new BooleanTelemetryEntry("/intake/Homed", true);
 
   public IntakeRotationSubsystem() {
     configMotor();
@@ -202,5 +203,6 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     rotationGoal.append(rotationPid.getSetpoint().position);
     voltageGoal.append(intakeRotationMotor.getMotorVoltage().getValueAsDouble());
     atGoal.append(rotationPid.atGoal());
+    homed.append(isHomed);
   }
 }

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,10 +24,6 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
 import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
 import frc.robot.subsystems.Intake.IntakeSuperstructure;
-import frc.robot.utils.RaiderMathUtils;
-import frc.robot.utils.RaiderUtils;
-import frc.robot.utils.Reef;
-import frc.robot.utils.VectorRateLimiter;
 import frc.robot.utils.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -97,6 +94,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("Auto", autos.getAutoChooser());
     SmartDashboard.putData("Alerts", Alert.getDefaultGroup());
+    SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
   }
 
   private void configureOperatorBindings() {
@@ -296,7 +294,7 @@ public class RobotContainer {
                 Commands.parallel(
                     intakeSpinningSubsystem.setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE),
                     ElevatorWristCommands.elevatorWristGroundIntake(
-                        elevatorSubsystem, wristSubsystem))));
+                        elevatorSubsystem, wristSubsystem)).until(coralSubsystem::getLeftSwitchState)));
 
     joystick
         .a()

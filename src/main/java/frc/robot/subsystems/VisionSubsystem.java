@@ -18,7 +18,6 @@ public class VisionSubsystem extends SubsystemBase {
 private final CommandSwerveDrivetrain drivetrain;
   public VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
-    LimelightHelpers.setCameraPose_RobotSpace(Constants.VisionConstants.APRIL_LIMELIGHT, Units.inchesToMeters(-10.5000), Units.inchesToMeters(-9.7500), .018, 0, 0, -60);
     
   }
 

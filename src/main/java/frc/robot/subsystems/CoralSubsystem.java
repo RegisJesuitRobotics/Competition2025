@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -149,6 +150,10 @@ public class CoralSubsystem extends SubsystemBase {
 
   public Command sysIDDynamic(SysIdRoutine.Direction direction) {
     return coralSysId.dynamic(direction).beforeStarting(SignalLogger::start);
+  }
+
+  public Command addInstrumentCommand(Orchestra orchestra){
+    return this.run(() -> orchestra.addInstrument(coralMotor));
   }
 
   @Override

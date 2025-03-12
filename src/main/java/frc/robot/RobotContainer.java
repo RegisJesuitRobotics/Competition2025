@@ -2,6 +2,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -9,6 +11,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -86,17 +89,45 @@ public class RobotContainer {
   private final CommandXboxPlaystationController operator = new CommandXboxPlaystationController(1);
   private final CommandButtonBoard buttonBoard =
       new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
+ final Orchestra orchestra = new Orchestra();
+ SendableChooser<Command> musicChooser;
+ SendableChooser<Command> playMusic;
 
   public RobotContainer() {
     configureBindings();
     configureOperatorBindings();
     configureBoard();
+//     intakeRotationSubsystem.addInstrumentCommand(orchestra);
+//     coralSubsystem.addInstrumentCommand(orchestra);
+//     elevatorSubsystem.addInstrumentCommand(orchestra);
+//     wristSubsystem.addInstrumentCommand(orchestra);
+//    for (int i =0; i<4; i++){
+//     TalonFX driveMotor = drivetrain.getModule(i).getDriveMotor();
+//     TalonFX steerMotor = drivetrain.getModule(i).getSteerMotor();
+//     orchestra.addInstrument(steerMotor);
+//     orchestra.addInstrument(driveMotor);
+//    }
+
+//    musicChooser.addOption("NationalAnthem", Commands.run(()-> orchestra.loadMusic("NationAnthem.chrp")));
+//    musicChooser.addOption("RockafellerSkank", Commands.run(()-> orchestra.loadMusic("RockafellerSkank.chrp")));
+//    musicChooser.addOption("JigsawsFallingIntoPlace", Commands.run(()-> orchestra.loadMusic("JigsawsFallingIntoPlace.chrp")));
+//    musicChooser.addOption("Sandstorm", Commands.run(()-> orchestra.loadMusic("Sandstorm.chrp")));
+//    playMusic.addOption("on", Commands.run(()-> orchestra.play()));
+//    playMusic.addOption("off", Commands.run(()-> orchestra.stop()));
+
 
     SmartDashboard.putData("Auto", autos.getAutoChooser());
     SmartDashboard.putData("Alerts", Alert.getDefaultGroup());
     SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
+    // SmartDashboard.putData("MusicChooser", getMusiChooser());
+    // SmartDashboard.putData("MusicOn/Off",  getMusicOn());
   }
-
+public SendableChooser<Command> getMusiChooser(){
+    return musicChooser;
+}
+public SendableChooser<Command> getMusicOn(){
+    return playMusic;
+}
   private void configureOperatorBindings() {
     operator
         .povDown()

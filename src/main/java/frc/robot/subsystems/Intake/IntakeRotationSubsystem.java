@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.lang.ModuleLayer.Controller;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -190,6 +191,10 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return intakeRotationSysId.dynamic(direction).beforeStarting(SignalLogger::start);
+  }
+
+  public Command addInstrumentCommand(Orchestra orchestra){
+    return this.run(() -> orchestra.addInstrument(intakeRotationMotor));
   }
 
   @Override

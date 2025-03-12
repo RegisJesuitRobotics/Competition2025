@@ -65,7 +65,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
-    private final SwerveRequest.FieldCentric swerveRequest = new SwerveRequest.FieldCentric();
+    private final SwerveRequest.RobotCentric swerveRequest = new SwerveRequest.RobotCentric();
     
 
   private final DoubleTelemetryEntry pigeonEntry = new DoubleTelemetryEntry("/drive/pigeon", true);
@@ -164,6 +164,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   /**
+   * 
+   * 
+   * 
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
    * <p>This constructs the underlying hardware devices, so users should not construct the devices
@@ -312,7 +315,7 @@ return Commands.none();
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.VisionConstants.APRIL_LIMELIGHT);
 
     if (mt2 != null && mt2.tagCount > 0) {
       this.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999));

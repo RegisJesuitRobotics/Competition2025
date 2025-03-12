@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -222,6 +223,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return elevatorSysId.dynamic(direction).beforeStarting(SignalLogger::start);
+  }
+  public Command addInstrumentCommand(Orchestra orchestra){
+    return this.run(() -> orchestra.addInstrument(rightElevatorMotor))
+    .alongWith(this.run(()-> orchestra.addInstrument(leftElevatorMotor)));
   }
 
   @Override

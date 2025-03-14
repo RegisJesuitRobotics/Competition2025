@@ -211,7 +211,7 @@ public final class Constants {
 
     public static final TunablePIDGains pointTranslationGains =
         new TunablePIDGains(
-            "/drive/gains/pointTranslationController", 10, 0, 0, MiscConstants.TUNING_MODE);
+            "/drive/gains/pointTranslationController", 1, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
         new TunableTrapezoidalProfileGains(
             "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);

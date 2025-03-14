@@ -259,7 +259,7 @@ public SendableChooser<Command> getMusicOn(){
         drivetrain.applyRequest(
             () ->
             {
-                Translation2d translation = vectorRateLimiter.calculate(new Translation2d(RaiderMathUtils.deadZoneAndCubeJoystick(-joystick.getLeftY()) * MaxSpeed, -RaiderMathUtils.deadZoneAndCubeJoystick(joystick.getLeftX()) * MaxSpeed));
+                Translation2d translation = vectorRateLimiter.calculate(new Translation2d(RaiderMathUtils.deadZoneAndCubeJoystick(-joystick.getLeftY()) * MaxSpeed, RaiderMathUtils.deadZoneAndCubeJoystick(-joystick.getLeftX()) * MaxSpeed));
                 return drive
                     .withVelocityX(
                         translation.getX()) // Drive forward with negative Y (forward)

@@ -84,7 +84,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     setDefaultCommand(
       homeElevatorCommand()
-      .onlyWhile(()->!isHomed)
+      .onlyIf(()->!isHomed)
       .andThen(
         setPosition(()->ElevatorConstants.HANDOFF)
       )
@@ -229,11 +229,11 @@ public class ElevatorSubsystem extends SubsystemBase {
               isHomed = false;
             })
         .finallyDo((interupt) -> {
-          if(!interupt){
-            isHoming = false;
-            isHomed = true;
-            leftElevatorMotor.setPosition(0);
-          }
+          if(!interupt){  
+            isHomed = true;  
+            leftElevatorMotor.setPosition(0);  
+          }  
+          isHoming = false; 
         })
         .withName("HomeElevator");
   }

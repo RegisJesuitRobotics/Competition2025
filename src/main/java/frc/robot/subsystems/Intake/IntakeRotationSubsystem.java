@@ -84,6 +84,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     configMotor();
     setDefaultCommand(setVoltageCommand(0.0).withName("IntakeRotationDefault"));
     rotationPid.setTolerance(Units.degreesToRadians(10));
+    intakeRotationMotor.setPosition(0);
   }
 
   private void configMotor() {
@@ -147,6 +148,8 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   public boolean atGoal(){
     return rotationPid.atGoal();
+
+
   }
 
   public Command setRotationGoalCommand(Rotation2d goal) {
@@ -205,7 +208,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     }
     rotationSwitchEntry.append(atLimit());
     position.append(getPosition());
-    rotationGoal.append(rotationPid.getSetpoint().position);
+    rotationGoal.append(rotationPid.getGoal().position);
     voltageGoal.append(intakeRotationMotor.getMotorVoltage().getValueAsDouble());
     atGoal.append(rotationPid.atGoal());
     homed.append(isHomed);

@@ -73,13 +73,13 @@ public final class Constants {
     public static final int ROTATION_MOTOR_ID = 15;
     public static final int ROTATION_LIMIT_SWITCH_ID = 1;
     public static final TunablePIDGains ROTATION_PID_GAINS =
-        new TunablePIDGains("/intake/rotation/PID", 10, 0, 0, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/intake/rotation/PID", .00001, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
         new TunableTrapezoidalProfileGains(
-            "/intake/rotation/trap gains", 8, 1, MiscConstants.TUNING_MODE);
+            "/intake/rotation/trap gains", 5, 3, MiscConstants.TUNING_MODE);
     public static final TunableArmElevatorFFGains ROTATION_FF_GAINS =
         new TunableArmElevatorFFGains(
-            "/intake/rotation/ff/", 0.32465, 0.84019, 0.025175, 0.074426, MiscConstants.TUNING_MODE);
+            "/intake/rotation/ff/", 0.52525, 0.1693, 0.00080483, 0.0020163, MiscConstants.TUNING_MODE);
 
     public static final double GEAR_RATIO_ROTATION = 3.0 * 4.0 * (60.0 / 30.0);
     public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
@@ -132,7 +132,7 @@ public final class Constants {
         new TunablePIDGains("algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
-    public static final double RUNNING_VOLTAGE = 10.0;
+    public static final double RUNNING_VOLTAGE = 12.0;
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
     public static final int SWITCH_ID_RIGHT = 9;
@@ -211,18 +211,18 @@ public final class Constants {
 
     public static final TunablePIDGains pointTranslationGains =
         new TunablePIDGains(
-            "/drive/gains/pointTranslationController", 1, 0, 0, MiscConstants.TUNING_MODE);
+            "/drive/gains/pointTranslationController", 16, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
         new TunableTrapezoidalProfileGains(
             "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains pointTranslationFFGains =
         new TunableFFGains("/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
-    public static final double MAX_VELOCITY = 1.0;
-    public static final double MAX_ACCELERATION = .5;
+    public static final double MAX_VELOCITY = 3.0;
+    public static final double MAX_ACCELERATION = 1;
     public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(100);
     public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(80);
     public static final double NOMINAL_VOLTAGE = 12.0;
-    public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(.01, 0, 0);
+    public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(5, 0, 0);
     public static final double RATE_LIMIT = 10.0;
   }
 

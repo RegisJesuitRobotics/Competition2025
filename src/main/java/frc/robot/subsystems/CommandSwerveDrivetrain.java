@@ -318,11 +318,12 @@ return Commands.none();
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
 
     if (mt2 != null && mt2.tagCount > 0) {
-      this.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 3));
+      this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 99999999));
       this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
+
       
     }
-    /*
+    /*[]\
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
      * This allows us to correct the perspective in case the robot code restarts mid-match.

@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -30,7 +31,7 @@ import frc.robot.subsystems.Intake.IntakeSuperstructure;
 import frc.robot.utils.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
+// @Logged
 public class RobotContainer {
 
   private double MaxSpeed =

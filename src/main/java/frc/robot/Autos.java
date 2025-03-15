@@ -51,9 +51,11 @@ public class Autos {
           VisionSubsystem visionSubsystem) {
     
         NamedCommands.registerCommand("L4_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(()  -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState()).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
-        NamedCommands.registerCommand("coralSearch_Drive", detectAndMoveTarget(visionSubsystem, drivetrain));
+        NamedCommands.registerCommand("coralSearch_Drive", Commands.run(()->detectAndMoveTarget(visionSubsystem, drivetrain)));
         NamedCommands.registerCommand("AlgaePickup", Commands.sequence(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE).until(algaeSubsystem::getSwitchState)));
         NamedCommands.registerCommand("AlgaeNet", Commands.sequence(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE).until(() -> !algaeSubsystem.getSwitchState())));
+        NamedCommands.registerCommand("L3_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL3(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(()  -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState()).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
+        
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
     if (MiscConstants.TUNING_MODE) {
       // autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));

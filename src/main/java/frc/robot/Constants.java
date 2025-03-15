@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -23,7 +24,9 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
@@ -259,5 +262,50 @@ public final class Constants {
     public static final double HUMAN = Units.degreesToRadians(-42.5551);
     public static final double L1_REEF = -Units.degreesToRadians(4.8061);
     public static final double GROUND_INTAKE = 0.0;
+  }
+
+  public static class LEDConstants{
+    public static final int PWM_OUTPUT = 0;
+
+    public static final int TOTAL_LEDS = 300;
+    public static final int NUM_STRIPS = 4;
+    public static final int LEDS_PER_STRIP =  TOTAL_LEDS/NUM_STRIPS;
+
+    public static final LinearVelocity SCROLL_SPEED = MetersPerSecond.of(1);
+    public static final Distance LEDS_PER_METER = Meters.of(60);
+
+    public static final Time BLINK_PERIOD = Seconds.of(1);
+
+
+    public static final Color COLOR_RED = new Color("#cf1b2a");
+    public static final Color COLOR_BLUE = new Color("#3fd4b6");
+    public static final Color COLOR_PURPLE = new Color("#a42dcc");
+    
+    public static final Color COLOR_WHITE = Color.kWhite;
+
+    public static final double LIGHTEN_PERCENT = 0.1 ;
+
+    public static final Color COLOR_RED_LIGHTEN = Color.lerpRGB(COLOR_RED, COLOR_WHITE, LIGHTEN_PERCENT);
+    public static final Color COLOR_BLUE_LIGHTEN = Color.lerpRGB(COLOR_BLUE, COLOR_WHITE, LIGHTEN_PERCENT);
+    public static final Color COLOR_PURPLE_LIGHTEN = Color.lerpRGB(COLOR_PURPLE, COLOR_WHITE, LIGHTEN_PERCENT);
+
+
+    /*
+     * from kannan:
+     * red for when we want coral
+     * blue for taking alage to processor
+     * purple for taking alage to the net
+     */
+    public static enum LEDType{
+      flashRed,
+      flashBlue,
+      flashPurple,
+      waveRed,
+      waveBlue,
+      wavePurple,
+      waveRainbow,
+    }
+
+    
   }
 }

@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -29,7 +30,7 @@ import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 
-@Logged
+// @Logged
 public class CoralSubsystem extends SubsystemBase {
 
   private final TelemetryTalonFX coralMotor =
@@ -130,18 +131,15 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public Command runVelolocityCenterCommand(double setpointRadiansSecond) {
-    return this.run(
-        () ->
-            runVelocityCommand(setpointRadiansSecond)
-                .until(() -> (getLeftSwitchState() || getRightSwitchState()))
-                .andThen(
-                    () -> {
-                      if (getRightSwitchState()) {
-                        runVelocityCommand(1).until(this::getLeftSwitchState);
-                      } else if (getLeftSwitchState()) {
-                        runVelocityCommand(-1).until(this::getRightSwitchState);
+    return this.defer(() ->
+        {
+                      if (!getLeftSwitchState()) {
+                        return setVoltageCommand(1).until(this::getLeftSwitchState);
+                      } else if (!getRightSwitchState()) {
+                        return setVoltageCommand(-1).until(this::getRightSwitchState);
                       }
-                    }));
+                      return Commands.none();
+                    });
   }
 
   public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {

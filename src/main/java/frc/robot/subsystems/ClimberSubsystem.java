@@ -28,7 +28,7 @@ import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 
-@Logged
+// @Logged
 public class ClimberSubsystem extends SubsystemBase {
   // motor 1
   public final TelemetryTalonFX climbMotor1 =

@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
@@ -16,7 +15,7 @@ import frc.robot.Constants.MiscConstants;
 
 import org.littletonrobotics.urcl.URCL;
 
-@Logged
+// @Logged
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
@@ -24,7 +23,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    Epilogue.bind(this);
+    
   }
 
   @Override

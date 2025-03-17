@@ -111,7 +111,8 @@ public class Autos {
       // autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
       autoChooser.addOption("wrist", wristSubsystem.setPositionCommand(Units.degreesToRadians(240)));
       autoChooser.addOption("elevator", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
-      autoChooser.addOption("slapdown", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(Constants.IntakeConstants.ROTATION_DOWN_ANGLE))));
+      autoChooser.addOption("slapdownDOWN", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(Constants.IntakeConstants.ROTATION_DOWN_ANGLE))));
+      autoChooser.addOption("slapdownUP", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(0)));
       autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
       autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE));
     }

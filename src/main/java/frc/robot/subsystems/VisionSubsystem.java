@@ -13,7 +13,7 @@ import frc.robot.utils.RaiderUtils;
 
 import java.util.OptionalDouble;
 
-@Logged
+// @Logged
 public class VisionSubsystem extends SubsystemBase {
 private final CommandSwerveDrivetrain drivetrain;
   public VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
@@ -43,7 +43,7 @@ private final CommandSwerveDrivetrain drivetrain;
     }
   }
 
-  @Logged(name = "estimated target distance")
+  // @Logged(name = "estimated target distance")
   public double getEstimatedDistanceTarget() {
     double angleToGoalRadians =
         getTargetVerticalOffset().getAsDouble() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
@@ -53,7 +53,7 @@ private final CommandSwerveDrivetrain drivetrain;
         / Math.tan(angleToGoalRadians);
   }
 
-  @Logged(name = "target trajectory") // horizontal offset?
+  // @Logged(name = "target trajectory") // horizontal offset?
   public Pose2d getTargetTrajectory() {
     double estimatedDistanceTarget = getEstimatedDistanceTarget();
     Pose2d poseFromRobot = new Pose2d(

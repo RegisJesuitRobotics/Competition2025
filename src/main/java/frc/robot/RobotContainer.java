@@ -314,7 +314,7 @@ public SendableChooser<Command> getMusicOn(){
                     algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE))
                 .until(
                     () ->
-                        (algaeSubsystem.getSwitchState())).andThen(algaeSubsystem.setVoltageCommand(5)));
+                        (algaeSubsystem.getSwitchState())).andThen(Commands.parallel(wristSubsystem.setPositionCommand(Constants.AlgaeConstants.LEAVING) ,algaeSubsystem.setVoltageCommand(5))));
     joystick
         .leftBumper()
         .whileTrue(

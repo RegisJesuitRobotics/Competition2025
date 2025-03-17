@@ -35,7 +35,7 @@ import frc.robot.utils.Alert;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 
-@Logged
+// @Logged
 public class IntakeRotationSubsystem extends SubsystemBase {
 
   public static final TelemetryTalonFX intakeRotationMotor =
@@ -82,9 +82,7 @@ public class IntakeRotationSubsystem extends SubsystemBase {
 
   public IntakeRotationSubsystem() {
     configMotor();
-    setDefaultCommand(setVoltageCommand(0.0).withName("IntakeRotationDefault"));
     rotationPid.setTolerance(Units.degreesToRadians(10));
-    intakeRotationMotor.setPosition(0);
   }
 
   private void configMotor() {

@@ -8,7 +8,6 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
@@ -30,7 +29,7 @@ import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 import java.util.function.DoubleSupplier;
 
-@Logged
+// @Logged
 public class ElevatorSubsystem extends SubsystemBase {
   private final TelemetryTalonFX leftElevatorMotor =
       new TelemetryTalonFX(

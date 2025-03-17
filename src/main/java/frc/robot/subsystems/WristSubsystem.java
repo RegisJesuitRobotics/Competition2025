@@ -32,7 +32,7 @@ import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 import java.util.function.DoubleSupplier;
 
-@Logged
+// @Logged
 public class WristSubsystem extends SubsystemBase {
 
   private final TelemetryTalonFX wristMotor =

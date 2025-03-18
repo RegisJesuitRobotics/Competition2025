@@ -75,7 +75,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     configMotors();
-    controller.setTolerance(Units.inchesToMeters(.4));
+    controller.setTolerance(Units.inchesToMeters(1));
   }
 
   private void configMotors() {
@@ -200,7 +200,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         .beforeStarting(
             () ->
                 controller.reset(
-                    getElevatorPosition(), rightElevatorMotor.getVelocity().getValueAsDouble()))
+                    getElevatorPosition(), leftElevatorMotor.getVelocity().getValueAsDouble()))
         .onlyIf(() -> isHomed);
   }
 

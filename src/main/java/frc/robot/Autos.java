@@ -58,15 +58,15 @@ public class Autos {
         
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
     if (MiscConstants.TUNING_MODE) {
-      // autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));
-      // autoChooser.addOption("elevator qr", elevatorSubsystem.sysIdQuasistatic(Direction.kReverse));
-      // autoChooser.addOption("elevator df", elevatorSubsystem.sysIdDynamic(Direction.kForward));
-      // autoChooser.addOption("elevator dr", elevatorSubsystem.sysIdDynamic(Direction.kReverse));
+      autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));
+      autoChooser.addOption("elevator qr", elevatorSubsystem.sysIdQuasistatic(Direction.kReverse));
+      autoChooser.addOption("elevator df", elevatorSubsystem.sysIdDynamic(Direction.kForward));
+      autoChooser.addOption("elevator dr", elevatorSubsystem.sysIdDynamic(Direction.kReverse));
 
-      // autoChooser.addOption("wrist qf", wristSubsystem.sysIdQuasistatic(Direction.kForward));
-      // autoChooser.addOption("wrist qr", wristSubsystem.sysIdQuasistatic(Direction.kReverse));
-      // autoChooser.addOption("wrist df", wristSubsystem.sysIdDynamic(Direction.kForward));
-      // autoChooser.addOption("wrist dr", wristSubsystem.sysIdDynamic(Direction.kReverse));
+      autoChooser.addOption("wrist qf", wristSubsystem.sysIdQuasistatic(Direction.kForward));
+      autoChooser.addOption("wrist qr", wristSubsystem.sysIdQuasistatic(Direction.kReverse));
+      autoChooser.addOption("wrist df", wristSubsystem.sysIdDynamic(Direction.kForward));
+      autoChooser.addOption("wrist dr", wristSubsystem.sysIdDynamic(Direction.kReverse));
 
       autoChooser.addOption(
           "intake rotation qf",
@@ -109,12 +109,14 @@ public class Autos {
       // autoChooser.addOption("drive qr", drivetrain.sysIdQuasistatic(Direction.kReverse));
       // autoChooser.addOption("drive df", drivetrain.sysIdDynamic(Direction.kForward));
       // autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
-      autoChooser.addOption("wrist", wristSubsystem.setPositionCommand(Units.degreesToRadians(240)));
+      autoChooser.addOption("wrist", wristSubsystem.setPositionCommand(Units.degreesToRadians(50)));
+      autoChooser.addOption("wrist 0", wristSubsystem.setPositionCommand(0));
+      autoChooser.addOption("wrist160", wristSubsystem.setPositionCommand(Units.degreesToRadians(160)));
       autoChooser.addOption("elevator", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
       autoChooser.addOption("slapdownDOWN", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(Constants.IntakeConstants.ROTATION_DOWN_ANGLE))));
       autoChooser.addOption("slapdownUP", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(0)));
       autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
-      autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE));
+      autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(Constants.IntakeConstants.SPINNING_VOLTAGE));
     }
   }
 

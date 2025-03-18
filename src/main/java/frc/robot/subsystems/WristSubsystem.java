@@ -67,7 +67,7 @@ public class WristSubsystem extends SubsystemBase {
 
   public WristSubsystem() {
     configMotor();
-    wristpid.setTolerance(Units.degreesToRadians(WristConstants.PID_TOLERANCE));
+    wristpid.setTolerance(Units.degreesToRadians(10));
     setDefaultCommand(setVoltageCommand(0));
     wristEncoder.setDutyCycleRange(1.0 / 1025.0, 1024.0 / 1025.0);
     wristMotor.setPosition(0);

@@ -253,8 +253,7 @@ public SendableChooser<Command> getMusicOn(){
   }
 
   private void configureBindings() {
-    // Note that X is defined as forward according to WPILib convention,
-    // and Y is defined as to the left according to WPILib convention.
+    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setPosition(Units.inchesToMeters(3.15)));
     drivetrain.setDefaultCommand(
 
         drivetrain.applyRequest(
@@ -318,15 +317,15 @@ public SendableChooser<Command> getMusicOn(){
     joystick
         .leftBumper()
         .whileTrue(
-            Commands.sequence(Commands.parallel(elevatorSubsystem.setPosition(Units.inchesToMeters(3.15)), wristSubsystem.setPositionCommand(0)).until(() -> elevatorSubsystem.atGoal() && wristSubsystem.atGoal()),
+            Commands.parallel(elevatorSubsystem.setPosition(Units.inchesToMeters(3.15)), wristSubsystem.setPositionCommand(0)).until(elevatorSubsystem::atGoal).andThen(
                 intakeSuperstructure
-                    .setDownAndRunCommand()
-                    .until(intakeSpinningSubsystem::getSwitchValue),
-                intakeSuperstructure.setUpCommand(),
-                Commands.parallel(
-                    intakeSpinningSubsystem.setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE),
+                    .setDownAndRunCommand())
+                    .until(intakeSpinningSubsystem::getSwitchValue).andThen(
+                intakeSuperstructure.setUpCommand()).until(intakeRotationSubsystem::atLimit).andThen(
+                Commands.sequence(
                     ElevatorWristCommands.elevatorWristGroundIntake(
-                        elevatorSubsystem, wristSubsystem)).until(coralSubsystem::getLeftSwitchState)));
+                        elevatorSubsystem, wristSubsystem).until(() -> elevatorSubsystem.atGoal() && wristSubsystem.atGoal()),
+                        intakeSpinningSubsystem.setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE)).until(coralSubsystem::getLeftSwitchState)));
 
     joystick
         .a()

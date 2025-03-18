@@ -131,12 +131,12 @@ public class IntakeRotationSubsystem extends SubsystemBase {
     intakeRotationMotor.setVoltage(voltage);
   }
 
-  private double getPosition() {
+  public double getPosition() {
     
         return Units.rotationsToRadians(intakeRotationMotor.getPosition().getValueAsDouble() / 24.0);
   }
 
-  private boolean atLimit() {
+  public boolean atLimit() {
     return !rotationLimitSwitch.get();
   }
 

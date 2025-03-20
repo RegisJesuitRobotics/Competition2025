@@ -143,6 +143,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       // Handle exception as needed
       e.printStackTrace();
     }
+    this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 999999999));
 
     AutoBuilder.configure(
         this::getPose,
@@ -185,6 +186,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 99999999));
+
     RobotConfig config = null;
     try {
       config = RobotConfig.fromGUISettings();
@@ -238,6 +241,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 99999999));
+
     RobotConfig config = null;
     try {
       config = RobotConfig.fromGUISettings();
@@ -315,10 +320,9 @@ return Commands.none();
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.VisionConstants.APRIL_LIMELIGHT);
 
     if (mt2 != null && mt2.tagCount > 0) {
-      this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 99999999));
       this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
 
       

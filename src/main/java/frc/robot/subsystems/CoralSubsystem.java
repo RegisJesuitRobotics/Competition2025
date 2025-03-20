@@ -116,7 +116,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public Command setVoltageCommand(double voltage) {
-    return this.run(() -> coralMotor.setVoltage(voltage));
+    return this.run(() -> coralMotor.setVoltage(voltage)).finallyDo(() -> coralMotor.setVoltage(0.0));
   }
 
   public Command runVelocityCommand(double setpointRadiansSecond) {

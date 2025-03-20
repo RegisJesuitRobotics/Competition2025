@@ -24,7 +24,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -43,7 +43,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -57,12 +57,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "AlgaeNet"
@@ -75,15 +69,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Net-10JAlgae"
-                }
-              },
               {
                 "type": "sequential",
                 "data": {
@@ -97,10 +85,16 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "AlgaePickup"
+                        "name": "AlgaePickupHigh"
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Net-10JAlgae"
                 }
               }
             ]

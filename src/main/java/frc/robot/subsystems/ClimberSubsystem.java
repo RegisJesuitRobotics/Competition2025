@@ -38,10 +38,6 @@ public class ClimberSubsystem extends SubsystemBase {
   private final EventTelemetryEntry climbMotor1Entry =
       new EventTelemetryEntry("/climber/motor1/events");
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(ClimberConstants.LIMITER);
-  
-  private final Alert climbMotor2Alert = new Alert("climb motor(2) had a fault", AlertType.ERROR);
-  private final EventTelemetryEntry climbMotor2Entry =
-      new EventTelemetryEntry("/climber/motor2/events");
 
   private final TunableTelemetryPIDController climbPID =
       new TunableTelemetryPIDController("pid/climb", ClimberConstants.CLIMB_PID_GAINS);

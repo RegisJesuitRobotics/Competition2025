@@ -29,7 +29,7 @@ public class IntakeSuperstructure extends SubsystemBase {
   public Command setDownAndRunCommand() {
     return Commands.parallel(
       intakeRotationSubsystem.setRotationGoalCommand(
-                Rotation2d.fromRadians(Units.degreesToRadians(IntakeConstants.ROTATION_DOWN_ANGLE))),
+                Rotation2d.fromRadians(IntakeConstants.ROTATION_DOWN_ANGLE)),
             intakeSpinningSubsystem.setVoltageCommand(IntakeConstants.SPINNING_VOLTAGE))
             
         .withName("IntakeSetDownAndRun");

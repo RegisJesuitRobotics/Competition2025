@@ -7,6 +7,7 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -14,7 +15,9 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -76,6 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     configMotors();
     controller.setTolerance(Units.inchesToMeters(1));
+    SmartDashboard.putData(forceHomeCommand().withName("Force Home"));
   }
 
   private void configMotors() {
@@ -87,6 +91,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfiguration.Audio.AllowMusicDurDisable = true;
+
     ConfigurationUtils.StringFaultRecorder faultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -122,6 +127,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     leftMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    leftMotorConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -161,12 +167,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
   }
 
+  public Command forceHomeCommand(){
+    return Commands.runOnce(() -> {
+      isHomed = true;
+      leftElevatorMotor.setPosition(Constants.ElevatorConstants.FORCE_HOME / Constants.ElevatorConstants.METERS_PER_REVOLUTION);}).ignoringDisable(true);
+  }
+
+
+
   public void setVoltage(double volts) {
     rightElevatorMotor.setVoltage(volts);
   }
 
   public Command setVoltageCommand(double volts) {
-    return this.run(() -> rightElevatorMotor.setVoltage(volts));
+    return this.run(() -> setVoltage(volts));
   }
   public boolean atGoal(){
     return controller.atGoal();
@@ -234,11 +248,13 @@ public class ElevatorSubsystem extends SubsystemBase {
       isHomed = true;
       leftElevatorMotor.setPosition(0.0);
     }
+
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
     topSwitch.append(atLimit());
     homed.append(isHomed());
+    SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
   }
 }

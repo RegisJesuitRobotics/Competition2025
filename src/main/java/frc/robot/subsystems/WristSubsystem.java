@@ -55,6 +55,8 @@ public class WristSubsystem extends SubsystemBase {
           "wrist/profiledpid", WristConstants.WRIST_PID_GAINS, WristConstants.WRIST_TRAP_GAINS);
   private final ArmFeedforward wristff =
       Constants.WristConstants.WRIST_FF_GAINS.createArmFeedforward();
+  private final ArmFeedforward wristffAlgae = WristConstants.WRIST_ALGAE_FF_GAINS.createArmFeedforward();
+  private final TunableTelemetryProfiledPIDController wristpidAlgae = new TunableTelemetryProfiledPIDController("/wrist/prifiledpidAlgae", WristConstants.WRIST_PID_ALGAE_GAINS, WristConstants.WRIST_TRAP_ALGAE);
   private final DutyCycleEncoder wristEncoder =
       new DutyCycleEncoder(WristConstants.WRIST_ENCODER_PORT);
   private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
@@ -67,10 +69,13 @@ public class WristSubsystem extends SubsystemBase {
 
   public WristSubsystem() {
     configMotor();
-    wristpid.setTolerance(Units.degreesToRadians(10));
+    wristpid.setTolerance(Units.degreesToRadians(5));
     setDefaultCommand(setVoltageCommand(0));
     wristEncoder.setDutyCycleRange(1.0 / 1025.0, 1024.0 / 1025.0);
-    wristMotor.setPosition(0);
+    wristMotor.setPosition(0.5 * 10);
+
+    setDefaultCommand(setVoltageCommand(0.0));
+    // wristMotor.setPosition(0);
 
   }
 
@@ -153,6 +158,22 @@ public class WristSubsystem extends SubsystemBase {
             () -> wristpid.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
         .withName("SetWristPosition");
   }
+  public Command setPositionCommandAlgae(DoubleSupplier desiredPositionRadians) {
+    return this.run(
+            () -> {
+              wristpidAlgae.setGoal(desiredPositionRadians.getAsDouble());
+              double feedbackOutput = wristpidAlgae.calculate(getPosition());
+              TrapezoidProfile.State currentSetpoint = wristpidAlgae.getSetpoint();
+
+              setVoltage(
+                  feedbackOutput
+                      + wristffAlgae.calculate(currentSetpoint.position, currentSetpoint.velocity));
+            })
+        .beforeStarting(
+            () -> wristpidAlgae.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
+        .withName("SetWristPosition");
+  }
+
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
 
@@ -174,5 +195,6 @@ public class WristSubsystem extends SubsystemBase {
     velocityGoal.append(wristMotor.getMotorVoltage().getValueAsDouble()
     );
     wristPosition = getPosition();
+    SignalLogger.writeDouble("wristPosition", getPosition());
   }
 }

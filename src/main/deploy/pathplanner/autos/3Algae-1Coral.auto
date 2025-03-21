@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "MidStart"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -24,7 +30,7 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -43,7 +49,7 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -53,18 +59,37 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "AlgaeNet"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlgaeNet"
+                      }
+                    }
+                  ]
                 }
               }
             ]
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Net-10JAlgae"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -83,18 +108,12 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Net-10JAlgae"
-                }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -103,19 +122,6 @@
                   "pathName": "10JAlgae-Net"
                 }
               },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlgaeNet"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
               {
                 "type": "sequential",
                 "data": {
@@ -129,23 +135,49 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "AlgaePickupHigh"
+                        "name": "AlgaeNet"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Net-2BAlgae"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Net-2BAlgae"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlgaePickup"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -155,9 +187,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "AlgaeNet"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlgaeNet"
+                      }
+                    }
+                  ]
                 }
               }
             ]

@@ -320,7 +320,7 @@ return Commands.none();
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.VisionConstants.APRIL_LIMELIGHT);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
 
     if (mt2 != null && mt2.tagCount > 0) {
       this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));

@@ -61,7 +61,7 @@ public final class Constants {
         new TunableFFGains("/elevator/ff", 0.02501, 0.12426, 0.074887, MiscConstants.TUNING_MODE);
     public static final double L2_REEF = Units.inchesToMeters(7.9736);
     public static final double L4_REEF = Units.inchesToMeters(57.50);
-    public static final double L3_REEF = Units.inchesToMeters(24.75);
+    public static final double L3_REEF = Units.inchesToMeters(25.75);
     public static final double L1_REEF = 0.0;
     public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
     public static final double NET = Units.inchesToMeters(49.706);
@@ -96,7 +96,6 @@ public final class Constants {
     // spinny stuff
     public static final int SPINNING_MOTOR_ID = 14; // idk
     public static final double SPINNING_VOLTAGE = 10.0; // m
-    public static final int SPINNING_LIMIT_SWITCH_ID = 1; // m
     public static final double RATE_LIMIT = 1.0; // m
     public static final TunablePIDGains SPINNING_PID_GAINS =
         new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
@@ -142,7 +141,7 @@ public final class Constants {
     public static final double RUNNING_VOLTAGE = 12.0;
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
-    public static final int SWITCH_ID_RIGHT = 10;
+    public static final int SWITCH_ID_RIGHT = 0;
     public static final DoubleSupplier LEAVING = () -> Units.degreesToRadians(95);
   }
 
@@ -159,7 +158,7 @@ public final class Constants {
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final double RUNNING_VOLTAGE = 12.0;
-    public static final int SWITCH_ID_LEFT = 7; 
+    public static final int SWITCH_ID_LEFT = 4; 
     public static final double OUTPUT_VOLTAGE = -10.0;
     public static final int SWITCH_ID_RIGHT = 9; 
     public static final double SUPPLY_CURRENT_LIMIT = 20;
@@ -174,8 +173,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 60.0; // m
     public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; // m
     public static final InvertedValue INVERTED_1 = InvertedValue.Clockwise_Positive;
-    public static final double CLIMBER_UP_VOLTAGE = 4.0; // m
-    public static final double CLIMBER_DOWN_VOLTAGE = -4.0; // m
+    public static final double CLIMBER_UP_VOLTAGE = 2.0; // m
+    public static final double CLIMBER_DOWN_VOLTAGE = -2.0; // m
     public static final int LIMITER = 0; // m
   }
 
@@ -239,10 +238,10 @@ public final class Constants {
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = Units.degreesToRadians(90 - 85.55177013879425);
     public static final double PID_TOLERANCE = 2.0; // idk
-    public static final int WRIST_ENCODER_PORT = 4; // needs a value
+    public static final int WRIST_ENCODER_PORT = 22; // needs a value
     // a lot of 0s
     public static final TunablePIDGains WRIST_PID_GAINS =
-        new TunablePIDGains("/pid/wrist/", 3.0, 0.0, 0.1, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/pid/wrist/", 20, 0.0, 0, MiscConstants.TUNING_MODE);
 
     public static final TunableTrapezoidalProfileGains WRIST_TRAP_GAINS =
         new TunableTrapezoidalProfileGains(
@@ -254,7 +253,7 @@ public final class Constants {
 
     public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
         new TunableArmElevatorFFGains(
-            "/feedfoward/wrist/", 0.36096, 0.19206, 0.13188, 0.025095, MiscConstants.TUNING_MODE);
+            "/feedfoward/wrist/", 0.69552, 0.68187, 0.092448, 0.22262, MiscConstants.TUNING_MODE);
 
     public static final double L2_REEF = Units.degreesToRadians(145.2326);
 

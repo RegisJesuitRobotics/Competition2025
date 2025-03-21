@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorWristCommands;
@@ -139,10 +140,10 @@ public class RobotContainer {
                 ElevatorWristCommands.elevatorWristBallHigh(elevatorSubsystem, wristSubsystem, scoringFlipped));
         operator
                 .povDown()
-                .onTrue(
+                .onTrue(Commands.parallel(
                         ElevatorWristCommands.elevatorWristL2(
                                 elevatorSubsystem, wristSubsystem, scoringFlipped)
-                                );
+                , intakeSuperstructure.setDownAndRunCommand().withInterruptBehavior(InterruptionBehavior.kCancelSelf)));
         operator
                 .povRight()
                 .onTrue(
@@ -366,8 +367,7 @@ public class RobotContainer {
                                                 .inchesToMeters(.1)),
                                         Commands.parallel(intakeSpinningSubsystem
                                                 .setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE_OUTAKE))
-                                                .until(coralSubsystem::getRightSwitchState)))))
-                .onFalse(intakeSuperstructure.setUpCommand());
+                                                ))))                .onFalse(intakeSuperstructure.setUpCommand());
         joystick.y().whileTrue(Commands.run(() -> {
             Translation2d translation = vectorRateLimiter.calculate(new Translation2d(
                     RaiderMathUtils.deadZoneAndCubeJoystick(-joystick.getLeftY()) * MaxSpeed,

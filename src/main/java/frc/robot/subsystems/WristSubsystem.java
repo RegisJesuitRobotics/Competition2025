@@ -151,8 +151,8 @@ public class WristSubsystem extends SubsystemBase {
               TrapezoidProfile.State currentSetpoint = wristpid.getSetpoint();
 
               setVoltage(
-                  feedbackOutput
-                      + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
+                  feedbackOutput);
+                      // + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
             })
         .beforeStarting(
             () -> wristpid.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))

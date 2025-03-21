@@ -30,6 +30,8 @@ import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
+import sun.misc.Signal;
+
 import java.util.function.DoubleSupplier;
 
 // @Logged
@@ -143,6 +145,10 @@ public class WristSubsystem extends SubsystemBase {
     return setPositionCommand(() -> desiredPositionRadians);
   }
 
+  public double getVelocityActual(){
+    return wristMotor.getVelocity().getValueAsDouble() / 10 * 2 * Math.PI;
+  }
+
   public Command setPositionCommand(DoubleSupplier desiredPositionRadians) {
     return this.run(
             () -> {
@@ -151,13 +157,14 @@ public class WristSubsystem extends SubsystemBase {
               TrapezoidProfile.State currentSetpoint = wristpid.getSetpoint();
 
               setVoltage(
-                  feedbackOutput);
-                      // + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
+                  feedbackOutput
+                       + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
             })
         .beforeStarting(
-            () -> wristpid.reset(getPosition(), wristMotor.getVelocity().getValueAsDouble()))
+            () -> wristpid.reset(getPosition(), getVelocityActual()))
         .withName("SetWristPosition");
   }
+
   public Command setPositionCommandAlgae(DoubleSupplier desiredPositionRadians) {
     return this.run(
             () -> {
@@ -196,5 +203,6 @@ public class WristSubsystem extends SubsystemBase {
     );
     wristPosition = getPosition();
     SignalLogger.writeDouble("wristPosition", getPosition());
+    SignalLogger.writeDouble("wristVelocity", getVelocityActual());
   }
 }

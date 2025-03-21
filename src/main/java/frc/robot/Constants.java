@@ -233,7 +233,7 @@ public final class Constants {
 
   public static class WristConstants {
     public static final int WRIST_ID = 11;
-    public static final double GEAR_RATIO = 5.0;
+    public static final double GEAR_RATIO = 10.0;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = Units.degreesToRadians(90 - 85.55177013879425);

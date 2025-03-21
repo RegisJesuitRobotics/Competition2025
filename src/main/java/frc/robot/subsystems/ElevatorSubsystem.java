@@ -56,7 +56,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.MiscConstants.TUNING_MODE);
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
-  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);  
+//  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
   private final EventTelemetryEntry rightEventEntry =
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
@@ -71,7 +71,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final DoubleTelemetryEntry elevatorPosition =
       new DoubleTelemetryEntry("/elevator/position", true);
   private final DoubleTelemetryEntry elevatorGoal = new DoubleTelemetryEntry("/elevator/goalPos", true);
-  private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top", true);
+//  private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top", true);
   private final BooleanTelemetryEntry homed = new BooleanTelemetryEntry("/elevator/homed", true);
   private boolean isHomed = false;
   private boolean isHoming = false;
@@ -179,6 +179,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setVoltage(volts);
   }
 
+  public double getVelocityActual(){
+    return leftElevatorMotor.getVelocity().getValueAsDouble() * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
+  }
+
   public Command setVoltageCommand(double volts) {
     return this.run(() -> setVoltage(volts));
   }
@@ -186,9 +190,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     return controller.atGoal();
   }
 
-  public boolean atLimit() {
-    return bottomSwitch.get();
-  }
+//  public boolean atLimit() {
+//    return bottomSwitch.get();
+//  }
 
   public boolean isHomed() {
     return isHomed;
@@ -244,16 +248,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if ((atLimit() && isHoming) || debouncer.calculate(atLimit())) {
-      isHomed = true;
-      leftElevatorMotor.setPosition(0.0);
-    }
+//    if ((atLimit() && isHoming) || debouncer.calculate(atLimit())) {
+//      isHomed = true;
+//      leftElevatorMotor.setPosition(0.0);
+//    }
 
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
-    topSwitch.append(atLimit());
+//    topSwitch.append(atLimit());
     homed.append(isHomed());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
   }

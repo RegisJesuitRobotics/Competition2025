@@ -50,7 +50,7 @@ public class Autos {
           AtomicBoolean flipped,
           VisionSubsystem visionSubsystem) {
     
-        NamedCommands.registerCommand("L4_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE).until(()  -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState()).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
+        NamedCommands.registerCommand("L4_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE).withTimeout(2.0).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
         NamedCommands.registerCommand("coralSearch_Drive", Commands.run(()->detectAndMoveTarget(visionSubsystem, drivetrain)));
         NamedCommands.registerCommand("AlgaePickup", Commands.sequence(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE).until(algaeSubsystem::getSwitchState)));
         NamedCommands.registerCommand("AlgaeNet", Commands.sequence(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE).until(() -> !algaeSubsystem.getSwitchState())));

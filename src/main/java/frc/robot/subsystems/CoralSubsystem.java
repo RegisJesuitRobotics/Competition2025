@@ -33,27 +33,25 @@ import frc.robot.utils.ConfigurationUtils;
 // @Logged
 public class CoralSubsystem extends SubsystemBase {
 
-  private final TelemetryTalonFX coralMotor =
-      new TelemetryTalonFX(CoralConstants.CORAL_MOTOR_ID, "coral/motor", MiscConstants.TUNING_MODE);
+  private final TelemetryTalonFX coralMotor = new TelemetryTalonFX(CoralConstants.CORAL_MOTOR_ID, "coral/motor",
+      MiscConstants.TUNING_MODE);
 
   private final Alert coralMotorAlert = new Alert("Coral motor had a fault", AlertType.ERROR);
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
   private final EventTelemetryEntry coralEvent = new EventTelemetryEntry("/coral/events");
-  private final DigitalInput intakeLeftBeam =
-      new DigitalInput(Constants.CoralConstants.SWITCH_ID_LEFT);
-  private final DigitalInput intakeRightBeam =
-      new DigitalInput(Constants.CoralConstants.SWITCH_ID_RIGHT);
-  private final TunableTelemetryPIDController coralpid =
-      new TunableTelemetryPIDController("/coral/pid", Constants.CoralConstants.PID_GAINS);
+  private final DigitalInput intakeLeftBeam = new DigitalInput(Constants.CoralConstants.SWITCH_ID_LEFT);
+  private final DigitalInput intakeRightBeam = new DigitalInput(Constants.CoralConstants.SWITCH_ID_RIGHT);
+  private final TunableTelemetryPIDController coralpid = new TunableTelemetryPIDController("/coral/pid",
+      Constants.CoralConstants.PID_GAINS);
+  private final SlewRateLimiter slewRateLimiter = new SlewRateLimiter(12.0/.25);
   private SimpleMotorFeedforward coralFF = CoralConstants.FF_GAINS.createFeedforward();
   private BooleanTelemetryEntry rightBeam = new BooleanTelemetryEntry("/coral/right", true);
   private BooleanTelemetryEntry leftBeam = new BooleanTelemetryEntry("/coral/left", true);
 
-  private final SysIdRoutine coralSysId =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), 
+  private final SysIdRoutine coralSysId = new SysIdRoutine(
+      new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2),
           null, (state) -> SignalLogger.writeString("coral", state.toString())),
-          new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
+      new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
 
   public CoralSubsystem() {
     configMotor();
@@ -62,14 +60,12 @@ public class CoralSubsystem extends SubsystemBase {
 
   private void configMotor() {
     TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
-    motorConfiguration.CurrentLimits.SupplyCurrentLimit =
-        Constants.CoralConstants.SUPPLY_CURRENT_LIMIT;
+    motorConfiguration.CurrentLimits.SupplyCurrentLimit = Constants.CoralConstants.SUPPLY_CURRENT_LIMIT;
     motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     motorConfiguration.MotorOutput.Inverted = Constants.CoralConstants.INVERTED;
     motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfiguration.Audio.AllowMusicDurDisable = true;
-    ConfigurationUtils.StringFaultRecorder faultRecorder =
-        new ConfigurationUtils.StringFaultRecorder();
+    ConfigurationUtils.StringFaultRecorder faultRecorder = new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
         () -> coralMotor.getConfigurator().apply(motorConfiguration),
         () -> {
@@ -116,30 +112,30 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public Command setVoltageCommand(double voltage) {
-    return this.run(() -> coralMotor.setVoltage(voltage)).finallyDo(() -> coralMotor.setVoltage(0.0));
+    return this.run(() -> coralMotor.setVoltage(slewRateLimiter.calculate(voltage)))
+        .finallyDo(() -> coralMotor.setVoltage(0.0)).beforeStarting(() -> slewRateLimiter.reset(0));
   }
 
   public Command runVelocityCommand(double setpointRadiansSecond) {
     return this.run(
-            () -> {
-              double rateLimited = rateLimiter.calculate(setpointRadiansSecond);
-              setVoltage(
-                  coralpid.calculate(getVelocity(), rateLimited) + coralFF.calculate(rateLimited));
-            })
+        () -> {
+          double rateLimited = rateLimiter.calculate(setpointRadiansSecond);
+          setVoltage(
+              coralpid.calculate(getVelocity(), rateLimited) + coralFF.calculate(rateLimited));
+        })
         .beforeStarting(() -> rateLimiter.reset(getVelocity()))
         .withName("CoralRunVelocity");
   }
 
   public Command runVelolocityCenterCommand(double setpointRadiansSecond) {
-    return this.defer(() ->
-        {
-                      if (!getLeftSwitchState()) {
-                        return setVoltageCommand(1).until(this::getLeftSwitchState);
-                      } else if (!getRightSwitchState()) {
-                        return setVoltageCommand(-1).until(this::getRightSwitchState);
-                      }
-                      return Commands.none();
-                    });
+    return this.defer(() -> {
+      if (!getLeftSwitchState()) {
+        return setVoltageCommand(1).until(this::getLeftSwitchState);
+      } else if (!getRightSwitchState()) {
+        return setVoltageCommand(-1).until(this::getRightSwitchState);
+      }
+      return Commands.none();
+    });
   }
 
   public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
@@ -150,7 +146,7 @@ public class CoralSubsystem extends SubsystemBase {
     return coralSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
-  public Command addInstrumentCommand(Orchestra orchestra){
+  public Command addInstrumentCommand(Orchestra orchestra) {
     return this.run(() -> orchestra.addInstrument(coralMotor));
   }
 

@@ -5,6 +5,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSuperstructure extends SubsystemBase {
@@ -38,8 +39,7 @@ public class IntakeSuperstructure extends SubsystemBase {
   public Command setUpCommand() {
     return Commands.parallel(
             intakeSpinningSubsystem.setVoltageCommand(0.0),
-            intakeRotationSubsystem.setRotationGoalCommand(
-                Rotation2d.fromRadians(IntakeConstants.ROTATION_UP_ANGLE)))
+            intakeRotationSubsystem.setVoltageCommand(-3.0).withTimeout(.25).until(() -> intakeRotationSubsystem.atLimit()))
         .withName("IntakeSetUp");
   }
 }

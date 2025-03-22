@@ -165,9 +165,9 @@ public class RobotContainer {
                                         );
         operator
                 .x()
-                .onTrue(
-                        ElevatorWristCommands.elevatorWristProcessor(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped));
+                .whileTrue(
+                        Commands.parallel(ElevatorWristCommands.elevatorWristProcessor(
+                                elevatorSubsystem, wristSubsystem, scoringFlipped), intakeSuperstructure.setDownAndRunCommand())).onFalse(intakeSuperstructure.setUpCommand());
         operator
                 .circle()
                 .onTrue(
@@ -358,13 +358,13 @@ public class RobotContainer {
                                         Commands.waitUntil(() -> elevatorSubsystem.atGoal() && wristSubsystem.atGoal()),
                                         intakeSuperstructure.setDownAndRunCommand()
                                                 .until(intakeSpinningSubsystem::getSwitchValue),
-                                        intakeSuperstructure.setUpCommand().until(intakeRotationSubsystem::atLimit))),
+                                        intakeSuperstructure.setUpCommand().until(intakeRotationSubsystem::atLimit).andThen(intakeRotationSubsystem.setVoltageCommand(0)))),
 
                         Commands.race(
                                 ElevatorWristCommands.elevatorWristGroundIntake(elevatorSubsystem, wristSubsystem),
                                 Commands.sequence(Commands
                                         .waitUntil(() -> elevatorSubsystem.getElevatorPosition() < Units
-                                                .inchesToMeters(.1)),
+                                                .inchesToMeters(.4)),
                                         Commands.parallel(intakeSpinningSubsystem
                                                 .setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE_OUTAKE))
                                                 ))))                .onFalse(intakeSuperstructure.setUpCommand());

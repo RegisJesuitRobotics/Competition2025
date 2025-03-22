@@ -47,7 +47,7 @@ public class WristSubsystem extends SubsystemBase {
       new SysIdRoutine(
           new SysIdRoutine.Config(
               Volts.per(Second).of(.5),
-              Volts.of(2),
+              Volts.of(6),
               null,
               (state) -> SignalLogger.writeString("wristState", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
@@ -74,7 +74,7 @@ public class WristSubsystem extends SubsystemBase {
     wristpid.setTolerance(Units.degreesToRadians(5));
     setDefaultCommand(setVoltageCommand(0));
     wristEncoder.setDutyCycleRange(1.0 / 1025.0, 1024.0 / 1025.0);
-    wristMotor.setPosition(0.5 * 10);
+    wristMotor.setPosition(0.5 * 18);
 
     setDefaultCommand(setVoltageCommand(0.0));
     // wristMotor.setPosition(0);
@@ -133,7 +133,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / 10.0));
+    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() /18.0));
     // should be just .get() this year instead of .getAbsolutePosition()
   }
 
@@ -152,7 +152,7 @@ public class WristSubsystem extends SubsystemBase {
   public Command setPositionCommand(DoubleSupplier desiredPositionRadians) {
     return this.run(
             () -> {
-              wristpid.setGoal(desiredPositionRadians.getAsDouble());
+              wristpid.setGoal(-desiredPositionRadians.getAsDouble());
               double feedbackOutput = wristpid.calculate(getPosition());
               TrapezoidProfile.State currentSetpoint = wristpid.getSetpoint();
 
@@ -204,5 +204,6 @@ public class WristSubsystem extends SubsystemBase {
     wristPosition = getPosition();
     SignalLogger.writeDouble("wristPosition", getPosition());
     SignalLogger.writeDouble("wristVelocity", getVelocityActual());
+    wristMotor.logValues();
   }
 }

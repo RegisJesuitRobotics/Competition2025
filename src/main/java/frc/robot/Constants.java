@@ -79,18 +79,18 @@ public final class Constants {
     public static final int ROTATION_MOTOR_ID = 15;
     public static final int ROTATION_LIMIT_SWITCH_ID = 1;
     public static final TunablePIDGains ROTATION_PID_GAINS =
-        new TunablePIDGains("/intake/rotation/PID", 5, 0, 0, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/intake/rotation/PID", 6, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
         new TunableTrapezoidalProfileGains(
-            "/intake/rotation/trapgains", 15, 10, MiscConstants.TUNING_MODE);
+            "/intake/rotation/trapgains", 25, 25, MiscConstants.TUNING_MODE);
     public static final TunableArmElevatorFFGains ROTATION_FF_GAINS =
         new TunableArmElevatorFFGains(
-            "/intake/rotation/ff/", 0.52525, 0.1693, 0.00080483, 0.0020163, MiscConstants.TUNING_MODE);
+            "/intake/rotation/ff/", 0.52525, 0.1693, 0.0080483, 0.0020163, MiscConstants.TUNING_MODE);
 
     public static final double GEAR_RATIO_ROTATION = 3.0 * 4.0 * (60.0 / 30.0);
     public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
     public static final InvertedValue INVERTED_ROTATION = InvertedValue.CounterClockwise_Positive;
-    public static final double ROTATION_UP_ANGLE = 0; // idk
+    public static final double ROTATION_UP_ANGLE = Units.degreesToRadians(-2); // idk
     public static final double ROTATION_DOWN_ANGLE = 1.635; // m
 
     // spinny stuff
@@ -173,8 +173,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 60.0; // m
     public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; // m
     public static final InvertedValue INVERTED_1 = InvertedValue.Clockwise_Positive;
-    public static final double CLIMBER_UP_VOLTAGE = 2.0; // m
-    public static final double CLIMBER_DOWN_VOLTAGE = -2.0; // m
+    public static final double CLIMBER_UP_VOLTAGE = 4.0; // m
+    public static final double CLIMBER_DOWN_VOLTAGE = -4.0; // m
     public static final int LIMITER = 0; // m
   }
 
@@ -233,15 +233,15 @@ public final class Constants {
 
   public static class WristConstants {
     public static final int WRIST_ID = 11;
-    public static final double GEAR_RATIO = 10.0;
-    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+    public static final double GEAR_RATIO = 9.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 60.0;
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = Units.degreesToRadians(90 - 85.55177013879425);
     public static final double PID_TOLERANCE = 2.0; // idk
     public static final int WRIST_ENCODER_PORT = 22; // needs a value
     // a lot of 0s
     public static final TunablePIDGains WRIST_PID_GAINS =
-        new TunablePIDGains("/pid/wrist/", 20, 0.0, 0, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/pid/wrist/", 17, 0.0, 0, MiscConstants.TUNING_MODE);
 
     public static final TunableTrapezoidalProfileGains WRIST_TRAP_GAINS =
         new TunableTrapezoidalProfileGains(
@@ -253,7 +253,7 @@ public final class Constants {
 
     public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
         new TunableArmElevatorFFGains(
-            "/feedfoward/wrist/", 0.69552, 0.68187, 0.092448, 0.22262, MiscConstants.TUNING_MODE);
+            "/feedfoward/wrist/", 0.38155, 0.42528, 0.26833, 0.11142, MiscConstants.TUNING_MODE);
 
     public static final double L2_REEF = Units.degreesToRadians(145.2326);
 

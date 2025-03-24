@@ -186,8 +186,8 @@ public class RobotContainer {
         operator
                 .leftTrigger()
                 .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
-        operator.leftBumper().whileTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
-        operator.rightBumper().whileTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
+        operator.leftBumper().whileTrue(Commands.parallel(MiscCommands.ClimberUpCommand(climberSubsystem), intakeSuperstructure.setDownAndRunCommand()));
+        operator.rightBumper().whileTrue(Commands.parallel(MiscCommands.ClimberDownCommand(climberSubsystem), intakeSuperstructure.setDownAndRunCommand()));
         operator.options().whileTrue(intakeRotationSubsystem.homeIntakeCommand());
         operator.share().whileTrue(elevatorSubsystem.homeElevatorCommand());
     }

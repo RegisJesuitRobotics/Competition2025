@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -27,7 +28,7 @@ import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 
-@Logged
+// @Logged
 public class ClimberSubsystem extends SubsystemBase {
   // motor 1
   public final TelemetryTalonFX climbMotor1 =
@@ -37,13 +38,6 @@ public class ClimberSubsystem extends SubsystemBase {
   private final EventTelemetryEntry climbMotor1Entry =
       new EventTelemetryEntry("/climber/motor1/events");
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(ClimberConstants.LIMITER);
-  // motor 2
-  public final TelemetryTalonFX climbMotor2 =
-      new TelemetryTalonFX(
-          ClimberConstants.CLIMB_MOTOR_2_ID, "climber/motor/2", MiscConstants.TUNING_MODE);
-  private final Alert climbMotor2Alert = new Alert("climb motor(2) had a fault", AlertType.ERROR);
-  private final EventTelemetryEntry climbMotor2Entry =
-      new EventTelemetryEntry("/climber/motor2/events");
 
   private final TunableTelemetryPIDController climbPID =
       new TunableTelemetryPIDController("pid/climb", ClimberConstants.CLIMB_PID_GAINS);
@@ -51,7 +45,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final SysIdRoutine climberSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), 
+          null, (state) -> SignalLogger.writeString("climber", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
 
   public ClimberSubsystem() {
@@ -71,35 +66,7 @@ public class ClimberSubsystem extends SubsystemBase {
     motorConfiguration.Audio.AllowMusicDurDisable = true;
     ConfigurationUtils.StringFaultRecorder faultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
-    ConfigurationUtils.applyCheckRecordCTRE(
-        () -> climbMotor2.getConfigurator().apply(motorConfiguration),
-        () -> {
-          TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
-          climbMotor2.getConfigurator().refresh(appliedConfig);
-          return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
-        },
-        faultRecorder.run("Motor configuration"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecordCTRE(
-        climbMotor2::optimizeBusUtilization,
-        () -> true,
-        faultRecorder.run("Optimize bus utilization"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
 
-    ConfigurationUtils.postDeviceConfig(
-        faultRecorder.hasFault(),
-        climbMotor2Entry::append,
-        "climb motor 2 fault",
-        faultRecorder.getFaultString());
-    climbMotor2Alert.set(faultRecorder.hasFault());
-
-    climbMotor2.setLoggingPositionConversionFactor(Constants.ClimberConstants.GEAR_RATIO);
-    climbMotor2.setLoggingVelocityConversionFactor(Constants.ClimberConstants.GEAR_RATIO);
-
-    // Clear reset as this is on startup
-    climbMotor2.hasResetOccurred();
-      }
-      private void configMotor2(){
     TalonFXConfiguration leftMotorConfiguration = new TalonFXConfiguration();
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.ClimberConstants.SUPPLY_CURRENT_LIMIT;
@@ -129,9 +96,6 @@ public class ClimberSubsystem extends SubsystemBase {
         leftFaultRecorder.getFaultString());
     climbMotor1Alert.set(leftFaultRecorder.hasFault());
 
-    climbMotor1.setControl(
-        new Follower(
-            Constants.ClimberConstants.CLIMB_MOTOR_2_ID, Constants.ClimberConstants.INVERTED_1));
     // Clear reset as this is on startup
     climbMotor1.hasResetOccurred();
   }
@@ -161,11 +125,11 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
-    return climberSysId.quasistatic(direction);
+    return climberSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
   }
 
   public Command sysIDDynamic(SysIdRoutine.Direction direction) {
-    return climberSysId.dynamic(direction);
+    return climberSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
   @Override

@@ -23,6 +23,6 @@ public class RaiderMathUtils {
   }
 
   public static double deadZoneAndCubeJoystick(double value) {
-    return signCopyPow(MathUtil.applyDeadband(value, 0.03), 3);
+    return signCopyPow(MathUtil.applyDeadband(value, 0), 3);
   }
 }

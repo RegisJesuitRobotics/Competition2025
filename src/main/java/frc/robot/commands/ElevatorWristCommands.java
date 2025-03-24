@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -18,7 +19,7 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.L2_REEF
-                        : -Constants.WristConstants.L2_REEF)));
+                        : -Constants.WristConstants.L2_REEF).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristL3(
@@ -30,7 +31,7 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.L3_REEF
-                        : -Constants.WristConstants.L3_REEF)));
+                        : -Constants.WristConstants.L3_REEF).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristL4(
@@ -42,7 +43,7 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.L4_REEF
-                        : -Constants.WristConstants.L4_REEF)));
+                        : -Constants.WristConstants.L4_REEF).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristHuman(
@@ -54,16 +55,28 @@ public class ElevatorWristCommands {
                 wristSubsystem.setPositionCommand(
                     flipped.get()
                         ? Constants.WristConstants.HUMAN
-                        : -Constants.WristConstants.HUMAN)));
+                        : -Constants.WristConstants.HUMAN).beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristBallLow(
       ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem, AtomicBoolean flipped) {
     return Commands.parallel(
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_BALL_PICKUP),
+        Commands.sequence(Commands.waitSeconds(.5),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(
+                wristSubsystem.setPositionCommand(()->
+                    flipped.get()
+                        ? Constants.WristConstants.BALL_PICKUP
+                        : -Constants.WristConstants.BALL_PICKUP))));
+  }
+  public static Command elevatorWristBallHigh(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem, AtomicBoolean flipped) {
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.HIGH_BALL_PICKUP),
+        Commands.deferredProxy(
+            () ->
+                wristSubsystem.setPositionCommand(()->
                     flipped.get()
                         ? Constants.WristConstants.BALL_PICKUP
                         : -Constants.WristConstants.BALL_PICKUP)));
@@ -87,8 +100,8 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.NET),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(
-                    flipped.get() ? Constants.WristConstants.NET : -Constants.WristConstants.NET)));
+                wristSubsystem.setPositionCommandAlgae(()->
+                    flipped.get() ? Constants.WristConstants.NET : -Constants.WristConstants.NET).beforeStarting(Commands.waitSeconds(.5))));
   }
 
   public static Command elevatorWristProcessor(
@@ -97,10 +110,17 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.PROCESSOR),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(
+                wristSubsystem.setPositionCommandAlgae(()->
                     flipped.get()
                         ? Constants.WristConstants.PROCESSOR
                         : -Constants.WristConstants.PROCESSOR)));
+    
+
+  }
+  
+  public static Command preGroundIntake(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem){
+    return Commands.parallel(
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.PRE_GROUND), Commands.sequence(Commands.waitUntil(() -> elevatorSubsystem.getElevatorPosition() > Units.inchesToMeters(12)), wristSubsystem.setPositionCommand(0.0)));
   }
 
   public static Command elevatorWristReset(
@@ -115,5 +135,4 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.GROUND_INTAKE),
         wristSubsystem.setPositionCommand(Constants.WristConstants.GROUND_INTAKE));
   }
-
 }

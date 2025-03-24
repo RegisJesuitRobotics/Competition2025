@@ -3,20 +3,27 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
+import frc.robot.telemetry.types.BooleanTelemetryEntry;
+import frc.robot.telemetry.types.DoubleTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
@@ -25,25 +32,31 @@ import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 import java.util.function.DoubleSupplier;
 
-@Logged
+// @Logged
 public class ElevatorSubsystem extends SubsystemBase {
   private final TelemetryTalonFX leftElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.LEFT_ID,
           "/elevator/motorleft",
+          Constants.MiscConstants.CANIVORE_NAME,
           Constants.MiscConstants.TUNING_MODE);
   private final SysIdRoutine elevatorSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), null, null),
+          new SysIdRoutine.Config(
+              Volts.per(Second).of(.5),
+              Volts.of(2),
+              null,
+              (state) -> SignalLogger.writeString("elevator", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
   private final TelemetryTalonFX rightElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.RIGHT_ID,
           "/elevator/motorright",
+          Constants.MiscConstants.CANIVORE_NAME,
           Constants.MiscConstants.TUNING_MODE);
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
-  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
+//  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
   private final EventTelemetryEntry rightEventEntry =
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
@@ -55,13 +68,18 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
+  private final DoubleTelemetryEntry elevatorPosition =
+      new DoubleTelemetryEntry("/elevator/position", true);
+  private final DoubleTelemetryEntry elevatorGoal = new DoubleTelemetryEntry("/elevator/goalPos", true);
+//  private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top", true);
+  private final BooleanTelemetryEntry homed = new BooleanTelemetryEntry("/elevator/homed", true);
   private boolean isHomed = false;
   private boolean isHoming = false;
 
   public ElevatorSubsystem() {
-    configRightMotor();
-    configLeftMotor();
-    setDefaultCommand(setVoltageCommand(0.0));
+    configMotors();
+    controller.setTolerance(Units.inchesToMeters(1));
+    SmartDashboard.putData(forceHomeCommand().withName("Force Home"));
   }
 
   private void configRightMotor() {
@@ -109,6 +127,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     leftMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    leftMotorConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -138,29 +157,43 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.setLoggingVelocityConversionFactor(
         Constants.ElevatorConstants.METERS_PER_REVOLUTION);
 
-    leftElevatorMotor.setControl(
-        new Follower(
-            Constants.ElevatorConstants.RIGHT_ID, Constants.ElevatorConstants.LEFT_INVERTED));
+    leftElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.RIGHT_ID, true));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
   }
 
   public double getElevatorPosition() {
-    return rightElevatorMotor.getPosition().getValueAsDouble()
+    return leftElevatorMotor.getPosition().getValueAsDouble()
         * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
   }
+
+  public Command forceHomeCommand(){
+    return Commands.runOnce(() -> {
+      isHomed = true;
+      leftElevatorMotor.setPosition(Constants.ElevatorConstants.FORCE_HOME / Constants.ElevatorConstants.METERS_PER_REVOLUTION);}).ignoringDisable(true);
+  }
+
+
 
   public void setVoltage(double volts) {
     rightElevatorMotor.setVoltage(volts);
   }
 
-  public Command setVoltageCommand(double volts){
-    return this.run(()-> rightElevatorMotor.setVoltage(volts));
+  public double getVelocityActual(){
+    return leftElevatorMotor.getVelocity().getValueAsDouble() * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
   }
 
-  public boolean atLimit() {
-    return bottomSwitch.get();
+  public Command setVoltageCommand(double volts) {
+    return this.run(() -> setVoltage(volts));
   }
+  public boolean atGoal(){
+    return controller.atGoal();
+  }
+
+//  public boolean atLimit() {
+//    return bottomSwitch.get();
+//  }
+
   public boolean isHomed() {
     return isHomed;
   }
@@ -175,7 +208,7 @@ public class ElevatorSubsystem extends SubsystemBase {
               double positionClamped =
                   MathUtil.clamp(
                       position.getAsDouble(),
-                      Constants.ElevatorConstants.L2_REEF,
+                      0,
                       Constants.ElevatorConstants.L4_REEF);
               controller.setGoal(positionClamped);
               double feedback = controller.calculate(getElevatorPosition());
@@ -185,12 +218,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         .beforeStarting(
             () ->
                 controller.reset(
-                    getElevatorPosition(), rightElevatorMotor.getVelocity().getValueAsDouble()))
+                    getElevatorPosition(), leftElevatorMotor.getVelocity().getValueAsDouble()))
         .onlyIf(() -> isHomed);
   }
 
   public Command homeElevatorCommand() {
-    return setVoltageCommand(-0.75)
+    return setVoltageCommand(-0.02)
         .until(this::isHomed)
         .beforeStarting(
             () -> {
@@ -202,20 +235,30 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return elevatorSysId.quasistatic(direction);
+    return elevatorSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return elevatorSysId.dynamic(direction);
+    return elevatorSysId.dynamic(direction).beforeStarting(SignalLogger::start);
+  }
+  public Command addInstrumentCommand(Orchestra orchestra){
+    return this.run(() -> orchestra.addInstrument(rightElevatorMotor))
+    .alongWith(this.run(()-> orchestra.addInstrument(leftElevatorMotor)));
   }
 
   @Override
   public void periodic() {
-    if ((atLimit()&& isHoming) || debouncer.calculate(atLimit())) {
-      isHomed = true;
-      rightElevatorMotor.setPosition(0.0);
-    }
+//    if ((atLimit() && isHoming) || debouncer.calculate(atLimit())) {
+//      isHomed = true;
+//      leftElevatorMotor.setPosition(0.0);
+//    }
+
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
+    elevatorPosition.append(getElevatorPosition());
+    elevatorGoal.append(controller.getGoal().position);
+//    topSwitch.append(atLimit());
+    homed.append(isHomed());
+    SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
   }
 }

@@ -15,12 +15,14 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
+import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
 import frc.robot.utils.Alert;
@@ -28,7 +30,7 @@ import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigurationUtils;
 import frc.robot.utils.ConfigurationUtils.StringFaultRecorder;
 
-@Logged
+// @Logged
 public class AlgaeSubsystem extends SubsystemBase {
 
   private final TelemetryCANSparkFlex algaeMotor =
@@ -41,13 +43,14 @@ public class AlgaeSubsystem extends SubsystemBase {
   private final TunableTelemetryPIDController algaePID =
       new TunableTelemetryPIDController("algae/pid", Constants.AlgaeConstants.PID_GAINS);
   private SimpleMotorFeedforward algaeFF = Constants.AlgaeConstants.FF_GAINS.createFeedforward();
-  private final DigitalInput intakeSwitch =
-      new DigitalInput(Constants.AlgaeConstants.SWITCH_ID);
-  public Alert algaeMotorAlert = new Alert("Algae motor not doing so well", AlertType.ERROR);
+  private final DigitalInput intakeSwitchRight =
+      new DigitalInput(Constants.AlgaeConstants.SWITCH_ID_RIGHT);
+  public Alert algaeMotorAlert = new Alert("Algae motor had a fault", AlertType.ERROR);
   SlewRateLimiter limiter =
       new SlewRateLimiter(Constants.AlgaeConstants.RATE_LIMIT); // deal with later
   private RelativeEncoder algaeEncoder;
   private EventTelemetryEntry algaeEvent = new EventTelemetryEntry("AlgaeMotor/Event");
+  private BooleanTelemetryEntry limit = new BooleanTelemetryEntry("/algae/limit", true);
 
   private final SysIdRoutine algaeSysId =
       new SysIdRoutine(
@@ -130,7 +133,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public boolean getSwitchState() {
-    return intakeSwitch.get();
+    return !intakeSwitchRight.get();
   }
 
   public Command runVelocityCommand(double setpointRadiansSecond) {
@@ -155,7 +158,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-      algaeMotor.logValues();
-    // This method will be called once per scheduler run
+    algaeMotor.logValues();
+    limit.append(getSwitchState());
   }
 }

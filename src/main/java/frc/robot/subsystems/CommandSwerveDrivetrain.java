@@ -9,12 +9,17 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
+import com.pathplanner.lib.path.RotationTarget;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,11 +27,16 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.telemetry.types.DoubleTelemetryEntry;
+import frc.robot.utils.RaiderUtils;
+import frc.robot.utils.Reef;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -55,6 +65,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
+    private final SwerveRequest.RobotCentric swerveRequest = new SwerveRequest.RobotCentric();
+    
+
+  private final DoubleTelemetryEntry pigeonEntry = new DoubleTelemetryEntry("/drive/pigeon", true);
+  private String autoTraj = Reef.MidAlgae.value;
 
   private final Pigeon2 pigeon2 = this.getPigeon2();
   /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
@@ -121,12 +136,38 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public CommandSwerveDrivetrain(
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
     super(drivetrainConstants, modules);
+    RobotConfig config = null;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+    this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 999999999));
+
+    AutoBuilder.configure(
+        this::getPose,
+        this::resetPose,
+        this::getSpeeds,
+        (ChassisSpeeds, FF) ->
+            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
+        new PPHolonomicDriveController(
+            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
+            Constants.AutoConstants.ROTATION_PID_GAINS),
+        config,
+        RaiderUtils::shouldFlip,
+        this);
+
     if (Utils.isSimulation()) {
+      
       startSimThread();
     }
   }
 
   /**
+   * 
+   * 
+   * 
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
    * <p>This constructs the underlying hardware devices, so users should not construct the devices
@@ -145,6 +186,28 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 99999999));
+
+    RobotConfig config = null;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    AutoBuilder.configure(
+        this::getPose,
+        this::resetPose,
+        this::getSpeeds,
+        (ChassisSpeeds, FF) ->
+            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
+        new PPHolonomicDriveController(
+            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
+            Constants.AutoConstants.ROTATION_PID_GAINS),
+        config,
+        RaiderUtils::shouldFlip,
+        this);
   }
 
   /**
@@ -178,7 +241,32 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 99999999));
+
+    RobotConfig config = null;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    AutoBuilder.configure(
+        this::getPose,
+        this::resetPose,
+        this::getSpeeds,
+        (ChassisSpeeds, FF) ->
+            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
+        new PPHolonomicDriveController(
+            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
+            Constants.AutoConstants.ROTATION_PID_GAINS),
+        config,
+        RaiderUtils::shouldFlip,
+        this);
   }
+
+ 
+  
 
   /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
@@ -187,6 +275,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
     return run(() -> this.setControl(requestSupplier.get()));
+  }
+
+  public ChassisSpeeds getSpeeds() {
+    return this.getState().Speeds;
   }
 
   /**
@@ -198,6 +290,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutineToApply.quasistatic(direction);
+  }
+
+  public Command nothing(){
+return Commands.none();
   }
 
   /**
@@ -213,19 +309,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   @Override
   public void periodic() {
+    pigeonEntry.append(pigeon2.getYaw().getValueAsDouble());
     // TODO: if needed add in the rest of these values
     LimelightHelpers.SetRobotOrientation(
         Constants.VisionConstants.APRIL_LIMELIGHT,
-        pigeon2.getYaw().getValue().baseUnitMagnitude(),
+        this.getState().Pose.getRotation().getDegrees(),
         0,
         0,
         0,
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight1");
-    this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
-    /*
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
+
+    if (mt2 != null && mt2.tagCount > 0) {
+      this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
+
+      
+    }
+    /*[]\
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
      * This allows us to correct the perspective in case the robot code restarts mid-match.
@@ -249,6 +351,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return this.getState().Pose;
   }
 
+
+
+  
+
   public Command autoDriveTrajectory(String position, AtomicBoolean shouldFlip) {
     PathConstraints constraints =
         new PathConstraints(
@@ -258,32 +364,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             Constants.AutoConstants.MAX_ANGULAR_ACCELERATION,
             Constants.AutoConstants.NOMINAL_VOLTAGE);
 
-    final PathPlannerPath path;
+    PathPlannerPath path;
     try {
       path = PathPlannerPath.fromPathFile(position);
-      int pathSize = path.getPathPoses().size();
-      PathPoint lastPosition = path.getPoint(pathSize - 1);
-      PathPoint firstPosition = path.getPoint(0);
-      boolean flipRotation =
-          this.shouldFlip(
-              new Pose2d(firstPosition.position, firstPosition.rotationTarget.rotation()),
-              shouldFlip);
-      if (flipRotation) {
-
-        path.getAllPathPoints()
-            .set(
-                pathSize - 1,
-                new PathPoint(lastPosition.position, lastPosition.rotationTarget.flip()));
-        path.getAllPathPoints()
-            .set(0, new PathPoint(firstPosition.position, firstPosition.rotationTarget.flip()));
-      }
+     
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (ParseException e) {
       throw new RuntimeException(e);
     }
 
-    return this.run(() -> AutoBuilder.pathfindThenFollowPath(path, constraints));
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
 
   private void startSimThread() {
@@ -311,4 +402,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     shouldFlip.set(flipped);
     return flipped;
   }
+  
 }

@@ -5,15 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": null
+            "pathName": "Left-9"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "STATION-DOWN-CORAL-LEFT-HUMAN"
+            "name": "L4_Score"
           }
         }
       ]

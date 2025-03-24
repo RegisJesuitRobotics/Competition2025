@@ -4,14 +4,18 @@
 
 package frc.robot;
 
-import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.MiscConstants;
 
-@Logged
+import org.littletonrobotics.urcl.URCL;
+
+// @Logged
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
@@ -19,8 +23,20 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    
+  }
+
+  @Override
+  public void robotInit(){
+    DataLogManager.logNetworkTables(MiscConstants.TUNING_MODE);
     DataLogManager.start();
-    Epilogue.bind(this);
+    DataLogManager.log("*****START*****");
+
+    DataLog dataLog = DataLogManager.getLog();
+    if (MiscConstants.TUNING_MODE) {
+      URCL.start();
+      NetworkTableInstance.getDefault().startEntryDataLog(dataLog, "/URCL/", "URCL/");
+    }
   }
 
   @Override

@@ -3,15 +3,23 @@ package frc.robot.subsystems;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.utils.RaiderUtils;
+
 import java.util.OptionalDouble;
 
-@Logged
+// @Logged
 public class VisionSubsystem extends SubsystemBase {
-
-  private VisionSubsystem() {}
+private final CommandSwerveDrivetrain drivetrain;
+  public VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
+    this.drivetrain = drivetrain;
+    
+  }
 
   public OptionalDouble getTargetVerticalOffset() {
     LimelightHelpers.LimelightTarget_Detector detector =
@@ -35,7 +43,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
-  @Logged(name = "estimated target distance")
+  // @Logged(name = "estimated target distance")
   public double getEstimatedDistanceTarget() {
     double angleToGoalRadians =
         getTargetVerticalOffset().getAsDouble() + Constants.VisionConstants.CAMERA_MOUNT_ANGLE;
@@ -45,19 +53,21 @@ public class VisionSubsystem extends SubsystemBase {
         / Math.tan(angleToGoalRadians);
   }
 
-  @Logged(name = "target trajectory")
+  // @Logged(name = "target trajectory") // horizontal offset?
   public Pose2d getTargetTrajectory() {
     double estimatedDistanceTarget = getEstimatedDistanceTarget();
+    Pose2d poseFromRobot = new Pose2d(
+            (estimatedDistanceTarget
+                    * Math.cos(
+                    90-getTargetHorizontalOffset().getAsDouble()
+                            )),
+            (estimatedDistanceTarget
+                    * Math.sin(
+                    90-getTargetHorizontalOffset().getAsDouble()
+                            )),
+            new Rotation2d(0.0));
 
-    return new Pose2d(
-        (estimatedDistanceTarget
-            * Math.cos(
-                getTargetVerticalOffset().getAsDouble()
-                    + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
-        (estimatedDistanceTarget
-            * Math.sin(
-                getTargetVerticalOffset().getAsDouble()
-                    + Constants.VisionConstants.CAMERA_MOUNT_ANGLE)),
-        new Rotation2d(0.0));
+
+    return poseFromRobot.relativeTo(drivetrain.getPose());
   }
 }

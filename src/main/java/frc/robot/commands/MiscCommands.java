@@ -10,10 +10,10 @@ import frc.robot.subsystems.ClimberSubsystem;
 
 public class MiscCommands {
   public static Command ClimberUpCommand(ClimberSubsystem climberSubsystem) {
-    return climberSubsystem.runVelocityCommand(Constants.ClimberConstants.CLIMBER_UP_VOLTAGE);
+    return climberSubsystem.setVoltageCommand(Constants.ClimberConstants.CLIMBER_UP_VOLTAGE);
   }
 
   public static Command ClimberDownCommand(ClimberSubsystem climberSubsystem) {
-    return climberSubsystem.runVelocityCommand(Constants.ClimberConstants.CLIMBER_DOWN_VOLTAGE);
+    return climberSubsystem.setVoltageCommand(Constants.ClimberConstants.CLIMBER_DOWN_VOLTAGE);
   }
 }

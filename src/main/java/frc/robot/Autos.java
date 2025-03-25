@@ -37,16 +37,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
-import frc.robot.subsystems.Intake.IntakeSuperstructure;
 import frc.robot.utils.RaiderUtils;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
-import frc.robot.subsystems.Intake.IntakeSuperstructure;
+
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.utils.RaiderUtils;
@@ -59,8 +56,6 @@ public class Autos {
   private final SendableChooser<Command> autoChooser;
 
   public Autos(
-          IntakeSpinningSubsystem intakeSpinningSubsystem,
-          IntakeSuperstructure intakeSuperstructure,
           AlgaeSubsystem algaeSubsystem,
           ClimberSubsystem climberSubsystem,
           CommandSwerveDrivetrain drivetrain,
@@ -71,7 +66,7 @@ public class Autos {
           VisionSubsystem visionSubsystem) {
     
         NamedCommands.registerCommand("L4_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE).withTimeout(2.0).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
-        NamedCommands.registerCommand("coralSearch_Drive", Commands.run(()->detectAndMoveTarget(visionSubsystem, drivetrain)));
+        // NamedCommands.registerCommand("coralSearch_Drive", Commands.run(()->detectAndMoveTarget(visionSubsystem, drivetrain)));
         NamedCommands.registerCommand("AlgaePickup", Commands.sequence(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE).until(algaeSubsystem::getSwitchState)));
         NamedCommands.registerCommand("AlgaeNet", Commands.sequence(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE).until(() -> !algaeSubsystem.getSwitchState())));
         NamedCommands.registerCommand("L3_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL3(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE).until(()  -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState()).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
@@ -88,18 +83,6 @@ public class Autos {
       autoChooser.addOption("wrist df", wristSubsystem.sysIdDynamic(Direction.kForward));
       autoChooser.addOption("wrist dr", wristSubsystem.sysIdDynamic(Direction.kReverse));
 
-      autoChooser.addOption(
-          "intake rotation qf",
-          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kForward));
-      autoChooser.addOption(
-          "intake rotation qr",
-          intakeSuperstructure.getIntakeRotationSubsystem().sysIdQuasistatic(Direction.kReverse));
-      autoChooser.addOption(
-          "intake rotation df",
-          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kForward));
-      autoChooser.addOption(
-          "intake rotation dr",
-          intakeSuperstructure.getIntakeRotationSubsystem().sysIdDynamic(Direction.kReverse));
 
       // autoChooser.addOption(
       //     "intakeSpinning qf", intakeSpinningSubsystem.sysIDQuasistatic(Direction.kForward));
@@ -135,10 +118,7 @@ public class Autos {
       autoChooser.addOption("elevator10", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
       autoChooser.addOption("elevator 40", elevatorSubsystem.setPosition(Units.inchesToMeters(40)));
       autoChooser.addOption("elevator0", elevatorSubsystem.setPosition(0));
-      autoChooser.addOption("slapdownDOWN", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(Constants.IntakeConstants.ROTATION_DOWN_ANGLE))));
-      autoChooser.addOption("slapdownUP", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(0)));
       autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
-      autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(Constants.IntakeConstants.SPINNING_VOLTAGE));
     }
   }
 
@@ -146,18 +126,18 @@ public class Autos {
     return autoChooser;
   }
 
-  public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
-    return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
-  }
+  // public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
+  //   return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
+  // }
 
   public Command autoStart(
-      ElevatorSubsystem elevatorSubsystem, IntakeSuperstructure intakeSuperstructure) {
+      ElevatorSubsystem elevatorSubsystem) {
     if (Robot.isSimulation()) {
       return Commands.print("Probed!");
     }
     return Commands.parallel(
-            elevatorSubsystem.homeElevatorCommand(),
-            intakeSuperstructure.getIntakeRotationSubsystem().homeIntakeCommand())
+            elevatorSubsystem.homeElevatorCommand()
+            )
         .withName("AutoStart");
   }
 }

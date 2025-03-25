@@ -77,7 +77,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private boolean isHoming = false;
 
   public ElevatorSubsystem() {
-    configMotors();
+    configRightMotor();
     controller.setTolerance(Units.inchesToMeters(1));
     SmartDashboard.putData(forceHomeCommand().withName("Force Home"));
   }

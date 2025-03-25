@@ -28,9 +28,6 @@ import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
 import frc.robot.hid.CommandXboxPlaystationController;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Intake.IntakeRotationSubsystem;
-import frc.robot.subsystems.Intake.IntakeSpinningSubsystem;
-import frc.robot.subsystems.Intake.IntakeSuperstructure;
 import frc.robot.utils.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,17 +64,12 @@ public class RobotContainer {
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final WristSubsystem wristSubsystem = new WristSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-    private final IntakeRotationSubsystem intakeRotationSubsystem = new IntakeRotationSubsystem();
-    private final IntakeSpinningSubsystem intakeSpinningSubsystem = new IntakeSpinningSubsystem();
-    private final IntakeSuperstructure intakeSuperstructure = new IntakeSuperstructure(intakeSpinningSubsystem,
-            intakeRotationSubsystem);
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
     private final Autos autos = new Autos(
-            intakeSpinningSubsystem,
-            intakeSuperstructure,
+
             algaeSubsystem,
             climberSubsystem,
             drivetrain,
@@ -136,60 +128,7 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        operator.triangle().onTrue(
-                ElevatorWristCommands.elevatorWristBallHigh(elevatorSubsystem, wristSubsystem, scoringFlipped));
-        operator
-                .povDown()
-                .onTrue(Commands.parallel(
-                        ElevatorWristCommands.elevatorWristL2(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped)
-                , intakeSuperstructure.setDownAndRunCommand().withInterruptBehavior(InterruptionBehavior.kCancelSelf)));
-        operator
-                .povRight()
-                .onTrue(
-                        ElevatorWristCommands.elevatorWristL3(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped)
-                               );
-        operator
-                .povUp()
-                .onTrue(
-                        ElevatorWristCommands.elevatorWristL4(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped)
-                                );
-        operator
-                .povLeft()
-                .onTrue(
-                        ElevatorWristCommands.elevatorWristL1(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped)
-                                
-                                        );
-        operator
-                .x()
-                .whileTrue(
-                        Commands.parallel(ElevatorWristCommands.elevatorWristProcessor(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped), intakeSuperstructure.setDownAndRunCommand())).onFalse(intakeSuperstructure.setUpCommand());
-        operator
-                .circle()
-                .onTrue(
-                        ElevatorWristCommands.elevatorWristBallLow(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped));
-        operator
-                .square()
-                .onTrue(
-                        ElevatorWristCommands.elevatorWristNet(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped));
-        operator
-                .rightTrigger()
-                .onTrue(
-                        ElevatorWristCommands.elevatorWristHuman(
-                                elevatorSubsystem, wristSubsystem, scoringFlipped));
-        operator
-                .leftTrigger()
-                .onTrue(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem));
-        operator.leftBumper().whileTrue(Commands.parallel(MiscCommands.ClimberUpCommand(climberSubsystem), intakeSuperstructure.setDownAndRunCommand()));
-        operator.rightBumper().whileTrue(Commands.parallel(MiscCommands.ClimberDownCommand(climberSubsystem), intakeSuperstructure.setDownAndRunCommand()));
-        operator.options().whileTrue(intakeRotationSubsystem.homeIntakeCommand());
-        operator.share().whileTrue(elevatorSubsystem.homeElevatorCommand());
+        
     }
 
     private void configureBoard() {
@@ -266,8 +205,6 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setPosition(Units.inchesToMeters(3.15)));
-        intakeRotationSubsystem.setDefaultCommand(intakeRotationSubsystem.setVoltageCommand(0));
         elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setVoltageCommand(0.0));
         drivetrain.setDefaultCommand(
 
@@ -309,8 +246,6 @@ public class RobotContainer {
          */
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.leftStick().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.leftStick().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick
                 .leftStick()
                 .and(joystick.y())
@@ -350,25 +285,7 @@ public class RobotContainer {
         // intakeSpinningSubsystem
         // .setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE))
         // .until(coralSubsystem::getLeftSwitchState)));
-        joystick.leftBumper().whileTrue(
-                Commands.sequence(
-                        Commands.race(
-                                ElevatorWristCommands.preGroundIntake(elevatorSubsystem, wristSubsystem),
-                                Commands.sequence(
-                                        Commands.waitUntil(() -> elevatorSubsystem.atGoal() && wristSubsystem.atGoal()),
-                                        intakeSuperstructure.setDownAndRunCommand()
-                                                .until(intakeSpinningSubsystem::getSwitchValue),
-                                        intakeSuperstructure.setUpCommand().until(intakeRotationSubsystem::atLimit).andThen(intakeRotationSubsystem.setVoltageCommand(0)))),
-
-                        Commands.race(
-                                ElevatorWristCommands.elevatorWristGroundIntake(elevatorSubsystem, wristSubsystem),
-                                Commands.sequence(Commands
-                                        .waitUntil(() -> elevatorSubsystem.getElevatorPosition() < Units
-                                                .inchesToMeters(.4)),
-                                        Commands.parallel(intakeSpinningSubsystem
-                                                .setVoltageCommand(-Constants.IntakeConstants.SPINNING_VOLTAGE_OUTAKE))
-                                                ))))                .onFalse(intakeSuperstructure.setUpCommand());
-        joystick.y().whileTrue(Commands.run(() -> {
+        joystick.leftBumper().whileTrue(Commands.run(() -> {
             Translation2d translation = vectorRateLimiter.calculate(new Translation2d(
                     RaiderMathUtils.deadZoneAndCubeJoystick(-joystick.getLeftY()) * MaxSpeed,
                     RaiderMathUtils.deadZoneAndCubeJoystick(-joystick.getLeftX()) * MaxSpeed));
@@ -377,8 +294,8 @@ public class RobotContainer {
                             translation.getX()) // Drive forward with negative Y (forward)
                     .withVelocityY(
                             translation.getY())
-                    .withTargetDirection(Rotation2d.fromDegrees(drivetrain.getPose().getRotation().getDegrees()
-                            + visionSubsystem.getTargetHorizontalOffset().getAsDouble())) // Drive left with negative X
+                    .withTargetDirection(Rotation2d.fromDegrees(drivetrain.getPose().getMeasureY().magnitude() > 4 ? 60 : -60))
+                .withHeadingPID(5, 0, 0) // Drive left with negative X
                                                                                           // (left)
             );
         }));

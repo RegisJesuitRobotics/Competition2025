@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -313,7 +314,7 @@ return Commands.none();
     // TODO: if needed add in the rest of these values
     LimelightHelpers.SetRobotOrientation(
         Constants.VisionConstants.APRIL_LIMELIGHT,
-        this.getState().Pose.getRotation().getDegrees(),
+        this.getPose().getRotation().getDegrees(),
         0,
         0,
         0,
@@ -321,11 +322,16 @@ return Commands.none();
         0);
     // i<3 nick
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
+    LimelightHelpers.PoseEstimate mt2Other = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.OBJECT_LIMELIGHT);
 
-    if (mt2 != null && mt2.tagCount > 0) {
+    if (mt2 != null && mt2.tagCount > 0 && mt2.avgTagDist < Units.inchesToMeters(60)) {
       this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
+      
 
       
+    }
+    if (mt2Other != null && mt2Other.tagCount > 0 && mt2Other.avgTagDist < Units.inchesToMeters(60)){
+      this.addVisionMeasurement(mt2Other.pose, Utils.fpgaToCurrentTime(mt2Other.timestampSeconds));
     }
     /*[]\
      * Periodically try to apply the operator perspective.

@@ -13,8 +13,6 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPoint;
-import com.pathplanner.lib.path.RotationTarget;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,7 +35,6 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
 import frc.robot.utils.RaiderUtils;
 import frc.robot.utils.Reef;
-
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -66,8 +63,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
-    private final SwerveRequest.RobotCentric swerveRequest = new SwerveRequest.RobotCentric();
-    
+  private final SwerveRequest.RobotCentric swerveRequest = new SwerveRequest.RobotCentric();
 
   private final DoubleTelemetryEntry pigeonEntry = new DoubleTelemetryEntry("/drive/pigeon", true);
   private String autoTraj = Reef.MidAlgae.value;
@@ -151,7 +147,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this::resetPose,
         this::getSpeeds,
         (ChassisSpeeds, FF) ->
-            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
+            this.setControl(
+                swerveRequest
+                    .withVelocityX(ChassisSpeeds.vxMetersPerSecond)
+                    .withVelocityY(ChassisSpeeds.vyMetersPerSecond)
+                    .withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
         new PPHolonomicDriveController(
             Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
             Constants.AutoConstants.ROTATION_PID_GAINS),
@@ -160,15 +160,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this);
 
     if (Utils.isSimulation()) {
-      
+
       startSimThread();
     }
   }
 
   /**
-   * 
-   * 
-   * 
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
    * <p>This constructs the underlying hardware devices, so users should not construct the devices
@@ -202,7 +199,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this::resetPose,
         this::getSpeeds,
         (ChassisSpeeds, FF) ->
-            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
+            this.setControl(
+                swerveRequest
+                    .withVelocityX(ChassisSpeeds.vxMetersPerSecond)
+                    .withVelocityY(ChassisSpeeds.vyMetersPerSecond)
+                    .withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
         new PPHolonomicDriveController(
             Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
             Constants.AutoConstants.ROTATION_PID_GAINS),
@@ -257,7 +258,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this::resetPose,
         this::getSpeeds,
         (ChassisSpeeds, FF) ->
-            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
+            this.setControl(
+                swerveRequest
+                    .withVelocityX(ChassisSpeeds.vxMetersPerSecond)
+                    .withVelocityY(ChassisSpeeds.vyMetersPerSecond)
+                    .withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
         new PPHolonomicDriveController(
             Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
             Constants.AutoConstants.ROTATION_PID_GAINS),
@@ -265,9 +270,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RaiderUtils::shouldFlip,
         this);
   }
-
- 
-  
 
   /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
@@ -293,8 +295,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return m_sysIdRoutineToApply.quasistatic(direction);
   }
 
-  public Command nothing(){
-return Commands.none();
+  public Command nothing() {
+    return Commands.none();
   }
 
   /**
@@ -321,16 +323,17 @@ return Commands.none();
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
-    LimelightHelpers.PoseEstimate mt2Other = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.OBJECT_LIMELIGHT);
+    LimelightHelpers.PoseEstimate mt2 =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
+    LimelightHelpers.PoseEstimate mt2Other =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.OBJECT_LIMELIGHT);
 
     if (mt2 != null && mt2.tagCount > 0 && mt2.avgTagDist < Units.inchesToMeters(60)) {
       this.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
-      
-
-      
     }
-    if (mt2Other != null && mt2Other.tagCount > 0 && mt2Other.avgTagDist < Units.inchesToMeters(60)){
+    if (mt2Other != null
+        && mt2Other.tagCount > 0
+        && mt2Other.avgTagDist < Units.inchesToMeters(60)) {
       this.addVisionMeasurement(mt2Other.pose, Utils.fpgaToCurrentTime(mt2Other.timestampSeconds));
     }
     /*[]\
@@ -357,10 +360,6 @@ return Commands.none();
     return this.getState().Pose;
   }
 
-
-
-  
-
   public Command autoDriveTrajectory(String position, AtomicBoolean shouldFlip) {
     PathConstraints constraints =
         new PathConstraints(
@@ -373,7 +372,7 @@ return Commands.none();
     PathPlannerPath path;
     try {
       path = PathPlannerPath.fromPathFile(position);
-     
+
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (ParseException e) {
@@ -408,5 +407,4 @@ return Commands.none();
     shouldFlip.set(flipped);
     return flipped;
   }
-  
 }

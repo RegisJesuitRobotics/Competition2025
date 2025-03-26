@@ -7,64 +7,75 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "RightStart-2B"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L3_Score"
+            "name": "L4"
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "AlgaePickup"
+                  "name": "intake"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue-1A-Blue1A-Algae"
+                  "pathName": "2B-PlayerRight"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
+          "data": {
+            "pathName": "PlayerRight-5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "1A Algae - Net"
+                  "name": "intake"
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AlgaeNet"
-                      }
-                    }
-                  ]
+                  "pathName": "5-PlayerRight"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PlayerRight-4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
           }
         }
       ]

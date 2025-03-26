@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.8101973684210524,
-        "y": 3.0435855263157894
+        "x": 4.118280029296875,
+        "y": 2.915373011997767
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.701953125,
-        "y": 2.2315818843984956
+        "x": 4.010035785875822,
+        "y": 2.103369370080473
       },
       "isLocked": false,
       "linkedName": "4D"
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 100.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -32.17121712854463
+    "rotation": 150.0
   },
   "useDefaultConstraints": true
 }

@@ -10,17 +10,13 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -31,6 +27,7 @@ import frc.robot.telemetry.tunable.gains.TunableArmElevatorFFGains;
 import frc.robot.telemetry.tunable.gains.TunableFFGains;
 import frc.robot.telemetry.tunable.gains.TunablePIDGains;
 import frc.robot.telemetry.tunable.gains.TunableTrapezoidalProfileGains;
+import java.util.function.DoubleSupplier;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -55,14 +52,13 @@ public final class Constants {
     public static final TunablePIDGains PID_GAINS =
         new TunablePIDGains("/elevator/PID", 30, 0, 0.5, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
-        new TunableTrapezoidalProfileGains("/elevator/trap", 10, 8
-        , MiscConstants.TUNING_MODE);
+        new TunableTrapezoidalProfileGains("/elevator/trap", 10, 8, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF =
         new TunableFFGains("/elevator/ff", 0.02501, 0.12426, 0.074887, MiscConstants.TUNING_MODE);
-    public static final double L2_REEF = Units.inchesToMeters(7.9736);
-    public static final double L4_REEF = Units.inchesToMeters(57.50);
-    public static final double L3_REEF = Units.inchesToMeters(25.75);
-    public static final double L1_REEF = 0.0;
+    public static final double L2_REEF = Units.inchesToMeters(26.197783);
+    public static final double L4_REEF = Units.inchesToMeters(65.9539);
+    public static final double L3_REEF = Units.inchesToMeters(41.939761);
+    public static final double L1_REEF = Units.inchesToMeters(13.729502);
     public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(10.9377);
@@ -72,42 +68,6 @@ public final class Constants {
     public static final double PRE_GROUND = Units.inchesToMeters(14);
     public static final double HIGH_BALL_PICKUP = Units.inchesToMeters(12.737500 + 18);
     public static final double FORCE_HOME = Units.inchesToMeters(7.0);
-  }
-
-  public static class IntakeConstants {
-    // rotation stuff
-    public static final int ROTATION_MOTOR_ID = 15;
-    public static final int ROTATION_LIMIT_SWITCH_ID = 1;
-    public static final TunablePIDGains ROTATION_PID_GAINS =
-        new TunablePIDGains("/intake/rotation/PID", 6, 0, 0, MiscConstants.TUNING_MODE);
-    public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
-        new TunableTrapezoidalProfileGains(
-            "/intake/rotation/trapgains", 25, 25, MiscConstants.TUNING_MODE);
-    public static final TunableArmElevatorFFGains ROTATION_FF_GAINS =
-        new TunableArmElevatorFFGains(
-            "/intake/rotation/ff/", 0.52525, 0.1693, 0.0080483, 0.0020163, MiscConstants.TUNING_MODE);
-
-    public static final double GEAR_RATIO_ROTATION = 3.0 * 4.0 * (60.0 / 30.0);
-    public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
-    public static final InvertedValue INVERTED_ROTATION = InvertedValue.CounterClockwise_Positive;
-    public static final double ROTATION_UP_ANGLE = Units.degreesToRadians(-2); // idk
-    public static final double ROTATION_DOWN_ANGLE = 1.635; // m
-
-    // spinny stuff
-    public static final int SPINNING_MOTOR_ID = 14; // idk
-    public static final double SPINNING_VOLTAGE = 10.0; // m
-    public static final double RATE_LIMIT = 1.0; // m
-    public static final TunablePIDGains SPINNING_PID_GAINS =
-        new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final TunableFFGains SPINNING_FF_GAINS =
-        new TunableFFGains("/intake/spinning/ff/", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
-    public static final double GEAR_RATIO_SPINNING = 1;
-    public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 25.0; // idk
-    public static final InvertedValue INVERTED_SPINNING = InvertedValue.Clockwise_Positive; // m
-    public static final int STALL_MOTOR_CURRENT = 40; // mF
-    public static final int FREE_MOTOR_CURRENT = 30; // m
-    public static final int LEFT_SWITCH = 3;
-    public static final int SPINNING_VOLTAGE_OUTAKE = 12;
   }
 
   public static class OperatorConstants {
@@ -148,11 +108,11 @@ public final class Constants {
   public static class CoralConstants {
     public static final int CORAL_MOTOR_ID = 12;
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
-    public static final int SLEW_RATE_LIMIT = 1; 
-    
-    public static final double SUPPLY_CURRENT_LIMIT = 40; 
-    public static final int STALL_MOTOR_CURRENT = 30; 
-    public static final int FREE_MOTOR_CURRENT = 20; 
+    public static final int SLEW_RATE_LIMIT = 1;
+
+    public static final double SUPPLY_CURRENT_LIMIT = 40;
+    public static final int STALL_MOTOR_CURRENT = 30;
+    public static final int FREE_MOTOR_CURRENT = 20;
     public static final double GEAR_RATIO = 18.0 / 16.0;
 
     // tune
@@ -161,9 +121,10 @@ public final class Constants {
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("/ff/coral", 0, 0, 0, MiscConstants.TUNING_MODE);
     public static final double RUNNING_VOLTAGE = 12.0;
-    public static final int SWITCH_ID_LEFT = 4; 
+    public static final int SWITCH_ID_LEFT = 1;
     public static final double OUTPUT_VOLTAGE = -10.0;
-    public static final int SWITCH_ID_RIGHT = 9; 
+    public static final int SWITCH_ID_RIGHT = 9;
+    public static final double INTAKE_VOLTAGE = 2.0;
   }
 
   public static class ClimberConstants {
@@ -180,28 +141,20 @@ public final class Constants {
     public static final int LIMITER = 0; // m
   }
 
-  public static class ChassisConstants{
-    public static final Distance WHEEL_RADIUS =  Distance.ofBaseUnits(0.048, Meters);
-    public static final LinearVelocity MAX_SPEED = LinearVelocity.ofBaseUnits(5.450, MetersPerSecond);
+  public static class ChassisConstants {
+    public static final Distance WHEEL_RADIUS = Distance.ofBaseUnits(0.048, Meters);
+    public static final LinearVelocity MAX_SPEED =
+        LinearVelocity.ofBaseUnits(5.450, MetersPerSecond);
     public static final Current MAX_CURRENT = Current.ofBaseUnits(60, Amps);
-    public static final RobotConfig PP_CONFIG = new RobotConfig(
-      Mass.ofBaseUnits(74, Kilogram),
-      MomentOfInertia.ofBaseUnits(6.883, KilogramSquareMeters),
-
-      new ModuleConfig(
-        WHEEL_RADIUS,
-        MAX_SPEED,
-         1.2,
-          DCMotor.getKrakenX60(1),
-          MAX_CURRENT ,
-           1),
-    new Translation2d(0.273,0.273),
-    new Translation2d(0.273,-0.273),
-    new Translation2d(-0.273,0.273),
-    new Translation2d(-0.273,-0.273)
-    
-      
-    );
+    public static final RobotConfig PP_CONFIG =
+        new RobotConfig(
+            Mass.ofBaseUnits(74, Kilogram),
+            MomentOfInertia.ofBaseUnits(6.883, KilogramSquareMeters),
+            new ModuleConfig(WHEEL_RADIUS, MAX_SPEED, 1.2, DCMotor.getKrakenX60(1), MAX_CURRENT, 1),
+            new Translation2d(0.273, 0.273),
+            new Translation2d(0.273, -0.273),
+            new Translation2d(-0.273, 0.273),
+            new Translation2d(-0.273, -0.273));
   }
 
   public static class VisionConstants {
@@ -218,12 +171,13 @@ public final class Constants {
 
     public static final TunablePIDGains pointTranslationGains =
         new TunablePIDGains(
-            "/drive/gains/pointTranslationController", 5, 0, 0, MiscConstants.TUNING_MODE);
+            "/drive/gains/pointTranslationController", 4, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
         new TunableTrapezoidalProfileGains(
             "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains pointTranslationFFGains =
-        new TunableFFGains("/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
+        new TunableFFGains(
+            "/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
     public static final double MAX_VELOCITY = 3.0;
     public static final double MAX_ACCELERATION = 0.5;
     public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(100);
@@ -267,8 +221,11 @@ public final class Constants {
     public static final double HUMAN = -0.62;
     public static final double L1_REEF = Units.degreesToRadians(4.8061);
     public static final double GROUND_INTAKE = 0.0;
-    public static final TunablePIDGains WRIST_PID_ALGAE_GAINS = new TunablePIDGains("/wrist/pidAlgae", 10.0, 0, .1, true);
-    public static final TunableTrapezoidalProfileGains WRIST_TRAP_ALGAE = new TunableTrapezoidalProfileGains("/wrist/trap", 10, 5, true);
-    public static final TunableArmElevatorFFGains WRIST_ALGAE_FF_GAINS = new TunableArmElevatorFFGains("/wristAlgae/ff", 0.35886, 4.556, 0.13355, 0.024112, true);
+    public static final TunablePIDGains WRIST_PID_ALGAE_GAINS =
+        new TunablePIDGains("/wrist/pidAlgae", 10.0, 0, .1, true);
+    public static final TunableTrapezoidalProfileGains WRIST_TRAP_ALGAE =
+        new TunableTrapezoidalProfileGains("/wrist/trap", 10, 5, true);
+    public static final TunableArmElevatorFFGains WRIST_ALGAE_FF_GAINS =
+        new TunableArmElevatorFFGains("/wristAlgae/ff", 0.35886, 4.556, 0.13355, 0.024112, true);
   }
 }

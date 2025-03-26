@@ -193,7 +193,6 @@ public class TunerConstants {
               kFrontLeftEncoderOffset,
               kFrontLeftXPos,
               kFrontLeftYPos,
-              
               true,
               kFrontLeftSteerMotorInverted,
               kFrontLeftEncoderInverted);
@@ -234,7 +233,6 @@ public class TunerConstants {
               kBackRightXPos,
               kBackRightYPos,
               false,
-              
               kBackRightSteerMotorInverted,
               kBackRightEncoderInverted);
 

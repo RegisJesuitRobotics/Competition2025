@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.964144736842105,
-        "y": 5.00641447368421
+        "x": 3.7139802631578944,
+        "y": 4.879791259765624
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2851268796992485,
-        "y": 5.445576832706766
+        "x": 3.0349624060150378,
+        "y": 5.318953618788179
       },
       "isLocked": false,
       "linkedName": "8H"
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 100.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -148.35117868914963
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": true
 }

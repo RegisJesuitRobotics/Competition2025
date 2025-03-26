@@ -9,9 +9,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,8 +43,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final SysIdRoutine climberSysId =
       new SysIdRoutine(
-          new SysIdRoutine.Config(Volts.per(Second).of(.5), Volts.of(2), 
-          null, (state) -> SignalLogger.writeString("climber", state.toString())),
+          new SysIdRoutine.Config(
+              Volts.per(Second).of(.5),
+              Volts.of(2),
+              null,
+              (state) -> SignalLogger.writeString("climber", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
 
   public ClimberSubsystem() {

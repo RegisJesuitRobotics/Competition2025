@@ -16,10 +16,12 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.L2_REEF),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(
-                    flipped.get()
-                        ? Constants.WristConstants.L2_REEF
-                        : -Constants.WristConstants.L2_REEF).beforeStarting(Commands.waitSeconds(.2))));
+                wristSubsystem
+                    .setPositionCommand(
+                        flipped.get()
+                            ? Constants.WristConstants.L2_REEF
+                            : -Constants.WristConstants.L2_REEF)
+                    .beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristL3(
@@ -28,10 +30,12 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.L3_REEF),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(
-                    flipped.get()
-                        ? Constants.WristConstants.L3_REEF
-                        : -Constants.WristConstants.L3_REEF).beforeStarting(Commands.waitSeconds(.2))));
+                wristSubsystem
+                    .setPositionCommand(
+                        flipped.get()
+                            ? Constants.WristConstants.L3_REEF
+                            : -Constants.WristConstants.L3_REEF)
+                    .beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristL4(
@@ -40,10 +44,12 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(
-                    flipped.get()
-                        ? Constants.WristConstants.L4_REEF
-                        : -Constants.WristConstants.L4_REEF).beforeStarting(Commands.waitSeconds(.2))));
+                wristSubsystem
+                    .setPositionCommand(
+                        flipped.get()
+                            ? Constants.WristConstants.L4_REEF
+                            : -Constants.WristConstants.L4_REEF)
+                    .beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristHuman(
@@ -52,34 +58,40 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.HUMAN),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(
-                    flipped.get()
-                        ? Constants.WristConstants.HUMAN
-                        : -Constants.WristConstants.HUMAN).beforeStarting(Commands.waitSeconds(.2))));
+                wristSubsystem
+                    .setPositionCommand(
+                        flipped.get()
+                            ? Constants.WristConstants.HUMAN
+                            : -Constants.WristConstants.HUMAN)
+                    .beforeStarting(Commands.waitSeconds(.2))));
   }
 
   public static Command elevatorWristBallLow(
       ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem, AtomicBoolean flipped) {
     return Commands.parallel(
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_BALL_PICKUP),
-        Commands.sequence(Commands.waitSeconds(.5),
-        Commands.deferredProxy(
-            () ->
-                wristSubsystem.setPositionCommand(()->
-                    flipped.get()
-                        ? Constants.WristConstants.BALL_PICKUP
-                        : -Constants.WristConstants.BALL_PICKUP))));
+        Commands.sequence(
+            Commands.waitSeconds(.5),
+            Commands.deferredProxy(
+                () ->
+                    wristSubsystem.setPositionCommand(
+                        () ->
+                            flipped.get()
+                                ? Constants.WristConstants.BALL_PICKUP
+                                : -Constants.WristConstants.BALL_PICKUP))));
   }
+
   public static Command elevatorWristBallHigh(
       ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem, AtomicBoolean flipped) {
     return Commands.parallel(
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.HIGH_BALL_PICKUP),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommand(()->
-                    flipped.get()
-                        ? Constants.WristConstants.BALL_PICKUP
-                        : -Constants.WristConstants.BALL_PICKUP)));
+                wristSubsystem.setPositionCommand(
+                    () ->
+                        flipped.get()
+                            ? Constants.WristConstants.BALL_PICKUP
+                            : -Constants.WristConstants.BALL_PICKUP)));
   }
 
   public static Command elevatorWristL1(
@@ -100,8 +112,13 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.NET),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommandAlgae(()->
-                    flipped.get() ? Constants.WristConstants.NET : -Constants.WristConstants.NET).beforeStarting(Commands.waitSeconds(.5))));
+                wristSubsystem
+                    .setPositionCommandAlgae(
+                        () ->
+                            flipped.get()
+                                ? Constants.WristConstants.NET
+                                : -Constants.WristConstants.NET)
+                    .beforeStarting(Commands.waitSeconds(.5))));
   }
 
   public static Command elevatorWristProcessor(
@@ -110,17 +127,21 @@ public class ElevatorWristCommands {
         elevatorSubsystem.setPosition(Constants.ElevatorConstants.PROCESSOR),
         Commands.deferredProxy(
             () ->
-                wristSubsystem.setPositionCommandAlgae(()->
-                    flipped.get()
-                        ? Constants.WristConstants.PROCESSOR
-                        : -Constants.WristConstants.PROCESSOR)));
-    
-
+                wristSubsystem.setPositionCommandAlgae(
+                    () ->
+                        flipped.get()
+                            ? Constants.WristConstants.PROCESSOR
+                            : -Constants.WristConstants.PROCESSOR)));
   }
-  
-  public static Command preGroundIntake(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem){
+
+  public static Command preGroundIntake(
+      ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
     return Commands.parallel(
-        elevatorSubsystem.setPosition(Constants.ElevatorConstants.PRE_GROUND), Commands.sequence(Commands.waitUntil(() -> elevatorSubsystem.getElevatorPosition() > Units.inchesToMeters(12)), wristSubsystem.setPositionCommand(0.0)));
+        elevatorSubsystem.setPosition(Constants.ElevatorConstants.PRE_GROUND),
+        Commands.sequence(
+            Commands.waitUntil(
+                () -> elevatorSubsystem.getElevatorPosition() > Units.inchesToMeters(12)),
+            wristSubsystem.setPositionCommand(0.0)));
   }
 
   public static Command elevatorWristReset(

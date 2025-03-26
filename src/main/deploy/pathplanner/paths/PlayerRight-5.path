@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.4630681818181817,
-        "y": 4.043295454545454
+        "x": 1.2743612557870359,
+        "y": 0.824449508101851
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7130681818181817,
-        "y": 4.043295454545454
+        "x": 1.4820793951922584,
+        "y": 1.0029841101012107
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "PlayerRight"
     },
     {
       "anchor": {
-        "x": 3.1559210526315784,
-        "y": 4.043295454545454
+        "x": 3.898129708426339,
+        "y": 3.1484793526785713
       },
       "prevControl": {
-        "x": 2.9059210526315784,
-        "y": 4.043295454545454
+        "x": 3.7198158556083953,
+        "y": 2.972369051412235
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "6F7G-ALGAE"
+      "linkedName": "5E"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 150.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 145.0
   },
   "useDefaultConstraints": true
 }

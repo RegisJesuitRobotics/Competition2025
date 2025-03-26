@@ -11,8 +11,6 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -30,8 +28,6 @@ import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
-import sun.misc.Signal;
-
 import java.util.function.DoubleSupplier;
 
 // @Logged
@@ -57,8 +53,13 @@ public class WristSubsystem extends SubsystemBase {
           "wrist/profiledpid", WristConstants.WRIST_PID_GAINS, WristConstants.WRIST_TRAP_GAINS);
   private final ArmFeedforward wristff =
       Constants.WristConstants.WRIST_FF_GAINS.createArmFeedforward();
-  private final ArmFeedforward wristffAlgae = WristConstants.WRIST_ALGAE_FF_GAINS.createArmFeedforward();
-  private final TunableTelemetryProfiledPIDController wristpidAlgae = new TunableTelemetryProfiledPIDController("/wrist/prifiledpidAlgae", WristConstants.WRIST_PID_ALGAE_GAINS, WristConstants.WRIST_TRAP_ALGAE);
+  private final ArmFeedforward wristffAlgae =
+      WristConstants.WRIST_ALGAE_FF_GAINS.createArmFeedforward();
+  private final TunableTelemetryProfiledPIDController wristpidAlgae =
+      new TunableTelemetryProfiledPIDController(
+          "/wrist/prifiledpidAlgae",
+          WristConstants.WRIST_PID_ALGAE_GAINS,
+          WristConstants.WRIST_TRAP_ALGAE);
   private final DutyCycleEncoder wristEncoder =
       new DutyCycleEncoder(WristConstants.WRIST_ENCODER_PORT);
   private final Alert wristAlert = new Alert("wrist died", AlertType.ERROR);
@@ -66,7 +67,8 @@ public class WristSubsystem extends SubsystemBase {
   private DoubleTelemetryEntry wrisTelemetryEntry =
       new DoubleTelemetryEntry("/wrist/encoder", true);
   private final DoubleTelemetryEntry wristAbs = new DoubleTelemetryEntry("/wrist/absEncoder", true);
-  private final DoubleTelemetryEntry velocityGoal = new DoubleTelemetryEntry("/wrist/velocity", true);
+  private final DoubleTelemetryEntry velocityGoal =
+      new DoubleTelemetryEntry("/wrist/velocity", true);
   private double wristPosition = 0;
 
   public WristSubsystem() {
@@ -133,7 +135,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() /18.0));
+    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / 18.0));
     // should be just .get() this year instead of .getAbsolutePosition()
   }
 
@@ -145,7 +147,7 @@ public class WristSubsystem extends SubsystemBase {
     return setPositionCommand(() -> desiredPositionRadians);
   }
 
-  public double getVelocityActual(){
+  public double getVelocityActual() {
     return wristMotor.getVelocity().getValueAsDouble() / 10 * 2 * Math.PI;
   }
 
@@ -158,10 +160,9 @@ public class WristSubsystem extends SubsystemBase {
 
               setVoltage(
                   feedbackOutput
-                       + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
+                      + wristff.calculate(currentSetpoint.position, currentSetpoint.velocity));
             })
-        .beforeStarting(
-            () -> wristpid.reset(getPosition(), getVelocityActual()))
+        .beforeStarting(() -> wristpid.reset(getPosition(), getVelocityActual()))
         .withName("SetWristPosition");
   }
 
@@ -181,7 +182,6 @@ public class WristSubsystem extends SubsystemBase {
         .withName("SetWristPosition");
   }
 
-
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
 
     return wristSysId.quasistatic(direction).beforeStarting(SignalLogger::start);
@@ -191,7 +191,7 @@ public class WristSubsystem extends SubsystemBase {
     return wristSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
 
-  public Command addInstrumentCommand(Orchestra orchestra){
+  public Command addInstrumentCommand(Orchestra orchestra) {
     return this.run(() -> orchestra.addInstrument(wristMotor));
   }
 
@@ -199,8 +199,7 @@ public class WristSubsystem extends SubsystemBase {
   public void periodic() {
     wrisTelemetryEntry.append(getPosition());
     wristAbs.append(wristpid.getGoal().position);
-    velocityGoal.append(wristMotor.getMotorVoltage().getValueAsDouble()
-    );
+    velocityGoal.append(wristMotor.getMotorVoltage().getValueAsDouble());
     wristPosition = getPosition();
     SignalLogger.writeDouble("wristPosition", getPosition());
     SignalLogger.writeDouble("wristVelocity", getVelocityActual());

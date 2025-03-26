@@ -4,51 +4,22 @@
 
 package frc.robot;
 
-
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PathFollowingController;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.ChassisConstants;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.commands.ElevatorWristCommands;
-
-import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-import com.fasterxml.jackson.databind.Module;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.autoCommands.ToPointCommand;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.utils.RaiderUtils;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.utils.RaiderUtils;
-import frc.robot.generated.TunerConstants;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Autos {
@@ -56,22 +27,19 @@ public class Autos {
   private final SendableChooser<Command> autoChooser;
 
   public Autos(
-          AlgaeSubsystem algaeSubsystem,
-          ClimberSubsystem climberSubsystem,
-          CommandSwerveDrivetrain drivetrain,
-          CoralSubsystem coralSubsystem,
-          ElevatorSubsystem elevatorSubsystem,
-          WristSubsystem wristSubsystem,
-          AtomicBoolean flipped,
-          VisionSubsystem visionSubsystem) {
-    
-        NamedCommands.registerCommand("L4_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL4(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE).withTimeout(2.0).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
-        // NamedCommands.registerCommand("coralSearch_Drive", Commands.run(()->detectAndMoveTarget(visionSubsystem, drivetrain)));
-        NamedCommands.registerCommand("AlgaePickup", Commands.sequence(ElevatorWristCommands.elevatorWristBallLow(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE).until(algaeSubsystem::getSwitchState)));
-        NamedCommands.registerCommand("AlgaeNet", Commands.sequence(ElevatorWristCommands.elevatorWristNet(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE).until(() -> !algaeSubsystem.getSwitchState())));
-        NamedCommands.registerCommand("L3_Score", Commands.sequence(ElevatorWristCommands.elevatorWristL3(elevatorSubsystem, wristSubsystem, flipped), coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE).until(()  -> !coralSubsystem.getLeftSwitchState() && !coralSubsystem.getRightSwitchState()).andThen(ElevatorWristCommands.elevatorWristReset(elevatorSubsystem, wristSubsystem))));
-        NamedCommands.registerCommand("AlgaePickupHigh", Commands.sequence(ElevatorWristCommands.elevatorWristBallHigh(elevatorSubsystem, wristSubsystem, flipped), algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE).until(algaeSubsystem::getSwitchState)));
+      AlgaeSubsystem algaeSubsystem,
+      ClimberSubsystem climberSubsystem,
+      CommandSwerveDrivetrain drivetrain,
+      CoralSubsystem coralSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
+      WristSubsystem wristSubsystem,
+      AtomicBoolean flipped,
+      VisionSubsystem visionSubsystem) {
+
+
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
+    NamedCommands.registerCommand("L4", Commands.sequence(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF), coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(() -> !coralSubsystem.getLeftSwitchState()), elevatorSubsystem.setVoltageCommand(0.0)));
+    NamedCommands.registerCommand("intake", coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).until(coralSubsystem::getLeftSwitchState).andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).withTimeout(0.25)));
     if (MiscConstants.TUNING_MODE) {
       autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));
       autoChooser.addOption("elevator qr", elevatorSubsystem.sysIdQuasistatic(Direction.kReverse));
@@ -82,7 +50,6 @@ public class Autos {
       autoChooser.addOption("wrist qr", wristSubsystem.sysIdQuasistatic(Direction.kReverse));
       autoChooser.addOption("wrist df", wristSubsystem.sysIdDynamic(Direction.kForward));
       autoChooser.addOption("wrist dr", wristSubsystem.sysIdDynamic(Direction.kReverse));
-
 
       // autoChooser.addOption(
       //     "intakeSpinning qf", intakeSpinningSubsystem.sysIDQuasistatic(Direction.kForward));
@@ -114,7 +81,8 @@ public class Autos {
       // autoChooser.addOption("drive dr", drivetrain.sysIdDynamic(Direction.kReverse));
       autoChooser.addOption("wrist", wristSubsystem.setPositionCommand(Units.degreesToRadians(20)));
       autoChooser.addOption("wrist 0", wristSubsystem.setPositionCommand(0));
-      autoChooser.addOption("wrist160", wristSubsystem.setPositionCommand(Units.degreesToRadians(160)));
+      autoChooser.addOption(
+          "wrist160", wristSubsystem.setPositionCommand(Units.degreesToRadians(160)));
       autoChooser.addOption("elevator10", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
       autoChooser.addOption("elevator 40", elevatorSubsystem.setPosition(Units.inchesToMeters(40)));
       autoChooser.addOption("elevator0", elevatorSubsystem.setPosition(0));
@@ -126,18 +94,15 @@ public class Autos {
     return autoChooser;
   }
 
-  // public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
+  // public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain
+  // drive) {
   //   return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
   // }
 
-  public Command autoStart(
-      ElevatorSubsystem elevatorSubsystem) {
+  public Command autoStart(ElevatorSubsystem elevatorSubsystem) {
     if (Robot.isSimulation()) {
       return Commands.print("Probed!");
     }
-    return Commands.parallel(
-            elevatorSubsystem.homeElevatorCommand()
-            )
-        .withName("AutoStart");
+    return Commands.parallel(elevatorSubsystem.homeElevatorCommand()).withName("AutoStart");
   }
 }

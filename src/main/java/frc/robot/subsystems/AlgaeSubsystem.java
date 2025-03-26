@@ -51,6 +51,8 @@ public class AlgaeSubsystem extends SubsystemBase {
   private RelativeEncoder algaeEncoder;
   private EventTelemetryEntry algaeEvent = new EventTelemetryEntry("AlgaeMotor/Event");
   private BooleanTelemetryEntry limit = new BooleanTelemetryEntry("/algae/limit", true);
+  private DigitalInput otherInput = new DigitalInput(1);
+  private final BooleanTelemetryEntry otherSwitch = new BooleanTelemetryEntry("/algae/other", true);
 
   private final SysIdRoutine algaeSysId =
       new SysIdRoutine(
@@ -160,5 +162,6 @@ public class AlgaeSubsystem extends SubsystemBase {
   public void periodic() {
     algaeMotor.logValues();
     limit.append(getSwitchState());
+    otherSwitch.append(otherInput.get());
   }
 }

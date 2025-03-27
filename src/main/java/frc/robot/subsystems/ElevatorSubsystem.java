@@ -44,7 +44,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       new SysIdRoutine(
           new SysIdRoutine.Config(
               Volts.per(Second).of(.5),
-              Volts.of(2),
+              Volts.of(5),
               null,
               (state) -> SignalLogger.writeString("elevator", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
@@ -73,8 +73,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       new DoubleTelemetryEntry("/elevator/position", true);
   private final DoubleTelemetryEntry elevatorGoal =
       new DoubleTelemetryEntry("/elevator/goalPos", true);
-  //  private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top",
-  // true);
+   private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top",
+  true);
   private final BooleanTelemetryEntry homed = new BooleanTelemetryEntry("/elevator/homed", true);
   private boolean isHomed = false;
   private boolean isHoming = false;
@@ -264,7 +264,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
-    //    topSwitch.append(atLimit());
+    topSwitch.append(bottomSwitch.get());
     homed.append(isHomed());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
   }

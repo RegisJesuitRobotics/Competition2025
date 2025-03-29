@@ -33,19 +33,22 @@ import frc.robot.utils.ConfigurationUtils;
 public class CoralSubsystem extends SubsystemBase {
 
   private final TelemetryTalonFX coralMotor =
-      new TelemetryTalonFX(CoralConstants.CORAL_MOTOR_ID, "coral/motor", MiscConstants.TUNING_MODE);
+      new TelemetryTalonFX(CoralConstants.CORAL_MOTOR_ID, "coral/motor", Constants.MiscConstants.CANIVORE_NAME,
+       MiscConstants.TUNING_MODE);
 
   private final Alert coralMotorAlert = new Alert("Coral motor had a fault", AlertType.ERROR);
   private final SlewRateLimiter rateLimiter = new SlewRateLimiter(CoralConstants.SLEW_RATE_LIMIT);
   private final EventTelemetryEntry coralEvent = new EventTelemetryEntry("/coral/events");
   private final DigitalInput intakeLeftBeam =
-      new DigitalInput(Constants.CoralConstants.SWITCH_ID_LEFT);
+      new DigitalInput(1);
+  private final DigitalInput intakeRightBeam = new DigitalInput(0);
+  private final BooleanTelemetryEntry rightEntry = new BooleanTelemetryEntry("/coral/right", true);
   private final TunableTelemetryPIDController coralpid =
       new TunableTelemetryPIDController("/coral/pid", Constants.CoralConstants.PID_GAINS);
   private final SlewRateLimiter slewRateLimiter = new SlewRateLimiter(12.0 / .25);
   private SimpleMotorFeedforward coralFF = CoralConstants.FF_GAINS.createFeedforward();
   private BooleanTelemetryEntry rightBeam = new BooleanTelemetryEntry("/coral/right", true);
-  private BooleanTelemetryEntry leftBeam = new BooleanTelemetryEntry("/coral/left", true);
+  private BooleanTelemetryEntry leftBeam = new BooleanTelemetryEntry("/coral/beam", true);
 
   private final SysIdRoutine coralSysId =
       new SysIdRoutine(
@@ -109,7 +112,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public boolean getLeftSwitchState() {
-    return intakeLeftBeam.get();
+    return !intakeRightBeam.get();
   }
 
 

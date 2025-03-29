@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -23,20 +25,17 @@ import frc.robot.telemetry.tunable.TunableTelemetryPIDController;
 import frc.robot.telemetry.types.BooleanTelemetryEntry;
 import frc.robot.telemetry.types.EventTelemetryEntry;
 import frc.robot.telemetry.wrappers.TelemetryCANSparkFlex;
+import frc.robot.telemetry.wrappers.TelemetryTalonFX;
 import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
+import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
 import frc.robot.utils.ConfigurationUtils.StringFaultRecorder;
 
 // @Logged
 public class AlgaeSubsystem extends SubsystemBase {
 
-  private final TelemetryCANSparkFlex algaeMotor =
-      new TelemetryCANSparkFlex(
-          Constants.AlgaeConstants.ALGAE_MOTOR_ID,
-          SparkLowLevel.MotorType.kBrushless, // no more CANSparkLowLevel?
-          "algae/motor",
-          Constants.MiscConstants.TUNING_MODE);
+ private final TelemetryTalonFX algaeMotor = new TelemetryTalonFX(Constants.AlgaeConstants.ALGAE_MOTOR_ID, "/algae/motor", Constants.MiscConstants.TUNING_MODE);
 
   private final TunableTelemetryPIDController algaePID =
       new TunableTelemetryPIDController("algae/pid", Constants.AlgaeConstants.PID_GAINS);
@@ -62,61 +61,40 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public void configMotor() {
-    algaeEncoder = algaeMotor.getEncoder();
-    double conversionFactor = Math.PI * 2 / Constants.AlgaeConstants.GEAR_RATIO;
+    TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
+    motorConfiguration.CurrentLimits.SupplyCurrentLimit =
+        Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
+    motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    motorConfiguration.MotorOutput.Inverted = Constants.ElevatorConstants.INVERTED_RIGHT;
+    motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    motorConfiguration.Audio.AllowMusicDurDisable = true;
 
-    StringFaultRecorder faultRecorder = new StringFaultRecorder();
-    SparkFlexConfig config = new SparkFlexConfig();
+    ConfigurationUtils.StringFaultRecorder faultRecorder =
+        new ConfigurationUtils.StringFaultRecorder();
+    ConfigurationUtils.applyCheckRecordCTRE(
+        () -> algaeMotor.getConfigurator().apply(motorConfiguration),
+        () -> {
+          TalonFXConfiguration appliedConfig = new TalonFXConfiguration();
+          algaeMotor.getConfigurator().refresh(appliedConfig);
+          return ConfigEquality.isTalonConfigurationEqual(motorConfiguration, appliedConfig);
+        },
+        faultRecorder.run("Motor configuration 1"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
+    ConfigurationUtils.applyCheckRecordCTRE(
+        algaeMotor::optimizeBusUtilization,
+        () -> true,
+        faultRecorder.run("Optimize bus utilization"),
+        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
 
-    ConfigurationUtils.applyCheckRecordRev(
-        () -> algaeMotor.setCANTimeout(250),
-        () -> true,
-        faultRecorder.run("CAN timeout"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecordRev(
-        () ->
-            algaeMotor.configure(
-                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters),
-        () -> true,
-        faultRecorder.run("Factory defaults"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () ->
-            config.smartCurrentLimit(
-                Constants.AlgaeConstants.STALL_MOTOR_CURRENT,
-                Constants.AlgaeConstants.FREE_MOTOR_CURRENT),
-        () -> true,
-        faultRecorder.run("Current limits"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () -> config.inverted(Constants.AlgaeConstants.INVERTED),
-        () -> algaeMotor.configAccessor.getInverted() == Constants.AlgaeConstants.INVERTED,
-        faultRecorder.run("Inverted"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () -> config.idleMode(IdleMode.kCoast),
-        () -> algaeMotor.configAccessor.getIdleMode() == SparkFlexConfig.IdleMode.kCoast,
-        faultRecorder.run("Idle mode"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecord(
-        () -> config.encoder.positionConversionFactor(conversionFactor / 60),
-        () ->
-            ConfigurationUtils.fpEqual(
-                algaeMotor.configAccessor.encoder.getVelocityConversionFactor(),
-                conversionFactor / 60),
-        faultRecorder.run("Velocity conversion factor"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
-    ConfigurationUtils.applyCheckRecordRev(
-        algaeMotor::burnFlashWithDelay,
-        () -> true,
-        faultRecorder.run("Burn flash"),
-        Constants.MiscConstants.CONFIGURATION_ATTEMPTS);
     ConfigurationUtils.postDeviceConfig(
         faultRecorder.hasFault(),
         algaeEvent::append,
-        "Shooter motor",
+        "algae motor fault",
         faultRecorder.getFaultString());
     algaeMotorAlert.set(faultRecorder.hasFault());
+
+   
+
   }
 
   public void setVoltage(Double voltage) {
@@ -126,6 +104,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   public Command setVoltageCommand(double voltage) {
     return this.run(() -> setVoltage(voltage)).withName("Algae/Voltage");
   }
+
 
   public double getVelocity() {
     return algaeEncoder.getVelocity();

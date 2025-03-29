@@ -50,13 +50,13 @@ public final class Constants {
         (Math.PI * Units.inchesToMeters(2.2594)) / GEAR_RATIO;
     public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
     public static final TunablePIDGains PID_GAINS =
-        new TunablePIDGains("/elevator/PID", 30, 0, 0.5, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/elevator/PID", 35, 0, 1.3, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
         new TunableTrapezoidalProfileGains("/elevator/trap", 10, 8, MiscConstants.TUNING_MODE);
-    public static final TunableFFGains FF =
-        new TunableFFGains("/elevator/ff", 0.02501, 0.12426, 0.074887, MiscConstants.TUNING_MODE);
+    public static final TunableArmElevatorFFGains FF =
+        new TunableArmElevatorFFGains("/elevator/ff", 0.11449, 0.48243, 0.1416, 0.042323, MiscConstants.TUNING_MODE);
     public static final double L2_REEF = Units.inchesToMeters(26.197783);
-    public static final double L4_REEF = Units.inchesToMeters(65.9539);
+    public static final double L4_REEF = Units.inchesToMeters(67.9539);
     public static final double L3_REEF = Units.inchesToMeters(41.939761);
     public static final double L1_REEF = Units.inchesToMeters(13.729502);
     public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
@@ -88,7 +88,7 @@ public final class Constants {
   }
 
   public static class AlgaeConstants {
-    public static final int ALGAE_MOTOR_ID = 13;
+    public static final int ALGAE_MOTOR_ID = 20;
     public static final int STALL_MOTOR_CURRENT = 30;
     public static final int FREE_MOTOR_CURRENT = 20;
     public static final double GEAR_RATIO = 36.0 / 18.0;
@@ -101,7 +101,7 @@ public final class Constants {
     public static final double RUNNING_VOLTAGE = 12.0;
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
-    public static final int SWITCH_ID_RIGHT = 0;
+    public static final int SWITCH_ID_RIGHT = 20;
     public static final DoubleSupplier LEAVING = () -> Units.degreesToRadians(95);
   }
 

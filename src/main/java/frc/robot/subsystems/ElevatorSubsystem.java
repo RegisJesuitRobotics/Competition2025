@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -37,6 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TelemetryTalonFX leftElevatorMotor =
       new TelemetryTalonFX(
           Constants.ElevatorConstants.LEFT_ID,
+          
           "/elevator/motorleft",
           Constants.MiscConstants.CANIVORE_NAME,
           Constants.MiscConstants.TUNING_MODE);
@@ -68,7 +70,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           "/elevator/controller",
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
-  private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
+  private final ElevatorFeedforward FF = Constants.ElevatorConstants.FF.createElevatorFeedforward();
   private final DoubleTelemetryEntry elevatorPosition =
       new DoubleTelemetryEntry("/elevator/position", true);
   private final DoubleTelemetryEntry elevatorGoal =
@@ -81,7 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     configRightMotor();
-    controller.setTolerance(Units.inchesToMeters(1));
+    configLeftMotor();
+    controller.setTolerance(Units.inchesToMeters(.1));
     SmartDashboard.putData(forceHomeCommand().withName("Force Home"));
   }
 
@@ -131,7 +134,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Constants.ElevatorConstants.SUPPLY_CURRENT_LIMIT;
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     leftMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    leftMotorConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    leftMotorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     ConfigurationUtils.StringFaultRecorder leftFaultRecorder =
         new ConfigurationUtils.StringFaultRecorder();
     ConfigurationUtils.applyCheckRecordCTRE(
@@ -160,8 +163,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Constants.ElevatorConstants.METERS_PER_REVOLUTION);
     leftElevatorMotor.setLoggingVelocityConversionFactor(
         Constants.ElevatorConstants.METERS_PER_REVOLUTION);
-
-    leftElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.RIGHT_ID, true));
+        leftElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.RIGHT_ID, true));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
   }
@@ -187,6 +189,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getVelocityActual() {
+
     return leftElevatorMotor.getVelocity().getValueAsDouble()
         * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
   }
@@ -255,7 +258,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-        if ((bottomSwitch.get() && isHoming) || debouncer.calculate(bottomSwitch.get())) {
+        if ((!bottomSwitch.get() && isHoming) || debouncer.calculate(!bottomSwitch.get())) {
           isHomed = true;
           leftElevatorMotor.setPosition(0.0);
         }
@@ -264,7 +267,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
-    topSwitch.append(bottomSwitch.get());
+    topSwitch.append(!bottomSwitch.get());
     homed.append(isHomed());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
   }

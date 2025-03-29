@@ -127,6 +127,7 @@ public class RobotContainer {
       operator.povRight().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L3_REEF));
       operator.povLeft().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L2_REEF));
       operator.povDown().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L1_REEF));
+      operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(0.0));
   }
 
   private void configureBoard() {
@@ -272,11 +273,12 @@ public class RobotContainer {
                           .withVelocityY(translation.getY())
                           .withTargetDirection(
                               Rotation2d.fromDegrees(
-                                  drivetrain.getPose().getMeasureY().magnitude() > 4 ? 60 + 90 : -60 - 90))
+                                  drivetrain.getPose().getMeasureY().magnitude() > 4 ? 60 + 90 : -60 + 90))
+
                           .withHeadingPID(5, 0, 0) // Drive left with negative X
                       // (left)
                       );
-                }), coralSubsystem.intakeUntilDetected().andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).withTimeout(.25))));
+                }), coralSubsystem.intakeUntilDetected().andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).withTimeout(.4))));
     joystick
         .a()
         .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));

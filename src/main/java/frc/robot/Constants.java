@@ -52,13 +52,13 @@ public final class Constants {
     public static final TunablePIDGains PID_GAINS =
         new TunablePIDGains("/elevator/PID", 35, 0, 1.3, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
-        new TunableTrapezoidalProfileGains("/elevator/trap", 10, 8, MiscConstants.TUNING_MODE);
+        new TunableTrapezoidalProfileGains("/elevator/trap", 15, 8, MiscConstants.TUNING_MODE);
     public static final TunableArmElevatorFFGains FF =
         new TunableArmElevatorFFGains("/elevator/ff", 0.11449, 0.48243, 0.1416, 0.042323, MiscConstants.TUNING_MODE);
     public static final double L2_REEF = Units.inchesToMeters(26.197783);
-    public static final double L4_REEF = Units.inchesToMeters(67.9539);
-    public static final double L3_REEF = Units.inchesToMeters(41.939761);
-    public static final double L1_REEF = Units.inchesToMeters(13.729502);
+    public static final double L4_REEF = Units.inchesToMeters(66.4539);
+    public static final double L3_REEF = Units.inchesToMeters(40.687363178941425);
+    public static final double L1_REEF = Units.inchesToMeters(18.729502);
     public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(10.9377);
@@ -98,7 +98,7 @@ public final class Constants {
         new TunablePIDGains("algae/pid", 0, 0.0, 0.0, MiscConstants.TUNING_MODE);
     public static final TunableFFGains FF_GAINS =
         new TunableFFGains("algae/ff", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
-    public static final double RUNNING_VOLTAGE = 12.0;
+    public static final double RUNNING_VOLTAGE = 1.0;
     public static final double RATE_LIMIT = 1.0;
     public static final double OUTPUT_VOLTAGE = -6.0;
     public static final int SWITCH_ID_RIGHT = 20;
@@ -178,17 +178,17 @@ public final class Constants {
     public static final TunableFFGains pointTranslationFFGains =
         new TunableFFGains(
             "/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
-    public static final double MAX_VELOCITY = 3.0;
-    public static final double MAX_ACCELERATION = 0.5;
-    public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(100);
-    public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(80);
+    public static final double MAX_VELOCITY = 4.0;
+    public static final double MAX_ACCELERATION = 3.0;
+    public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(300);
+    public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(100);
     public static final double NOMINAL_VOLTAGE = 12.0;
     public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(5, 0, 0);
     public static final double RATE_LIMIT = 10.0;
   }
 
   public static class WristConstants {
-    public static final int WRIST_ID = 11;
+    public static final int WRIST_ID = 15;
     public static final double GEAR_RATIO = 9.0;
     public static final double SUPPLY_CURRENT_LIMIT = 60.0;
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
@@ -222,7 +222,7 @@ public final class Constants {
     public static final double L1_REEF = Units.degreesToRadians(4.8061);
     public static final double GROUND_INTAKE = 0.0;
     public static final TunablePIDGains WRIST_PID_ALGAE_GAINS =
-        new TunablePIDGains("/wrist/pidAlgae", 10.0, 0, .1, true);
+        new TunablePIDGains("/wrist/pidAlgae", .1, 0, .1, true);
     public static final TunableTrapezoidalProfileGains WRIST_TRAP_ALGAE =
         new TunableTrapezoidalProfileGains("/wrist/trap", 10, 5, true);
     public static final TunableArmElevatorFFGains WRIST_ALGAE_FF_GAINS =

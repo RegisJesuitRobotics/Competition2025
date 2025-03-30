@@ -7,10 +7,13 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.MiscConstants;
+import frc.robot.commands.MiscCommands;
+
 import org.littletonrobotics.urcl.URCL;
 
 // @Logged
@@ -39,6 +42,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+        if (30 > DriverStation.getMatchTime() && DriverStation.getMatchTime()>20){
+          MiscCommands.rumbleHIDCommand(m_robotContainer.operator.getHID());
+          MiscCommands.rumbleHIDCommand(m_robotContainer.joystick.getHID());
+        }
+
+
   }
 
   @Override

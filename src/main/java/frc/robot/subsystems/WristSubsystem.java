@@ -76,7 +76,7 @@ public class WristSubsystem extends SubsystemBase {
     wristpid.setTolerance(Units.degreesToRadians(5));
     setDefaultCommand(setVoltageCommand(0));
     wristEncoder.setDutyCycleRange(1.0 / 1025.0, 1024.0 / 1025.0);
-    wristMotor.setPosition(0.5 * 18);
+    wristMotor.setPosition(0);
 
     setDefaultCommand(setVoltageCommand(0.0));
     // wristMotor.setPosition(0);
@@ -135,7 +135,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / 18.0));
+    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / 2.0));
     // should be just .get() this year instead of .getAbsolutePosition()
   }
 
@@ -148,7 +148,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getVelocityActual() {
-    return wristMotor.getVelocity().getValueAsDouble() / 10 * 2 * Math.PI;
+    return wristMotor.getVelocity().getValueAsDouble() / 2 * Math.PI;
   }
 
   public Command setPositionCommand(DoubleSupplier desiredPositionRadians) {

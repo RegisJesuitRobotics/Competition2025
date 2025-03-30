@@ -266,7 +266,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.logValues();
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
-    elevatorGoal.append(controller.getGoal().position);
+    elevatorGoal.append(controller.getSetpoint().position);
     topSwitch.append(!bottomSwitch.get());
     homed.append(isHomed());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());

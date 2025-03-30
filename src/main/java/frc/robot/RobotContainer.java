@@ -7,12 +7,14 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.MiscCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
@@ -21,7 +23,7 @@ import frc.robot.subsystems.*;
 import frc.robot.utils.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-// @Logged
+
 public class RobotContainer {
 
   private double MaxSpeed =
@@ -42,8 +44,8 @@ public class RobotContainer {
           .withDeadband(MaxSpeed * 0.03)
           .withRotationalDeadband(MaxAngularRate * 0.03)
           .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.RobotCentricFacingAngle robotCentricFacingAngle =
-      new SwerveRequest.RobotCentricFacingAngle();
+  private final SwerveRequest.FieldCentricFacingAngle robotCentricFacingAngle =
+      new SwerveRequest.FieldCentricFacingAngle();
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final VectorRateLimiter vectorRateLimiter =
@@ -73,61 +75,31 @@ public class RobotContainer {
           scoringFlipped,
           visionSubsystem);
 
-  private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
-  private final CommandXboxPlaystationController operator = new CommandXboxPlaystationController(1);
-  private final CommandButtonBoard buttonBoard =
-      new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
-  final Orchestra orchestra = new Orchestra();
-  SendableChooser<Command> musicChooser;
-  SendableChooser<Command> playMusic;
+  public final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
+  public final CommandXboxPlaystationController operator = new CommandXboxPlaystationController(1);
+  private final CommandButtonBoard buttonBoard = new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
 
   public RobotContainer() {
     configureBindings();
     configureOperatorBindings();
     configureBoard();
-    // intakeRotationSubsystem.addInstrumentCommand(orchestra);
-    // coralSubsystem.addInstrumentCommand(orchestra);
-    // elevatorSubsystem.addInstrumentCommand(orchestra);
-    // wristSubsystem.addInstrumentCommand(orchestra);
-    // for (int i =0; i<4; i++){
-    // TalonFX driveMotor = drivetrain.getModule(i).getDriveMotor();
-    // TalonFX steerMotor = drivetrain.getModule(i).getSteerMotor();
-    // orchestra.addInstrument(steerMotor);
-    // orchestra.addInstrument(driveMotor);
-    // }
-
-    // musicChooser.addOption("NationalAnthem", Commands.run(()->
-    // orchestra.loadMusic("NationAnthem.chrp")));
-    // musicChooser.addOption("RockafellerSkank", Commands.run(()->
-    // orchestra.loadMusic("RockafellerSkank.chrp")));
-    // musicChooser.addOption("JigsawsFallingIntoPlace", Commands.run(()->
-    // orchestra.loadMusic("JigsawsFallingIntoPlace.chrp")));
-    // musicChooser.addOption("Sandstorm", Commands.run(()->
-    // orchestra.loadMusic("Sandstorm.chrp")));
-    // playMusic.addOption("on", Commands.run(()-> orchestra.play()));
-    // playMusic.addOption("off", Commands.run(()-> orchestra.stop()));
 
     SmartDashboard.putData("Auto", autos.getAutoChooser());
     SmartDashboard.putData("Alerts", Alert.getDefaultGroup());
     SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
-    // SmartDashboard.putData("MusicChooser", getMusiChooser());
-    // SmartDashboard.putData("MusicOn/Off", getMusicOn());
+    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setVoltageCommand(0.0));
+
   }
 
-  public SendableChooser<Command> getMusiChooser() {
-    return musicChooser;
-  }
-
-  public SendableChooser<Command> getMusicOn() {
-    return playMusic;
-  }
 
   private void configureOperatorBindings() {
       operator.povUp().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF));
       operator.povRight().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L3_REEF));
-      operator.povLeft().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L2_REEF));
-      operator.povDown().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L1_REEF));
+      operator.povLeft().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L1_REEF));
+      operator.povDown().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L2_REEF));
       operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(0.0));
+      operator.circle().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_BALL_PICKUP));
+      operator.triangle().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.HIGH_BALL_PICKUP));
   }
 
   private void configureBoard() {
@@ -244,7 +216,6 @@ public class RobotContainer {
         .leftStick()
         .and(joystick.x())
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-    joystick.home().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     joystick
         .leftTrigger()
@@ -252,7 +223,7 @@ public class RobotContainer {
 
     joystick
         .rightTrigger()
-        .toggleOnTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.RUNNING_VOLTAGE));
+        .toggleOnTrue(Commands.parallel(algaeSubsystem.setVoltageCommand(2), coralSubsystem.setVoltageCommand(2.0), wristSubsystem.setPositionCommand(Units.degreesToRadians(50))));
 
     joystick
         .leftBumper()
@@ -283,7 +254,7 @@ public class RobotContainer {
         .a()
         .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));
 
-    joystick.leftTrigger().whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(() -> !coralSubsystem.getLeftSwitchState()).andThen(elevatorSubsystem.setPosition(0.0)));
+    joystick.leftTrigger().whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE-2).until(() -> !coralSubsystem.getLeftSwitchState()).andThen(elevatorSubsystem.setPosition(0.0)));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

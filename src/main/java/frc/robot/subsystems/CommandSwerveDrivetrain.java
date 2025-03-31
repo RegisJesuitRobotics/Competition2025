@@ -323,8 +323,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         0,
         0);
     // i<3 nick
-    LimelightHelpers.PoseEstimate mt2 =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.APRIL_LIMELIGHT);
+  
     LimelightHelpers.PoseEstimate mt2Other =
         LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.VisionConstants.OBJECT_LIMELIGHT);
 

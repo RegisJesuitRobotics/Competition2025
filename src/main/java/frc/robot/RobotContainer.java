@@ -100,6 +100,9 @@ public class RobotContainer {
       operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(0.0));
       operator.circle().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_BALL_PICKUP));
       operator.triangle().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.HIGH_BALL_PICKUP));
+      operator.rightBumper().whileTrue(MiscCommands.ClimberDownCommand(climberSubsystem));
+      operator.leftBumper().whileTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
+      operator.options().whileTrue(elevatorSubsystem.homeElevatorCommand());
   }
 
   private void configureBoard() {
@@ -254,7 +257,7 @@ public class RobotContainer {
         .a()
         .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));
 
-    joystick.leftTrigger().whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE-2).until(() -> !coralSubsystem.getLeftSwitchState()).andThen(elevatorSubsystem.setPosition(0.0)));
+    joystick.leftTrigger().whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE-2).until(() -> !coralSubsystem.getLeftSwitchState()).andThen(Commands.sequence(Commands.waitSeconds(.3), elevatorSubsystem.setPosition(0.0))));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

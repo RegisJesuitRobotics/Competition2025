@@ -121,8 +121,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         faultRecorder.getFaultString());
     rightMotorAlert.set(faultRecorder.hasFault());
 
-    rightElevatorMotor.setLoggingPositionConversionFactor(Constants.ElevatorConstants.GEAR_RATIO);
-    rightElevatorMotor.setLoggingVelocityConversionFactor(Constants.ElevatorConstants.GEAR_RATIO);
+    rightElevatorMotor.setLoggingPositionConversionFactor(Constants.ElevatorConstants.METERS_PER_REVOLUTION);
+    rightElevatorMotor.setLoggingVelocityConversionFactor(Constants.ElevatorConstants.METERS_PER_REVOLUTION);
 
     // Clear reset as this is on startup
     rightElevatorMotor.hasResetOccurred();
@@ -232,7 +232,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command homeElevatorCommand() {
-    return setVoltageCommand(-0.02)
+    return setVoltageCommand(-2.0)
         .until(this::isHomed)
         .beforeStarting(
             () -> {

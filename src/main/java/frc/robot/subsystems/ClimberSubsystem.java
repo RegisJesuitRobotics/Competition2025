@@ -31,7 +31,7 @@ public class ClimberSubsystem extends SubsystemBase {
   // motor 1
   public final TelemetryTalonFX climbMotor1 =
       new TelemetryTalonFX(
-          ClimberConstants.CLIMB_MOTOR_1_ID, "climber/motor/1", MiscConstants.TUNING_MODE);
+          ClimberConstants.CLIMB_MOTOR_1_ID, "climber/motor/1", Constants.MiscConstants.CANIVORE_NAME, MiscConstants.TUNING_MODE);
   private final Alert climbMotor1Alert = new Alert("climb motor(1) had a fault", AlertType.ERROR);
   private final EventTelemetryEntry climbMotor1Entry =
       new EventTelemetryEntry("/climber/motor1/events");

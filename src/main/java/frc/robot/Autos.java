@@ -82,7 +82,7 @@ public class Autos {
       autoChooser.addOption("wrist", wristSubsystem.setPositionCommand(Units.degreesToRadians(20)));
       autoChooser.addOption("wrist 0", wristSubsystem.setPositionCommand(0));
       autoChooser.addOption(
-          "wrist160", wristSubsystem.setPositionCommand(Units.degreesToRadians(160)));
+          "wrist80", wristSubsystem.setPositionCommand(Units.degreesToRadians(80)));
       autoChooser.addOption("elevator10", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
       autoChooser.addOption("elevator 40", elevatorSubsystem.setPosition(Units.inchesToMeters(40)));
       autoChooser.addOption("elevator0", elevatorSubsystem.setPosition(0));

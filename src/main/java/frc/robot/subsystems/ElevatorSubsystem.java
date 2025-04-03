@@ -58,6 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           Constants.MiscConstants.TUNING_MODE);
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
+  private final DoubleTelemetryEntry positionGoal = new DoubleTelemetryEntry("/elevator/positionGoal", true);
     private final DigitalInput bottomSwitch = new
    DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
   private final EventTelemetryEntry rightEventEntry =
@@ -218,7 +219,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     return this.run(
             () -> {
               double positionClamped =
-                  MathUtil.clamp(position.getAsDouble(), 0, Constants.ElevatorConstants.L4_REEF);
+                  MathUtil.clamp(position.getAsDouble(), 0, Constants.ElevatorConstants.L4_REEF + Units.inchesToMeters(1.0));
               controller.setGoal(positionClamped);
               double feedback = controller.calculate(getElevatorPosition());
               TrapezoidProfile.State currentSetpoint = controller.getSetpoint();
@@ -267,6 +268,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getSetpoint().position);
+    positionGoal.append(controller.getGoal().position);
     topSwitch.append(!bottomSwitch.get());
     homed.append(isHomed());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());

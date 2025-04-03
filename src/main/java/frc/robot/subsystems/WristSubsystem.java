@@ -135,7 +135,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / 2.0));
+    return Units.rotationsToRadians((wristMotor.getPosition().getValueAsDouble() / 50.0));
     // should be just .get() this year instead of .getAbsolutePosition()
   }
 

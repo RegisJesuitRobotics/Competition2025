@@ -50,23 +50,23 @@ public final class Constants {
         (Math.PI * Units.inchesToMeters(2.2594)) / GEAR_RATIO;
     public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
     public static final TunablePIDGains PID_GAINS =
-        new TunablePIDGains("/elevator/PID", 37, 0, 1.4, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/elevator/PID", 40, 0, 1.4, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
         new TunableTrapezoidalProfileGains("/elevator/trap", 15, 8, MiscConstants.TUNING_MODE);
     public static final TunableArmElevatorFFGains FF =
         new TunableArmElevatorFFGains("/elevator/ff", 1.3305, 0.35619, 0.12995, 0.042323, MiscConstants.TUNING_MODE);
     public static final double L2_REEF = Units.inchesToMeters(26.197783);
-    public static final double L4_REEF = Units.inchesToMeters(67.4539);
+    public static final double L4_REEF = Units.inchesToMeters(68.4539);
     public static final double L3_REEF = Units.inchesToMeters(40.687363178941425);
     public static final double L1_REEF = Units.inchesToMeters(18.729502);
-    public static final double LOW_BALL_PICKUP = Units.inchesToMeters(12.737500);
+    public static final double LOW_BALL_PICKUP = Units.inchesToMeters(0.0);
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(10.9377);
     public static final double PROCESSOR = 0.0;
     public static final double GROUND_INTAKE = Units.inchesToMeters(0.0);
     public static final double HANDOFF = Units.inchesToMeters(3.0);
     public static final double PRE_GROUND = Units.inchesToMeters(14);
-    public static final double HIGH_BALL_PICKUP = Units.inchesToMeters(12.737500 + 18);
+    public static final double HIGH_BALL_PICKUP = Units.inchesToMeters(0.0);
     public static final double FORCE_HOME = Units.inchesToMeters(7.0);
   }
 
@@ -124,7 +124,7 @@ public final class Constants {
     public static final int SWITCH_ID_LEFT = 1;
     public static final double OUTPUT_VOLTAGE = -10.0;
     public static final int SWITCH_ID_RIGHT = 9;
-    public static final double INTAKE_VOLTAGE = 2.0;
+    public static final double INTAKE_VOLTAGE = 1.25;
   }
 
   public static class ClimberConstants {
@@ -189,7 +189,7 @@ public final class Constants {
 
   public static class WristConstants {
     public static final int WRIST_ID = 15;
-    public static final double GEAR_RATIO = 9.0;
+    public static final double GEAR_RATIO = 50.0;
     public static final double SUPPLY_CURRENT_LIMIT = 60.0;
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double WRIST_OFFSET = Units.degreesToRadians(90 - 85.55177013879425);
@@ -197,7 +197,7 @@ public final class Constants {
     public static final int WRIST_ENCODER_PORT = 22; // needs a value
     // a lot of 0s
     public static final TunablePIDGains WRIST_PID_GAINS =
-        new TunablePIDGains("/pid/wrist/", 17, 0.0, 0, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/pid/wrist/", 3, 0.0, 0, MiscConstants.TUNING_MODE);
 
     public static final TunableTrapezoidalProfileGains WRIST_TRAP_GAINS =
         new TunableTrapezoidalProfileGains(
@@ -209,18 +209,18 @@ public final class Constants {
 
     public static final TunableArmElevatorFFGains WRIST_FF_GAINS =
         new TunableArmElevatorFFGains(
-            "/feedfoward/wrist/", 0.38155, 0.42528, 0.26833, 0.11142, MiscConstants.TUNING_MODE);
+            "/feedfoward/wrist/", 0.47185, 0.035643, 0.078474, 0.0069966, MiscConstants.TUNING_MODE);
 
     public static final double L2_REEF = Units.degreesToRadians(145.2326);
 
     public static final double L3_REEF = Units.degreesToRadians(147.2326);
     public static final double L4_REEF = Units.degreesToRadians(125.8490);
-    public static final double PROCESSOR = -Units.degreesToRadians(112.5900);
+    public static final double PROCESSOR = Units.degreesToRadians(44);
     public static final double BALL_PICKUP = -Units.degreesToRadians(70.0);
     public static final double NET = Units.degreesToRadians(20.0);
     public static final double HUMAN = -0.62;
     public static final double L1_REEF = Units.degreesToRadians(4.8061);
-    public static final double GROUND_INTAKE = 0.0;
+    public static final double GROUND_INTAKE = Units.degreesToRadians(113.0);
     public static final TunablePIDGains WRIST_PID_ALGAE_GAINS =
         new TunablePIDGains("/wrist/pidAlgae", .1, 0, .1, true);
     public static final TunableTrapezoidalProfileGains WRIST_TRAP_ALGAE =

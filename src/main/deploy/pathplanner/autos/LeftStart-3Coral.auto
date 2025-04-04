@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightStart-2B"
+            "pathName": "LeftStart-11K"
           }
         },
         {
@@ -35,7 +35,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "2B-PlayerRight"
+                  "pathName": "11k-PlayerLeft"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PlayerRight-5"
+            "pathName": "PlayerLeft-8"
           }
         },
         {
@@ -72,7 +72,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "5-PlayerRight"
+                  "pathName": "8-PlayerLeft"
                 }
               }
             ]
@@ -81,7 +81,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PlayerRight-4"
+            "pathName": "PlayerLeft-9"
           }
         },
         {

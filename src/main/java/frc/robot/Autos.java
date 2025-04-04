@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,9 +39,15 @@ public class Autos {
       VisionSubsystem visionSubsystem) {
 
 
+    
+    NamedCommands.registerCommand("L4", Commands.sequence(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF)).until(() -> MathUtil.isNear(Constants.ElevatorConstants.L4_REEF, elevatorSubsystem.getElevatorPosition(), Units.inchesToMeters(3.5))));
+    NamedCommands.registerCommand("outtakeDown", Commands.sequence(
+              Commands.print("running outttake down"), 
+              coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE)
+                .until(() -> !coralSubsystem.getLeftSwitchState()), elevatorSubsystem.setPosition(0.0).until(() -> MathUtil.isNear(0, elevatorSubsystem.getElevatorPosition(), Units.inchesToMeters(3)))).withName("SPITTING"));
+
+    NamedCommands.registerCommand("intake", coralSubsystem.setVoltageCommand(4.0).until(coralSubsystem::getLeftSwitchState));
     autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
-    NamedCommands.registerCommand("L4", Commands.sequence(elevatorSubsystem.setPosition(Constants.ElevatorConstants.L4_REEF), coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE).until(() -> !coralSubsystem.getLeftSwitchState()), elevatorSubsystem.setVoltageCommand(0.0)));
-    NamedCommands.registerCommand("intake", coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).until(coralSubsystem::getLeftSwitchState).andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).withTimeout(0.25)));
     if (MiscConstants.TUNING_MODE) {
       autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));
       autoChooser.addOption("elevator qr", elevatorSubsystem.sysIdQuasistatic(Direction.kReverse));

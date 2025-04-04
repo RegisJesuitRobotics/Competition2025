@@ -52,21 +52,21 @@ public final class Constants {
     public static final TunablePIDGains PID_GAINS =
         new TunablePIDGains("/elevator/PID", 40, 0, 1.4, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
-        new TunableTrapezoidalProfileGains("/elevator/trap", 15, 8, MiscConstants.TUNING_MODE);
+        new TunableTrapezoidalProfileGains("/elevator/trap", 17, 10, MiscConstants.TUNING_MODE);
     public static final TunableArmElevatorFFGains FF =
         new TunableArmElevatorFFGains("/elevator/ff", 1.3305, 0.35619, 0.12995, 0.042323, MiscConstants.TUNING_MODE);
     public static final double L2_REEF = Units.inchesToMeters(26.197783);
-    public static final double L4_REEF = Units.inchesToMeters(68.4539);
-    public static final double L3_REEF = Units.inchesToMeters(40.687363178941425);
+    public static final double L4_REEF = Units.inchesToMeters(66.4539); //L2-L3: 14.489
+    public static final double L3_REEF = Units.inchesToMeters(40.687363178941425); //L3-L4: 27.776
     public static final double L1_REEF = Units.inchesToMeters(18.729502);
-    public static final double LOW_BALL_PICKUP = Units.inchesToMeters(0.0);
+    public static final double LOW_BALL_PICKUP = Units.inchesToMeters(10.5);
     public static final double NET = Units.inchesToMeters(49.706);
     public static final double HUMAN = Units.inchesToMeters(10.9377);
     public static final double PROCESSOR = 0.0;
     public static final double GROUND_INTAKE = Units.inchesToMeters(0.0);
     public static final double HANDOFF = Units.inchesToMeters(3.0);
     public static final double PRE_GROUND = Units.inchesToMeters(14);
-    public static final double HIGH_BALL_PICKUP = Units.inchesToMeters(0.0);
+    public static final double HIGH_BALL_PICKUP = Units.inchesToMeters(LOW_BALL_PICKUP + Units.inchesToMeters(13.0));
     public static final double FORCE_HOME = Units.inchesToMeters(7.0);
   }
 
@@ -124,7 +124,7 @@ public final class Constants {
     public static final int SWITCH_ID_LEFT = 1;
     public static final double OUTPUT_VOLTAGE = -10.0;
     public static final int SWITCH_ID_RIGHT = 9;
-    public static final double INTAKE_VOLTAGE = 1.25;
+    public static final double INTAKE_VOLTAGE = 2.5;
   }
 
   public static class ClimberConstants {
@@ -136,8 +136,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT = 60.0; // m
     public static final InvertedValue INVERTED_2 = InvertedValue.Clockwise_Positive; // m
     public static final InvertedValue INVERTED_1 = InvertedValue.Clockwise_Positive;
-    public static final double CLIMBER_UP_VOLTAGE = 4.0; // m
-    public static final double CLIMBER_DOWN_VOLTAGE = -4.0; // m
+    public static final double CLIMBER_UP_VOLTAGE = 6.0; // m
+    public static final double CLIMBER_DOWN_VOLTAGE = -6.0; // m
     public static final int LIMITER = 0; // m
   }
 
@@ -180,8 +180,8 @@ public final class Constants {
             "/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
     public static final double MAX_VELOCITY = 4.0;
     public static final double MAX_ACCELERATION = 3.0;
-    public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(300);
-    public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(100);
+    public static final double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(500);
+    public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(300);
     public static final double NOMINAL_VOLTAGE = 12.0;
     public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(5, 0, 0);
     public static final double RATE_LIMIT = 10.0;
@@ -216,7 +216,7 @@ public final class Constants {
     public static final double L3_REEF = Units.degreesToRadians(147.2326);
     public static final double L4_REEF = Units.degreesToRadians(125.8490);
     public static final double PROCESSOR = Units.degreesToRadians(44);
-    public static final double BALL_PICKUP = -Units.degreesToRadians(70.0);
+    public static final double BALL_PICKUP = Units.degreesToRadians(37);
     public static final double NET = Units.degreesToRadians(20.0);
     public static final double HUMAN = -0.62;
     public static final double L1_REEF = Units.degreesToRadians(4.8061);

@@ -138,5 +138,6 @@ public class ClimberSubsystem extends SubsystemBase {
       climberff = Constants.ClimberConstants.CLIMBER_FF_GAINS.createFeedforward();
     }
     // This method will be called once per scheduler run
+    climbMotor1.logValues();
   }
 }

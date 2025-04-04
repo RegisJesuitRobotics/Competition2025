@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.211222861643349,
-        "y": 7.326
+        "x": 1.286335227272727,
+        "y": 7.171036931818182
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.488556338028169,
-        "y": 7.1147887323943655
+        "x": 2.0156181607710337,
+        "y": 6.526915321545071
       },
       "isLocked": false,
-      "linkedName": "LEFT-START"
+      "linkedName": "PlayerLeft"
     },
     {
       "anchor": {
-        "x": 4.01199,
-        "y": 4.9629
+        "x": 3.7139802631578944,
+        "y": 4.879791259765624
       },
       "prevControl": {
-        "x": 3.7802706818181813,
-        "y": 6.1116257954495605
+        "x": 3.1266957093892973,
+        "y": 5.404113063170664
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "9I"
+      "linkedName": "8H"
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 40.0
   },
   "useDefaultConstraints": true
 }

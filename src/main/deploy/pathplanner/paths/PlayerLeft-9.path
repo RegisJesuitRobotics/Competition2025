@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.211222861643349,
-        "y": 7.326
+        "x": 1.286335227272727,
+        "y": 7.171036931818182
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.488556338028169,
-        "y": 7.1147887323943655
+        "x": 2.0377728730743354,
+        "y": 6.557153841693571
       },
       "isLocked": false,
-      "linkedName": "LEFT-START"
+      "linkedName": "PlayerLeft"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 4.9629
       },
       "prevControl": {
-        "x": 3.7802706818181813,
-        "y": 6.1116257954495605
+        "x": 3.4282548579324787,
+        "y": 5.4310098935702324
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 40.0
   },
   "useDefaultConstraints": true
 }

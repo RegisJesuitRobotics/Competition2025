@@ -338,6 +338,7 @@ public class CommandXboxPlaystationController extends CommandGenericHID {
     return rightTrigger(0.5);
   }
 
+
   /**
    * Get the X axis value of left side of the controller.
    *

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -84,11 +85,13 @@ public class RobotContainer {
     configureBindings();
     configureOperatorBindings();
     configureBoard();
-
+    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setVoltageCommand(0.0));
+    coralSubsystem.setDefaultCommand(coralSubsystem.setVoltageCommand(0.0));
     SmartDashboard.putData("Auto", autos.getAutoChooser());
     SmartDashboard.putData("Alerts", Alert.getDefaultGroup());
     SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
-    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setVoltageCommand(0.0));
+    SmartDashboard.putData("commands", CommandScheduler.getInstance());
+   
 
   }
 
@@ -105,9 +108,11 @@ public class RobotContainer {
       operator.leftBumper().whileTrue(MiscCommands.ClimberUpCommand(climberSubsystem));
       operator.options().whileTrue(elevatorSubsystem.homeElevatorCommand());
       operator.triangle().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.HIGH_BALL_PICKUP));
-      operator.circle().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_BALL_PICKUP));
+      operator.circle().onTrue(Commands.parallel(elevatorSubsystem.setPosition(Constants.ElevatorConstants.LOW_BALL_PICKUP), wristSubsystem.setPositionCommand(Constants.WristConstants.BALL_PICKUP), coralSubsystem.setVoltageCommand(2.0), algaeSubsystem.setVoltageCommand(2.0)));
       operator.x().onTrue(elevatorSubsystem.setPosition(Constants.ElevatorConstants.NET));
-      operator.
+
+      elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setVoltageCommand(operator.getLeftY() * 6));
+      
   }
 
   private void configureBoard() {
@@ -250,7 +255,7 @@ public class RobotContainer {
                           .withVelocityY(translation.getY())
                           .withTargetDirection(
                               Rotation2d.fromDegrees(
-                                  RaiderUtils.shouldFlip() ? drivetrain.getPose().getMeasureY().magnitude() < 4 ? 60 + 180 : -60 + 180 : drivetrain.getPose().getMeasureY().magnitude() < 4 ? 60 + 90 : -60 + 90))
+                                  RaiderUtils.shouldFlip() ? drivetrain.getPose().getMeasureY().magnitude() < 4 ? 30 + 180 : -30 + 180 : drivetrain.getPose().getMeasureY().magnitude() < 4 ? 30 + 90 : -30 + 90))
 
                           .withHeadingPID(5, 0, 0) // Drive left with negative X
                       // (left)
@@ -262,11 +267,13 @@ public class RobotContainer {
         joystick.home().onTrue(Commands.parallel(elevatorSubsystem.setPosition(0.0), wristSubsystem.setPositionCommand(0.0)));
 
         
-    joystick.b().onTrue(coralSubsystem.intakeUntilDetected().andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).withTimeout(.4)));
-    joystick.leftTrigger().whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE-2).until(() -> !coralSubsystem.getLeftSwitchState()).andThen(Commands.sequence(Commands.waitSeconds(.3), elevatorSubsystem.setPosition(0.0))));
+    joystick.b().onTrue(coralSubsystem.intakeUntilDetected().andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE).withTimeout(.01)));
+    joystick.leftTrigger().whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.RUNNING_VOLTAGE-2).until(() -> !coralSubsystem.getLeftSwitchState()).andThen(Commands.sequence(Commands.waitSeconds(.1), elevatorSubsystem.setPosition(0.0))));
 joystick.x().onTrue(Commands.parallel(wristSubsystem.setPositionCommand(Constants.WristConstants.PROCESSOR), algaeSubsystem.setVoltageCommand(2), coralSubsystem.setVoltageCommand(2.0)));
-joystick.y().onTrue(Commands.parallel(wristSubsystem.setPositionCommand(62), algaeSubsystem.setVoltageCommand(2), coralSubsystem.setVoltageCommand(2.0)));
-    drivetrain.registerTelemetry(logger::telemeterize);
+// joystick.y().onTrue(Commands.parallel(wristSubsystem.setPositionCommand(62), algaeSubsystem.setVoltageCommand(2), coralSubsystem.setVoltageCommand(2.0)));
+joystick.y().whileTrue(coralSubsystem.setVoltageCommand(2.0));    
+drivetrain.registerTelemetry(logger::telemeterize);
+    
   }
 
   public Command getAutonomousCommand() {

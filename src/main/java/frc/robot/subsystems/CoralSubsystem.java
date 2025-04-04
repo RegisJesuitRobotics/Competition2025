@@ -33,7 +33,7 @@ import frc.robot.utils.ConfigurationUtils;
 public class CoralSubsystem extends SubsystemBase {
 
   private final TelemetryTalonFX coralMotor =
-      new TelemetryTalonFX(CoralConstants.CORAL_MOTOR_ID, "coral/motor",
+      new TelemetryTalonFX(CoralConstants.CORAL_MOTOR_ID, "coral/motor", Constants.MiscConstants.CANIVORE_NAME,
        MiscConstants.TUNING_MODE);
 
   private final Alert coralMotorAlert = new Alert("Coral motor had a fault", AlertType.ERROR);

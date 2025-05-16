@@ -150,7 +150,7 @@ public final class Constants {
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final int SLEW_RATE_LIMIT = 1; 
     
-    public static final double SUPPLY_CURRENT_LIMIT = 40; 
+    //public static final double SUPPLY_CURRENT_LIMIT = 40; 
     public static final int STALL_MOTOR_CURRENT = 30; 
     public static final int FREE_MOTOR_CURRENT = 20; 
     public static final double GEAR_RATIO = 18.0 / 16.0;
@@ -232,6 +232,15 @@ public final class Constants {
     public static final double NOMINAL_VOLTAGE = 12.0;
     public static final PIDConstants ROTATION_PID_GAINS = new PIDConstants(5, 0, 0);
     public static final double RATE_LIMIT = 10.0;
+
+    //zone points
+    public static final Translation2d TOP_RIGHT = new Translation2d(7.263, 2.445);
+    public static final Translation2d MID_RIGHT = new Translation2d(4.39, .1);
+    public static final Translation2d BOTTOM_RIGHT = new Translation2d(1.17, 1.75);
+    public static final Translation2d BOTTOM_LEFT = new Translation2d(1.152, 6.044);
+    public static final Translation2d MID_LEFT = new Translation2d(4.39, 7.6);
+    public static final Translation2d TOP_LEFT = new Translation2d(7.263, 5.629);
+    public static final Translation2d CENTER = new Translation2d(4.482, 4.049);
   }
 
   public static class WristConstants {

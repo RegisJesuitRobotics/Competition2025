@@ -7,9 +7,12 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -36,55 +39,62 @@ public class AutoAlignCommand extends Command {
   //TODO: like actually get values for these
   public void initializeFieldZones(){
     //top
-    fieldZones[0][0] = new Translation2d(); //top right
-    fieldZones[0][1] = new Translation2d(); // top left
-    fieldZones[0][2] = new Translation2d(); //center
+    fieldZones[0][0] = AutoConstants.TOP_RIGHT; //top right
+    fieldZones[0][1] = AutoConstants.TOP_LEFT; // top left
+    fieldZones[0][2] = AutoConstants.CENTER; //center
 
     // top right
-    fieldZones[1][0] = new Translation2d(); //mid right
-    fieldZones[1][1] = new Translation2d(); // top right
-    fieldZones[1][2] = new Translation2d(); //center
+    fieldZones[1][0] =  AutoConstants.MID_RIGHT; //mid right
+    fieldZones[1][1] =  AutoConstants.TOP_RIGHT; // top right
+    fieldZones[1][2] =  AutoConstants.CENTER; //center
 
     //bottom right
-    fieldZones[2][0] = new Translation2d(); //bottom right
-    fieldZones[2][1] = new Translation2d(); //mid right
-    fieldZones[2][2] = new Translation2d(); //center
+    fieldZones[2][0] =  AutoConstants.BOTTOM_RIGHT; //bottom right
+    fieldZones[2][1] =  AutoConstants.MID_RIGHT; //mid right
+    fieldZones[2][2] =  AutoConstants.CENTER; //center
 
     //bottom
-    fieldZones[3][0] = new Translation2d(); // bottom left
-    fieldZones[3][1] = new Translation2d(); //center
-    fieldZones[3][2] = new Translation2d(); // bottom right
+    fieldZones[3][0] =  AutoConstants.BOTTOM_LEFT; // bottom left
+    fieldZones[3][1] =  AutoConstants.CENTER; //center
+    fieldZones[3][2] =  AutoConstants.BOTTOM_RIGHT; // bottom right
 
     //bottom left
-    fieldZones[4][0] = new Translation2d(); //mid left
-    fieldZones[4][1] = new Translation2d(); //center
-    fieldZones[4][2] = new Translation2d(); //bottom left
+    fieldZones[4][0] =  AutoConstants.MID_LEFT; //mid left
+    fieldZones[4][1] =  AutoConstants.CENTER; //center
+    fieldZones[4][2] =  AutoConstants.BOTTOM_LEFT; //bottom left
 
     //top left 
-    fieldZones[5][0] = new Translation2d(); // top left
-    fieldZones[5][1] = new Translation2d(); // center
-    fieldZones[5][2] = new Translation2d(); //mid left
+    fieldZones[5][0] =  AutoConstants.TOP_LEFT; // top left
+    fieldZones[5][1] =  AutoConstants.CENTER; // center
+    fieldZones[5][2] =  AutoConstants.MID_LEFT; //mid left
   }
 
   public void makeBranchPlacements(){
 
-    branchPoints[0][0] = new Pose2d(); //12
-    branchPoints[0][1] = new Pose2d(); //1
 
-    branchPoints[1][0] = new Pose2d(); //2
-    branchPoints[1][1] = new Pose2d(); //3
+    branchPoints[0][0] = new Pose2d(5.696, 3.987, new Rotation2d(Units.radiansToDegrees(90)) //180
+    ); //12 
+    branchPoints[0][1] = new Pose2d(5.404, 3.619, new Rotation2d(Units.radiansToDegrees(90))); //1
 
-    branchPoints[2][0] = new Pose2d(); //4
-    branchPoints[2][1] = new Pose2d(); //5
+    branchPoints[1][0] = new Pose2d(4.994, 3.024, new Rotation2d(Units.radiansToDegrees(60)) //120
+    ); //2
+    branchPoints[1][1] = new Pose2d(4.735, 2.813, new Rotation2d(Units.radiansToDegrees(60))); //3
 
-    branchPoints[3][0] = new Pose2d(); //6
-    branchPoints[3][1] = new Pose2d(); //7
+    branchPoints[2][0] = new Pose2d(3.81, 3.044, new Rotation2d(Units.radiansToDegrees(-30)) //60
+    ); //4
+    branchPoints[2][1] = new Pose2d(3.561, 3.321, new Rotation2d(Units.radiansToDegrees(-30))); //5
 
-    branchPoints[4][0] = new Pose2d(); //8
-    branchPoints[4][1] = new Pose2d(); //9
+    branchPoints[3][0] = new Pose2d(3.363, 4.098, new Rotation2d(Units.radiansToDegrees(-90)) //0
+    ); //6
+    branchPoints[3][1] = new Pose2d(3.411, 4.334, new Rotation2d(Units.radiansToDegrees(-90))); //7
 
-    branchPoints[5][0] = new Pose2d(); //10
-    branchPoints[5][1] = new Pose2d(); //11
+    branchPoints[4][0] = new Pose2d(3.964, 5.006, new Rotation2d(Units.radiansToDegrees(210)) //-60
+    ); //8
+    branchPoints[4][1] = new Pose2d(4.31, 5.075, new Rotation2d(Units.radiansToDegrees(210))); //9
+
+    branchPoints[5][0] = new Pose2d(5.119, 5.026, new Rotation2d(Units.radiansToDegrees(-55)) //-125
+    ); //10
+    branchPoints[5][1] = new Pose2d(5.364, 4.803, new Rotation2d(Units.radiansToDegrees(-55))); //11
 
   }
 

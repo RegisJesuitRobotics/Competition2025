@@ -67,10 +67,13 @@ public class RobotContainer {
     
     public int leftOrRight(){
         if (joystick.rightBumper().getAsBoolean()){
+            return 1;
+        }
+        if(joystick.leftBumper().getAsBoolean()){
             return 0;
         }
         else{
-            return 1;
+                return -1;
         }
     }
 

@@ -70,7 +70,8 @@ public class AutoAlignCommand extends Command {
   }
 
   public void makeBranchPlacements(){
-
+//0 = left
+//1 = right
 
     branchPoints[0][0] = new Pose2d(5.696, 3.987, new Rotation2d(Units.radiansToDegrees(90)) //180
     ); //12 
@@ -84,13 +85,13 @@ public class AutoAlignCommand extends Command {
     ); //4
     branchPoints[2][1] = new Pose2d(3.561, 3.321, new Rotation2d(Units.radiansToDegrees(-30))); //5
 
-    branchPoints[3][0] = new Pose2d(3.363, 4.098, new Rotation2d(Units.radiansToDegrees(-90)) //0
+    branchPoints[3][1] = new Pose2d(3.363, 4.098, new Rotation2d(Units.radiansToDegrees(-90)) //0
     ); //6
-    branchPoints[3][1] = new Pose2d(3.411, 4.334, new Rotation2d(Units.radiansToDegrees(-90))); //7
+    branchPoints[3][0] = new Pose2d(3.411, 4.334, new Rotation2d(Units.radiansToDegrees(-90))); //7
 
-    branchPoints[4][0] = new Pose2d(3.964, 5.006, new Rotation2d(Units.radiansToDegrees(210)) //-60
+    branchPoints[4][1] = new Pose2d(3.964, 5.006, new Rotation2d(Units.radiansToDegrees(210)) //-60
     ); //8
-    branchPoints[4][1] = new Pose2d(4.31, 5.075, new Rotation2d(Units.radiansToDegrees(210))); //9
+    branchPoints[4][0] = new Pose2d(4.31, 5.075, new Rotation2d(Units.radiansToDegrees(210))); //9
 
     branchPoints[5][0] = new Pose2d(5.119, 5.026, new Rotation2d(Units.radiansToDegrees(-55)) //-125
     ); //10

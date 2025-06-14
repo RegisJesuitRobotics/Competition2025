@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -99,19 +100,39 @@ public class AutoAlignCommand extends Command {
 
   }
 
+  
+  public static Command createAutoAlignCommand(CommandSwerveDrivetrain drivetrain, int leftOrRight) {
+    return Commands.defer(() -> {
+      AutoAlignCommand autoAlignCommand = new AutoAlignCommand(drivetrain, leftOrRight);
+      int currentZone = autoAlignCommand.determineCurrentZone();
+      
+      if (currentZone >= 0 && leftOrRight >= 0 && leftOrRight <= 1) {
+        Pose2d targetPose = autoAlignCommand.branchPoints[currentZone][leftOrRight];
+        Supplier<Pose2d> targetPoseSupplier = () -> targetPose;
+        return new ToPointCommand(drivetrain, targetPoseSupplier);
+      } else {
+        return Commands.print("AutoAlign invalid zone or left/right");
+      }
+    }, Set.of(drivetrain));
+  }
+
   @Override
   public void initialize() {
-    int currentZone = determineCurrentZone();
+  //   int currentZone = determineCurrentZone();
 
-  if (currentZone >= 0) {
+  // if (currentZone >= 0 && leftOrRight >= 0 && leftOrRight <= 1) {
 
-      Pose2d targetPose = branchPoints[currentZone][leftOrRight];
+  //     Pose2d targetPose = branchPoints[currentZone][leftOrRight];
      
-      Supplier<Pose2d> targetPoseSupplier = () -> targetPose;
+  //     Supplier<Pose2d> targetPoseSupplier = () -> targetPose;
   
-    toPointCommand = new ToPointCommand(drivetrain, targetPoseSupplier);
-      toPointCommand.schedule();
-  }
+  //   toPointCommand = new ToPointCommand(drivetrain, targetPoseSupplier);
+  //     toPointCommand.initialize();
+  // }
+  // else{
+  //   System.out.println("Invalid zone: " + currentZone + " or left/right: " + leftOrRight);
+  //   toPointCommand = null;
+  // }
   }
 
   private double calculateTriangleArea(Translation2d v1, Translation2d v2, Translation2d v3) {
@@ -151,14 +172,8 @@ public class AutoAlignCommand extends Command {
   
   @Override
   public void end(boolean interrupted) {
-    if (toPointCommand != null && toPointCommand.isScheduled()) {
-      toPointCommand.cancel();
-    }
+    
   }
 
-  
-  @Override
-  public boolean isFinished() {
-    return toPointCommand != null && !toPointCommand.isScheduled();
-  }
+ 
 }

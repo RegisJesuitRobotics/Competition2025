@@ -65,17 +65,6 @@ public class RobotContainer {
 
     public AtomicBoolean scoringFlipped = new AtomicBoolean(false);
     
-    public int leftOrRight(){
-        if (joystick.rightBumper().getAsBoolean()){
-            return 1;
-        }
-        if(joystick.leftBumper().getAsBoolean()){
-            return 0;
-        }
-        else{
-                return -1;
-        }
-    }
 
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final WristSubsystem wristSubsystem = new WristSubsystem();
@@ -295,9 +284,8 @@ public class RobotContainer {
                                                                                           // (left)
             );
         }));
-        joystick.plus().onTrue(
-            new AutoAlignCommand(drivetrain, leftOrRight())
-        );
+        joystick.plus().and(joystick.rightBumper()).onTrue(AutoAlignCommand.createAutoAlignCommand(drivetrain, 1));
+        joystick.plus().and(joystick.leftBumper()).onTrue(AutoAlignCommand.createAutoAlignCommand(drivetrain, 0));
         joystick
                 .a()
                 .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));

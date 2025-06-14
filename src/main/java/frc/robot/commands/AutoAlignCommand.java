@@ -7,22 +7,28 @@ package frc.robot.commands;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.telemetry.types.DoubleTelemetryEntry;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+import frc.robot.telemetry.types.Pose2dEntry;
 public class AutoAlignCommand extends Command {
  
   Translation2d robotTranslation;
  public CommandSwerveDrivetrain drivetrain;
  private ToPointCommand toPointCommand;
  public int leftOrRight;
+ public static Pose2dEntry desiredPoseEntry = new Pose2dEntry("/drive/desiredpose", true);
+ public static DoubleTelemetryEntry rotationEntry = new DoubleTelemetryEntry("drive/rotationstuffig", true);
 
  private final Translation2d[][] fieldZones = new Translation2d[6][3];
   private final Pose2d[][] branchPoints = new Pose2d[6][2];
@@ -106,11 +112,18 @@ public class AutoAlignCommand extends Command {
       AutoAlignCommand autoAlignCommand = new AutoAlignCommand(drivetrain, leftOrRight);
       int currentZone = autoAlignCommand.determineCurrentZone();
       
-      if (currentZone >= 0 && leftOrRight >= 0 && leftOrRight <= 1) {
+      // && leftOrRight >= 0 && leftOrRight <= 1 && currentZone>= 0
+      if (leftOrRight >= 0 && leftOrRight <= 1 && currentZone >= 0) {
         Pose2d targetPose = autoAlignCommand.branchPoints[currentZone][leftOrRight];
         Supplier<Pose2d> targetPoseSupplier = () -> targetPose;
+        desiredPoseEntry.append(targetPose);  
+      
+        System.out.println("WORKING???????????????????????????????????????????????????????????????????????????????????????????" + currentZone);
         return new ToPointCommand(drivetrain, targetPoseSupplier);
-      } else {
+    
+      }
+      else {
+        System.out.println("NOTWORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return Commands.print("AutoAlign invalid zone or left/right");
       }
     }, Set.of(drivetrain));
@@ -135,35 +148,38 @@ public class AutoAlignCommand extends Command {
   // }
   }
 
-  private double calculateTriangleArea(Translation2d v1, Translation2d v2, Translation2d v3) {
-    return Math.abs((v1.getX() * (v2.getY() - v3.getY()) + 
-                     v2.getX() * (v3.getY() - v1.getY()) + 
-                     v3.getX() * (v1.getY() - v2.getY())) / 2.0);
-  }
+  private int determineCurrentZone(){
+     Pose2d pose = drivetrain.getPose();
+     double poseRotation = MathUtil.angleModulus(Math.atan(pose.getY()/pose.getX()));
 
-  private boolean isPointInTriangle(Translation2d point, Translation2d v1, Translation2d v2, Translation2d v3) {
-        double totalArea = calculateTriangleArea(v1, v2, v3);
-    
-    double area1 = calculateTriangleArea(point, v1, v2);
-    double area2 = calculateTriangleArea(point, v2, v3);
-    double area3 = calculateTriangleArea(point, v3, v1);
-    
-    // Check if sum of the three areas equals the total area (with tolerance)
-    return Math.abs(totalArea - (area1 + area2 + area3)) < 0.01;
-  }
+      
+     rotationEntry.append(poseRotation);
 
-  private int determineCurrentZone() {
-    Translation2d robotPosition = drivetrain.getPose().getTranslation();
-    
-    for (int i = 0; i < 6; i++) {
-      if (isPointInTriangle(robotPosition, fieldZones[i][0], fieldZones[i][1], fieldZones[i][2])) {
-        return i;
-      }
+   
+     if (0.368 <= poseRotation && poseRotation <= 0.273){
+      return 0;
+     }
+     if (.273 <= poseRotation && poseRotation <= .159 ){
+      return 5;
+     }
+     if (0.159 <= poseRotation && poseRotation <= .201){
+      return 4;
+     }
+     if (.201 <= poseRotation && poseRotation <= .337){
+      return 3;
+     }
+     if (.337 <= poseRotation && poseRotation <= .47){
+      return 2;
+     }
+     if (0.47 <= poseRotation && poseRotation <= .368){
+      return 1;
+     }
+    else{
+      return -1;
     }
-
-    
-    return -1;
+   
   }
+  
   @Override
   public void execute() {
     

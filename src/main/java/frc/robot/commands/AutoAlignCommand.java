@@ -150,28 +150,28 @@ public class AutoAlignCommand extends Command {
 
   private int determineCurrentZone(){
      Pose2d pose = drivetrain.getPose();
-     double poseRotation = MathUtil.angleModulus(Math.atan(pose.getY()/pose.getX()));
+     double poseRotation = Math.atan2(pose.getY(), pose.getX());
 
       
      rotationEntry.append(poseRotation);
 
    
-     if (0.368 <= poseRotation && poseRotation <= 0.273){
+     if ( -0.524<= poseRotation && poseRotation < .524){
       return 0;
      }
-     if (.273 <= poseRotation && poseRotation <= .159 ){
+     if ( .524 <= poseRotation && poseRotation < 1.571 ){
       return 5;
      }
-     if (0.159 <= poseRotation && poseRotation <= .201){
+     if (1.571 <= poseRotation && poseRotation <2.618 ){
       return 4;
      }
-     if (.201 <= poseRotation && poseRotation <= .337){
+     if ( 2.618 <= poseRotation && poseRotation < -2.618){
       return 3;
      }
-     if (.337 <= poseRotation && poseRotation <= .47){
+     if (-2.618 <= poseRotation && poseRotation < -1.571){
       return 2;
      }
-     if (0.47 <= poseRotation && poseRotation <= .368){
+     if (-1.571 <= poseRotation && poseRotation < -0.524){
       return 1;
      }
     else{

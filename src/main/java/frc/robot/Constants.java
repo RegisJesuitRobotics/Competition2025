@@ -14,8 +14,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
@@ -49,10 +52,11 @@ public final class Constants {
     public static final double METERS_PER_REVOLUTION =
         (Math.PI * Units.inchesToMeters(2.2594)) / GEAR_RATIO;
     public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
-    public static final TunablePIDGains PID_GAINS =
-        new TunablePIDGains("/elevator/PID", 40, 0, 1.4, MiscConstants.TUNING_MODE);
-    public static final TunableTrapezoidalProfileGains TRAP_GAINS =
-        new TunableTrapezoidalProfileGains("/elevator/trap", 17, 10, MiscConstants.TUNING_MODE);
+    public static double P = 40;
+    public static double I = 0;
+    public static double D = 1.4;
+    public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE = new TrapezoidProfile.Constraints(
+        17, 10);
     public static final TunableArmElevatorFFGains FF =
         new TunableArmElevatorFFGains("/elevator/ff", 1.3305, 0.35619, 0.12995, 0.042323, MiscConstants.TUNING_MODE);
     public static final double L2_REEF = Units.inchesToMeters(26.197783);

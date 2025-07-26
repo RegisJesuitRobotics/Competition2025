@@ -359,28 +359,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return this.getState().Pose;
   }
 
-  public Command autoDriveTrajectory(String position, AtomicBoolean shouldFlip) {
-    PathConstraints constraints =
-        new PathConstraints(
-            Constants.AutoConstants.MAX_VELOCITY,
-            Constants.AutoConstants.MAX_ACCELERATION,
-            Constants.AutoConstants.MAX_ANGULAR_VELOCITY,
-            Constants.AutoConstants.MAX_ANGULAR_ACCELERATION,
-            Constants.AutoConstants.NOMINAL_VOLTAGE);
-
-    PathPlannerPath path;
-    try {
-      path = PathPlannerPath.fromPathFile(position);
-
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
-    }
-
-    return AutoBuilder.pathfindThenFollowPath(path, constraints);
-  }
-
   private void startSimThread() {
     m_lastSimTime = Utils.getCurrentTimeSeconds();
 

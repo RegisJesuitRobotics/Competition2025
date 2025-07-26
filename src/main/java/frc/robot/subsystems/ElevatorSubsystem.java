@@ -7,10 +7,13 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -35,12 +38,11 @@ import java.util.function.DoubleSupplier;
 
 // @Logged
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TelemetryTalonFX leftElevatorMotor = new TelemetryTalonFX(
-      Constants.ElevatorConstants.LEFT_ID,
+  private final TalonFX leftElevatorMotor = new TalonFX(
+      Constants.ElevatorConstants.LEFT_ID);
+  private final TalonFX rightElevatorMotor = new TalonFX(
+      Constants.ElevatorConstants.RIGHT_ID);
 
-      "/elevator/motorleft",
-      Constants.MiscConstants.CANIVORE_NAME,
-      Constants.MiscConstants.TUNING_MODE);
   private final SysIdRoutine elevatorSysId = new SysIdRoutine(
       new SysIdRoutine.Config(
           Volts.per(Second).of(.5),
@@ -48,22 +50,22 @@ public class ElevatorSubsystem extends SubsystemBase {
           null,
           (state) -> SignalLogger.writeString("elevator", state.toString())),
       new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
-  private final TelemetryTalonFX rightElevatorMotor = new TelemetryTalonFX(
-      Constants.ElevatorConstants.RIGHT_ID,
-      "/elevator/motorright",
-      Constants.MiscConstants.CANIVORE_NAME,
-      Constants.MiscConstants.TUNING_MODE);
+  
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
+
   private final DoubleTelemetryEntry positionGoal = new DoubleTelemetryEntry("/elevator/positionGoal", true);
   private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
   private final EventTelemetryEntry rightEventEntry = new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry = new EventTelemetryEntry("/elevator/motorleft/events");
   private final Debouncer debouncer = new Debouncer(0.5);
-  private final TunableTelemetryProfiledPIDController controller = new TunableTelemetryProfiledPIDController(
-      "/elevator/controller",
-      Constants.ElevatorConstants.PID_GAINS,
-      Constants.ElevatorConstants.TRAP_GAINS);
+  private final DoubleTelemetryEntry voltageRight = new DoubleTelemetryEntry("/elevator/rightVoltage", true);
+  private final DoubleTelemetryEntry voltageLeft = new DoubleTelemetryEntry("/elevator/leftVoltage", true);
+
+  private final ProfiledPIDController controller = new ProfiledPIDController(
+      Constants.ElevatorConstants.P,Constants.ElevatorConstants.I, Constants.ElevatorConstants.D ,
+      Constants.ElevatorConstants.TRAPEZOID_PROFILE);
+
   private final ElevatorFeedforward FF = Constants.ElevatorConstants.FF.createElevatorFeedforward();
   private final DoubleTelemetryEntry elevatorPosition = new DoubleTelemetryEntry("/elevator/position", true);
   private final DoubleTelemetryEntry elevatorGoal = new DoubleTelemetryEntry("/elevator/goalPos", true);
@@ -111,9 +113,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         faultRecorder.getFaultString());
     rightMotorAlert.set(faultRecorder.hasFault());
 
-    rightElevatorMotor.setLoggingPositionConversionFactor(Constants.ElevatorConstants.METERS_PER_REVOLUTION);
-    rightElevatorMotor.setLoggingVelocityConversionFactor(Constants.ElevatorConstants.METERS_PER_REVOLUTION);
-
     // Clear reset as this is on startup
     rightElevatorMotor.hasResetOccurred();
   }
@@ -147,10 +146,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftFaultRecorder.getFaultString());
     leftMotorAlert.set(leftFaultRecorder.hasFault());
 
-    leftElevatorMotor.setLoggingPositionConversionFactor(
-        Constants.ElevatorConstants.METERS_PER_REVOLUTION);
-    leftElevatorMotor.setLoggingVelocityConversionFactor(
-        Constants.ElevatorConstants.METERS_PER_REVOLUTION);
     leftElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.RIGHT_ID, true));
     // Clear reset as this is on startup
     leftElevatorMotor.hasResetOccurred();
@@ -258,13 +253,13 @@ public class ElevatorSubsystem extends SubsystemBase {
       controller.reset(getElevatorPosition(), getVelocityActual());
     }
 
-    rightElevatorMotor.logValues();
-    leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getSetpoint().position);
     positionGoal.append(controller.getGoal().position);
     topSwitch.append(!bottomSwitch.get());
     homed.append(isHomed());
+    voltageLeft.append(leftElevatorMotor.getMotorVoltage().getValueAsDouble());
+    voltageRight.append(rightElevatorMotor.getMotorVoltage().getValueAsDouble());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
   }
 }

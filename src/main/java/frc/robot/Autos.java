@@ -139,6 +139,7 @@ public class Autos {
       autoChooser.addOption("slapdownUP", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(0)));
       autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
       autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(Constants.IntakeConstants.SPINNING_VOLTAGE));
+      autoChooser.addOption("test to point", testToPoint(drivetrain));
     }
   }
 
@@ -149,6 +150,10 @@ public class Autos {
   public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
     return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
   }
+  public static Command testToPoint(CommandSwerveDrivetrain drive) {
+    return drive.ToPointCommand(() -> new Pose2d(15.0, 3.5, new Rotation2d()) );
+  }
+
 
   public Command autoStart(
       ElevatorSubsystem elevatorSubsystem, IntakeSuperstructure intakeSuperstructure) {

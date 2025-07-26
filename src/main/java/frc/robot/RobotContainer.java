@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoAlignCommand;
 import frc.robot.commands.ElevatorWristCommands;
 import frc.robot.commands.MiscCommands;
+import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
@@ -284,8 +285,8 @@ public class RobotContainer {
                                                                                           // (left)
             );
         }));
-        joystick.plus().and(joystick.rightBumper()).onTrue(AutoAlignCommand.createAutoAlignCommand(drivetrain, 1));
-        joystick.plus().and(joystick.leftBumper()).onTrue(AutoAlignCommand.createAutoAlignCommand(drivetrain, 0));
+        joystick.plus().whileTrue((AutoAlignCommand.createAutoAlignCommand(drivetrain, 1)));
+      //  joystick.plus().and(joystick.leftBumper()).onTrue(AutoAlignCommand.createAutoAlignCommand(drivetrain, 0));
         joystick
                 .a()
                 .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));

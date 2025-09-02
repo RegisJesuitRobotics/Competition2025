@@ -222,7 +222,7 @@ public final class Constants {
             "/drive/gains/pointTranslationController", 5, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
         new TunableTrapezoidalProfileGains(
-            "/drive/gains/trapPointTranslationController", 1, .5, MiscConstants.TUNING_MODE);
+            "/drive/gains/trapPointTranslationController", 0.25, 0.125, MiscConstants.TUNING_MODE);
     public static final TunableFFGains pointTranslationFFGains =
         new TunableFFGains("/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
     public static final double MAX_VELOCITY = 3.0;

@@ -164,7 +164,7 @@ public final class Constants {
     public static final int SWITCH_ID_LEFT = 4; 
     public static final double OUTPUT_VOLTAGE = -10.0;
     public static final int SWITCH_ID_RIGHT = 9; 
-    public static final double SUPPLY_CURRENT_LIMIT = 20;
+    //public static final double SUPPLY_CURRENT_LIMIT = 20;
   }
 
   public static class ClimberConstants {

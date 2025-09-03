@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorWristCommands;
 import frc.robot.commands.MiscCommands;
+import frc.robot.commands.autoCommands.ToPointCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
 import frc.robot.hid.CommandNintendoSwitchController;
@@ -37,10 +38,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 // @Logged
 public class RobotContainer {
-
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    
+    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * drivetrain.getMaxSpeedChooser().getSelected() / 100; // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75)
-            .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+            .in(RadiansPerSecond) * drivetrain.getMaxAngularChooser().getSelected() / 100; // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -63,6 +66,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     public AtomicBoolean scoringFlipped = new AtomicBoolean(false);
+    
 
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final WristSubsystem wristSubsystem = new WristSubsystem();
@@ -73,7 +77,7 @@ public class RobotContainer {
             intakeRotationSubsystem);
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
-    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+   // private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
     private final Autos autos = new Autos(
             intakeSpinningSubsystem,
@@ -89,51 +93,25 @@ public class RobotContainer {
 
     private final CommandNintendoSwitchController joystick = new CommandNintendoSwitchController(0);
     private final CommandXboxPlaystationController operator = new CommandXboxPlaystationController(1);
-    private final CommandButtonBoard buttonBoard = new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
+   // private final CommandButtonBoard buttonBoard = new CommandButtonBoard(Constants.OperatorConstants.BUTTON_BOARD_ID);
     final Orchestra orchestra = new Orchestra();
     SendableChooser<Command> musicChooser;
     SendableChooser<Command> playMusic;
 
+
     public RobotContainer() {
         configureBindings();
         configureOperatorBindings();
-        configureBoard();
-        // intakeRotationSubsystem.addInstrumentCommand(orchestra);
-        // coralSubsystem.addInstrumentCommand(orchestra);
-        // elevatorSubsystem.addInstrumentCommand(orchestra);
-        // wristSubsystem.addInstrumentCommand(orchestra);
-        // for (int i =0; i<4; i++){
-        // TalonFX driveMotor = drivetrain.getModule(i).getDriveMotor();
-        // TalonFX steerMotor = drivetrain.getModule(i).getSteerMotor();
-        // orchestra.addInstrument(steerMotor);
-        // orchestra.addInstrument(driveMotor);
-        // }
-
-        // musicChooser.addOption("NationalAnthem", Commands.run(()->
-        // orchestra.loadMusic("NationAnthem.chrp")));
-        // musicChooser.addOption("RockafellerSkank", Commands.run(()->
-        // orchestra.loadMusic("RockafellerSkank.chrp")));
-        // musicChooser.addOption("JigsawsFallingIntoPlace", Commands.run(()->
-        // orchestra.loadMusic("JigsawsFallingIntoPlace.chrp")));
-        // musicChooser.addOption("Sandstorm", Commands.run(()->
-        // orchestra.loadMusic("Sandstorm.chrp")));
-        // playMusic.addOption("on", Commands.run(()-> orchestra.play()));
-        // playMusic.addOption("off", Commands.run(()-> orchestra.stop()));
-
+      
         SmartDashboard.putData("Auto", autos.getAutoChooser());
         SmartDashboard.putData("Alerts", Alert.getDefaultGroup());
         SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
-        // SmartDashboard.putData("MusicChooser", getMusiChooser());
-        // SmartDashboard.putData("MusicOn/Off", getMusicOn());
+        SmartDashboard.putData("MaxSpeedPercent", drivetrain.getMaxSpeedChooser());
+        SmartDashboard.putData("MaxAngularSpeedPercent", drivetrain.getMaxAngularChooser());
+        
     }
 
-    public SendableChooser<Command> getMusiChooser() {
-        return musicChooser;
-    }
-
-    public SendableChooser<Command> getMusicOn() {
-        return playMusic;
-    }
+   
 
     private void configureOperatorBindings() {
         operator.triangle().onTrue(
@@ -192,78 +170,7 @@ public class RobotContainer {
         operator.share().whileTrue(elevatorSubsystem.homeElevatorCommand());
     }
 
-    private void configureBoard() {
-
-        buttonBoard
-                .Button1()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-1A" : "Blue-12L1A-Algae", scoringFlipped));
-        buttonBoard
-                .Button2()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-2B" : "Blue-2B3C-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button3()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-3C" : "Blue-2B3C-Algae", scoringFlipped));
-        buttonBoard
-                .Button4()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-4D" : "Blue-4D5E-Algae", scoringFlipped));
-        buttonBoard
-                .Button5()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-5E" : "Blue-4D5E-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button6()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-6F" : "Blue-6F7G-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button7()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-7G" : "Blue-6F7G-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button8()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-8H" : "Blue-8H9I-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button9()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-9I" : "Blue-8H9I-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button10()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-10J" : "Blue-10J11K-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button11()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-11K" : "Blue-10J11K-Algae",
-                                scoringFlipped));
-        buttonBoard
-                .Button12()
-                .whileTrue(
-                        drivetrain.autoDriveTrajectory(
-                                onCoral.get() ? "Blue-12L" : "Blue-12L1A-Algae",
-                                scoringFlipped));
-    }
+   
 
     private void configureBindings() {
         // elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setPosition(Units.inchesToMeters(3.15)));
@@ -382,6 +289,7 @@ public class RobotContainer {
                                                                                           // (left)
             );
         }));
+      //  joystick.plus().and(joystick.leftBumper()).onTrue(AutoAlignCommand.createAutoAlignCommand(drivetrain, 0));
         joystick
                 .a()
                 .whileTrue(algaeSubsystem.setVoltageCommand(Constants.AlgaeConstants.OUTPUT_VOLTAGE));

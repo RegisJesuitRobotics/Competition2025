@@ -51,7 +51,6 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public ClimberSubsystem() {
     configMotor1();
-    configMotor2();
     setDefaultCommand(setVoltageCommand(0));
   }
 

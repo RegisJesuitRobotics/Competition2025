@@ -7,6 +7,7 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
@@ -34,12 +35,15 @@ import java.util.function.DoubleSupplier;
 
 // @Logged
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TelemetryTalonFX leftElevatorMotor =
-      new TelemetryTalonFX(
+  private final TalonFX leftElevatorMotor =
+      new TalonFX(
           Constants.ElevatorConstants.LEFT_ID,
-          "/elevator/motorleft",
-          Constants.MiscConstants.CANIVORE_NAME,
-          Constants.MiscConstants.TUNING_MODE);
+          Constants.MiscConstants.CANIVORE_NAME);
+private final TalonFX rightElevatorMotor =
+      new TalonFX(
+          Constants.ElevatorConstants.RIGHT_ID,
+          Constants.MiscConstants.CANIVORE_NAME);
+
   private final SysIdRoutine elevatorSysId =
       new SysIdRoutine(
           new SysIdRoutine.Config(
@@ -48,36 +52,39 @@ public class ElevatorSubsystem extends SubsystemBase {
               null,
               (state) -> SignalLogger.writeString("elevator", state.toString())),
           new SysIdRoutine.Mechanism((voltage) -> setVoltage(voltage.in(Volts)), null, this));
-  private final TelemetryTalonFX rightElevatorMotor =
-      new TelemetryTalonFX(
-          Constants.ElevatorConstants.RIGHT_ID,
-          "/elevator/motorright",
-          Constants.MiscConstants.CANIVORE_NAME,
-          Constants.MiscConstants.TUNING_MODE);
+  
   private final Alert rightMotorAlert = new Alert("right elevator motor fault", AlertType.ERROR);
   private final Alert leftMotorAlert = new Alert("left elevator motor fault", AlertType.ERROR);
-//  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
+  private final DigitalInput bottomSwitch = new DigitalInput(Constants.ElevatorConstants.BOTTOM_ID);
   private final EventTelemetryEntry rightEventEntry =
       new EventTelemetryEntry("/elevator/motorright/events");
   private final EventTelemetryEntry leftEventEntry =
       new EventTelemetryEntry("/elevator/motorleft/events");
+
   private final Debouncer debouncer = new Debouncer(0.5);
+
   private final TunableTelemetryProfiledPIDController controller =
       new TunableTelemetryProfiledPIDController(
           "/elevator/controller",
           Constants.ElevatorConstants.PID_GAINS,
           Constants.ElevatorConstants.TRAP_GAINS);
   private final SimpleMotorFeedforward FF = Constants.ElevatorConstants.FF.createFeedforward();
+
   private final DoubleTelemetryEntry elevatorPosition =
       new DoubleTelemetryEntry("/elevator/position", true);
+  private DoubleTelemetryEntry voltage = new DoubleTelemetryEntry("/elevator/voltage", true);
+  private DoubleTelemetryEntry supplyVoltage = new DoubleTelemetryEntry("/elevator/supplyVoltage", true);
+  private DoubleTelemetryEntry velocity = new DoubleTelemetryEntry("/elevator/velocity", true);
   private final DoubleTelemetryEntry elevatorGoal = new DoubleTelemetryEntry("/elevator/goalPos", true);
-//  private final BooleanTelemetryEntry topSwitch = new BooleanTelemetryEntry("/elevator/top", true);
+ private final BooleanTelemetryEntry homeSwitch = new BooleanTelemetryEntry("/elevator/switch", true);
   private final BooleanTelemetryEntry homed = new BooleanTelemetryEntry("/elevator/homed", true);
+
   private boolean isHomed = false;
   private boolean isHoming = false;
 
   public ElevatorSubsystem() {
-    configMotors();
+    configRightMotor();
+    configLeftMotor();
     controller.setTolerance(Units.inchesToMeters(1));
     SmartDashboard.putData(forceHomeCommand().withName("Force Home"));
   }
@@ -115,12 +122,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         faultRecorder.getFaultString());
     rightMotorAlert.set(faultRecorder.hasFault());
 
-    rightElevatorMotor.setLoggingPositionConversionFactor(Constants.ElevatorConstants.GEAR_RATIO);
-    rightElevatorMotor.setLoggingVelocityConversionFactor(Constants.ElevatorConstants.GEAR_RATIO);
-
     // Clear reset as this is on startup
     rightElevatorMotor.hasResetOccurred();
       }
+
       private void configLeftMotor(){
     TalonFXConfiguration leftMotorConfiguration = new TalonFXConfiguration();
     leftMotorConfiguration.CurrentLimits.SupplyCurrentLimit =
@@ -151,11 +156,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         "left elevator motor fault",
         leftFaultRecorder.getFaultString());
     leftMotorAlert.set(leftFaultRecorder.hasFault());
-
-    leftElevatorMotor.setLoggingPositionConversionFactor(
-        Constants.ElevatorConstants.METERS_PER_REVOLUTION);
-    leftElevatorMotor.setLoggingVelocityConversionFactor(
-        Constants.ElevatorConstants.METERS_PER_REVOLUTION);
 
     leftElevatorMotor.setControl(new Follower(Constants.ElevatorConstants.RIGHT_ID, true));
     // Clear reset as this is on startup
@@ -241,10 +241,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return elevatorSysId.dynamic(direction).beforeStarting(SignalLogger::start);
   }
-  public Command addInstrumentCommand(Orchestra orchestra){
-    return this.run(() -> orchestra.addInstrument(rightElevatorMotor))
-    .alongWith(this.run(()-> orchestra.addInstrument(leftElevatorMotor)));
-  }
+  
 
   @Override
   public void periodic() {
@@ -253,12 +250,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 //      leftElevatorMotor.setPosition(0.0);
 //    }
 
-    rightElevatorMotor.logValues();
-    leftElevatorMotor.logValues();
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
 //    topSwitch.append(atLimit());
+    homeSwitch.append(bottomSwitch.get());
     homed.append(isHomed());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
+    voltage.append(leftElevatorMotor.getMotorVoltage().getValueAsDouble());
+    velocity.append(getVelocityActual());
+    supplyVoltage.append(leftElevatorMotor.getSupplyVoltage().getValueAsDouble());
   }
 }

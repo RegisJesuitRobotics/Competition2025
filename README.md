@@ -2,7 +2,7 @@
 
 ## Controls
 ### Drive Controls
-![drive controller](https://github.com/user-attachments/assets/f499920c-3e7d-42c3-b94c-456c3e37dd7f)
-### Operator Controls
-![2025 drive schematics](https://github.com/user-attachments/assets/bdd8b4d9-07ae-4b62-a94d-6bbf42131608)
+<img width="2194" height="1232" alt="Drive Screenshot 2025-09-06 221044" src="https://github.com/user-attachments/assets/fb8ca558-9a10-49b9-bc14-c357b888a957" />
 
+### Operator Controls
+<img width="2208" height="1174" alt="Operator Screenshot 2025-09-06 221117" src="https://github.com/user-attachments/assets/2f0089b9-3ed0-4a90-b6d2-9ff74743c31e" />

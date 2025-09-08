@@ -28,7 +28,7 @@ import frc.robot.utils.Alert;
 import frc.robot.utils.Alert.AlertType;
 import frc.robot.utils.ConfigEquality;
 import frc.robot.utils.ConfigurationUtils;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 
 // @Logged
 public class CoralSubsystem extends SubsystemBase {

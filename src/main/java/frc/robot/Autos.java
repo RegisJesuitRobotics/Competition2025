@@ -135,8 +135,6 @@ public class Autos {
       autoChooser.addOption("elevator10", elevatorSubsystem.setPosition(Units.inchesToMeters(10)));
       autoChooser.addOption("elevator 40", elevatorSubsystem.setPosition(Units.inchesToMeters(40)));
       autoChooser.addOption("elevator0", elevatorSubsystem.setPosition(0));
-      autoChooser.addOption("slapdownDOWN", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(Units.degreesToRadians(Constants.IntakeConstants.ROTATION_DOWN_ANGLE))));
-      autoChooser.addOption("slapdownUP", intakeSuperstructure.getIntakeRotationSubsystem().setRotationGoalCommand(new Rotation2d(0)));
       autoChooser.addOption("coral 10v", coralSubsystem.setVoltageCommand(10));
       autoChooser.addOption("intakeRun", intakeSpinningSubsystem.setVoltageCommand(Constants.IntakeConstants.SPINNING_VOLTAGE));
     }

@@ -74,42 +74,6 @@ public final class Constants {
     public static final double FORCE_HOME = Units.inchesToMeters(7.0);
   }
 
-  public static class IntakeConstants {
-    // rotation stuff
-    public static final int ROTATION_MOTOR_ID = 15;
-    public static final int ROTATION_LIMIT_SWITCH_ID = 1;
-    public static final TunablePIDGains ROTATION_PID_GAINS =
-        new TunablePIDGains("/intake/rotation/PID", 6, 0, 0, MiscConstants.TUNING_MODE);
-    public static final TunableTrapezoidalProfileGains ROTATION_TRAP_GAINS =
-        new TunableTrapezoidalProfileGains(
-            "/intake/rotation/trapgains", 25, 25, MiscConstants.TUNING_MODE);
-    public static final TunableArmElevatorFFGains ROTATION_FF_GAINS =
-        new TunableArmElevatorFFGains(
-            "/intake/rotation/ff/", 0.52525, 0.1693, 0.0080483, 0.0020163, MiscConstants.TUNING_MODE);
-
-    public static final double GEAR_RATIO_ROTATION = 3.0 * 4.0 * (60.0 / 30.0);
-    public static final double SUPPLY_CURRENT_LIMIT_ROTATION = 30.0;
-    public static final InvertedValue INVERTED_ROTATION = InvertedValue.CounterClockwise_Positive;
-    public static final double ROTATION_UP_ANGLE = Units.degreesToRadians(-2); // idk
-    public static final double ROTATION_DOWN_ANGLE = 1.635; // m
-
-    // spinny stuff
-    public static final int SPINNING_MOTOR_ID = 14; // idk
-    public static final double SPINNING_VOLTAGE = 10.0; // m
-    public static final double RATE_LIMIT = 1.0; // m
-    public static final TunablePIDGains SPINNING_PID_GAINS =
-        new TunablePIDGains("/intake/spinning/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
-    public static final TunableFFGains SPINNING_FF_GAINS =
-        new TunableFFGains("/intake/spinning/ff/", 0.0, 0.0, 0.0, MiscConstants.TUNING_MODE);
-    public static final double GEAR_RATIO_SPINNING = 1;
-    public static final double SUPPLY_CURRENT_LIMIT_SPINNING = 25.0; // idk
-    public static final InvertedValue INVERTED_SPINNING = InvertedValue.Clockwise_Positive; // m
-    public static final int STALL_MOTOR_CURRENT = 40; // mF
-    public static final int FREE_MOTOR_CURRENT = 30; // m
-    public static final int LEFT_SWITCH = 3;
-    public static final int SPINNING_VOLTAGE_OUTAKE = 12;
-  }
-
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int BUTTON_BOARD_ID = 2;
@@ -117,8 +81,6 @@ public final class Constants {
 
   public static class MiscConstants {
     public static final String CANIVORE_NAME = "canivore";
-
-    private MiscConstants() {} // why is there a constructor here
 
     public static final int[] USED_CONTROLLER_PORTS = {0, 1, 2};
     public static final boolean TUNING_MODE = !DriverStation.isFMSAttached();

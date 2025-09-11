@@ -58,10 +58,10 @@ public class Autos {
     
         autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
     if (MiscConstants.TUNING_MODE) {
-      // autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));
-      // autoChooser.addOption("elevator qr", elevatorSubsystem.sysIdQuasistatic(Direction.kReverse));
-      // autoChooser.addOption("elevator df", elevatorSubsystem.sysIdDynamic(Direction.kForward));
-      // autoChooser.addOption("elevator dr", elevatorSubsystem.sysIdDynamic(Direction.kReverse));
+      autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));
+      autoChooser.addOption("elevator qr", elevatorSubsystem.sysIdQuasistatic(Direction.kReverse));
+      autoChooser.addOption("elevator df", elevatorSubsystem.sysIdDynamic(Direction.kForward));
+      autoChooser.addOption("elevator dr", elevatorSubsystem.sysIdDynamic(Direction.kReverse));
 
       // autoChooser.addOption("drive qf", drivetrain.sysIdQuasistatic(Direction.kForward));
       // autoChooser.addOption("drive qr", drivetrain.sysIdQuasistatic(Direction.kReverse));

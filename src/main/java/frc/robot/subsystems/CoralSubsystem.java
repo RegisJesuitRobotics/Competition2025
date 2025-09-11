@@ -98,7 +98,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
   
   public boolean getLeftSwitchState() {
-    return intakeLeftBeam.get();
+    return !intakeLeftBeam.get();
   }
 
   public boolean getRightSwitchState() {

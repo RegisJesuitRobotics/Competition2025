@@ -35,14 +35,27 @@ import java.util.function.DoubleSupplier;
 
 // @Logged
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX leftElevatorMotor =
-      new TalonFX(
+//   private final TalonFX leftElevatorMotor =
+//       new TalonFX(
+//           Constants.ElevatorConstants.LEFT_ID,
+//           Constants.MiscConstants.CANIVORE_NAME);
+// private final TalonFX rightElevatorMotor =
+//       new TalonFX(
+//           Constants.ElevatorConstants.RIGHT_ID,
+//           Constants.MiscConstants.CANIVORE_NAME);
+
+private final TelemetryTalonFX leftElevatorMotor =
+      new TelemetryTalonFX(
           Constants.ElevatorConstants.LEFT_ID,
-          Constants.MiscConstants.CANIVORE_NAME);
-private final TalonFX rightElevatorMotor =
-      new TalonFX(
-          Constants.ElevatorConstants.RIGHT_ID,
-          Constants.MiscConstants.CANIVORE_NAME);
+          "/elevator/motorleft",
+          Constants.MiscConstants.CANIVORE_NAME,
+          Constants.MiscConstants.TUNING_MODE);
+ private final TelemetryTalonFX rightElevatorMotor =
+          new TelemetryTalonFX(
+              Constants.ElevatorConstants.RIGHT_ID,
+              "/elevator/motorright",
+              Constants.MiscConstants.CANIVORE_NAME,
+              Constants.MiscConstants.TUNING_MODE);
 
   private final SysIdRoutine elevatorSysId =
       new SysIdRoutine(
@@ -86,7 +99,7 @@ private final TalonFX rightElevatorMotor =
     configRightMotor();
     configLeftMotor();
     controller.setTolerance(Units.inchesToMeters(1));
-    SmartDashboard.putData(forceHomeCommand().withName("Force Home"));
+    setDefaultCommand(setVoltageCommand(0.0).ignoringDisable(true).withName("ElevatorDefault"));
   }
 
   private void configRightMotor() {
@@ -167,14 +180,6 @@ private final TalonFX rightElevatorMotor =
         * Constants.ElevatorConstants.METERS_PER_REVOLUTION;
   }
 
-  public Command forceHomeCommand(){
-    return Commands.runOnce(() -> {
-      isHomed = true;
-      leftElevatorMotor.setPosition(Constants.ElevatorConstants.FORCE_HOME / Constants.ElevatorConstants.METERS_PER_REVOLUTION);}).ignoringDisable(true);
-  }
-
-
-
   public void setVoltage(double volts) {
     rightElevatorMotor.setVoltage(volts);
   }
@@ -195,7 +200,7 @@ private final TalonFX rightElevatorMotor =
 //  }
 
   public boolean isHomed() {
-    return isHomed;
+    return !bottomSwitch.get();
   }
 
   public Command setPosition(double position) {
@@ -218,19 +223,12 @@ private final TalonFX rightElevatorMotor =
         .beforeStarting(
             () ->
                 controller.reset(
-                    getElevatorPosition(), leftElevatorMotor.getVelocity().getValueAsDouble()))
-        .onlyIf(() -> isHomed);
+                    getElevatorPosition(), leftElevatorMotor.getVelocity().getValueAsDouble()));
   }
 
   public Command homeElevatorCommand() {
-    return setVoltageCommand(-0.02)
+    return setVoltageCommand(-1)
         .until(this::isHomed)
-        .beforeStarting(
-            () -> {
-              isHoming = true;
-              isHomed = false;
-            })
-        .finallyDo(() -> isHoming = false)
         .withName("HomeElevator");
   }
 
@@ -250,14 +248,22 @@ private final TalonFX rightElevatorMotor =
 //      leftElevatorMotor.setPosition(0.0);
 //    }
 
+leftElevatorMotor.logValues();
+
+
+if(!isHomed) {
+  leftElevatorMotor.setPosition(0.0);
+
+}
+
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
 //    topSwitch.append(atLimit());
     homeSwitch.append(bottomSwitch.get());
     homed.append(isHomed());
     SignalLogger.writeDouble("elevatorPosition", getElevatorPosition());
-    voltage.append(leftElevatorMotor.getMotorVoltage().getValueAsDouble());
-    velocity.append(getVelocityActual());
-    supplyVoltage.append(leftElevatorMotor.getSupplyVoltage().getValueAsDouble());
+    // voltage.append(leftElevatorMotor.getMotorVoltage().getValueAsDouble());
+    // velocity.append(getVelocityActual());
+    // supplyVoltage.append(leftElevatorMotor.getSupplyVoltage().getValueAsDouble());
   }
 }

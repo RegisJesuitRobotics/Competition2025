@@ -54,7 +54,7 @@ public final class Constants {
     public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final TunablePIDGains PID_GAINS =
-        new TunablePIDGains("/elevator/PID", 30, 0, 0.5, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/elevator/PID", 5, 0, 0.5, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
         new TunableTrapezoidalProfileGains("/elevator/trap", 10, 8
         , MiscConstants.TUNING_MODE);
@@ -73,8 +73,8 @@ public final class Constants {
   public static class CoralConstants {
 
     public static final int CORAL_MOTOR_ID = 12;
-    public static final int SWITCH_ID_RIGHT = 9; 
-    public static final int SWITCH_ID_LEFT = 4; 
+    public static final int SWITCH_ID_RIGHT = 1; 
+    public static final int SWITCH_ID_LEFT = 0; 
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double SUPPLY_CURRENT_LIMIT = 40; 

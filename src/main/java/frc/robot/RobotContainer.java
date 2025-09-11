@@ -80,9 +80,8 @@ public class RobotContainer {
         operator.povDown().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L1_REEF));
         operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(0.0));
 
-        operator.options().whileTrue(elevatorSubsystem.homeElevatorCommand());
-
-        elevatorSubsystem.setDefaultCommand(elevatorSubsystem.setVoltageCommand(operator.getRightY() * 6));
+        operator.options().whileTrue(elevatorSubsystem.setVoltageCommand(-2));
+        operator.share().whileTrue(elevatorSubsystem.setVoltageCommand(2));
     }
 
     private void configureBindings() {
@@ -120,9 +119,7 @@ public class RobotContainer {
         joystick.plus().and(joystick.leftBumper()).whileTrue(drivetrain.ToPointCommand(drivetrain.returnAutoAlignPose(0)));
         joystick.plus().and(joystick.rightBumper()).whileTrue(drivetrain.ToPointCommand(drivetrain.returnAutoAlignPose(1)));
 
-        joystick.rightTrigger().onTrue(coralSubsystem.intakeUntilDetected()
-             .andThen(coralSubsystem.setVoltageCommand(Constants.CoralConstants.INTAKE_VOLTAGE)
-             .withTimeout(.01)));
+        joystick.rightTrigger().whileTrue(coralSubsystem.intakeUntilDetected());
 
         joystick
                 .leftTrigger()

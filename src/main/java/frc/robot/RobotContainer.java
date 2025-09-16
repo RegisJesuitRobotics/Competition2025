@@ -77,7 +77,7 @@ public class RobotContainer {
         operator.povUp().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L4_REEF));
         operator.povRight().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF));
         operator.povLeft().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF));
-        operator.povDown().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L1_REEF));
+        operator.povDown().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L1_REEF + 0.001));
         operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(0.0));
 
         operator.options().whileTrue(elevatorSubsystem.setVoltageCommand(-2));

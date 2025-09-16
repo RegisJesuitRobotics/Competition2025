@@ -54,7 +54,7 @@ public final class Constants {
     public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final TunablePIDGains PID_GAINS =
-        new TunablePIDGains("/elevator/PID", 5, 0, 0.5, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/elevator/PID", 38, 1, 0.5, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains TRAP_GAINS =
         new TunableTrapezoidalProfileGains("/elevator/trap", 10, 8
         , MiscConstants.TUNING_MODE);
@@ -83,7 +83,7 @@ public final class Constants {
 
     public static final double GEAR_RATIO = 18.0 / 16.0;
     public static final double RUNNING_VOLTAGE = 12.0;
-    public static final double OUTPUT_VOLTAGE = -10.0;
+    public static final double OUTPUT_VOLTAGE = 10.0;
     public static final double INTAKE_VOLTAGE = 2.5;
     
   }

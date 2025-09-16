@@ -250,12 +250,6 @@ private final TelemetryTalonFX leftElevatorMotor =
 
 leftElevatorMotor.logValues();
 
-
-if(!isHomed) {
-  leftElevatorMotor.setPosition(0.0);
-
-}
-
     elevatorPosition.append(getElevatorPosition());
     elevatorGoal.append(controller.getGoal().position);
 //    topSwitch.append(atLimit());

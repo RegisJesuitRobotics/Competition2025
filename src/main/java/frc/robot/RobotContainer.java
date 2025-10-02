@@ -116,8 +116,8 @@ public class RobotContainer {
         
         joystick.home().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.plus().and(joystick.leftBumper()).whileTrue(drivetrain.ToPointCommand(drivetrain.returnAutoAlignPose(0)));
-        joystick.plus().and(joystick.rightBumper()).whileTrue(drivetrain.ToPointCommand(drivetrain.returnAutoAlignPose(1)));
+        joystick.plus().and(joystick.leftBumper()).whileTrue(drivetrain.autoDriveTrajectory(0));
+        joystick.plus().and(joystick.rightBumper()).whileTrue( drivetrain.autoDriveTrajectory(1));
 
         joystick.rightTrigger().whileTrue(coralSubsystem.intakeUntilDetected());
 

@@ -38,8 +38,8 @@ public class CoralSubsystem extends SubsystemBase {
   private final Alert coralMotorAlert = new Alert("Coral motor had a fault", AlertType.ERROR);
   private final EventTelemetryEntry coralEvent = new EventTelemetryEntry("/coral/events");
 
-  private BooleanTelemetryEntry rightBeam = new BooleanTelemetryEntry("/coral/right", true);
-  private BooleanTelemetryEntry leftBeam = new BooleanTelemetryEntry("/coral/left", true);
+  private BooleanTelemetryEntry rightBeam = new BooleanTelemetryEntry("/coral/rightBeam", true);
+  private BooleanTelemetryEntry leftBeam = new BooleanTelemetryEntry("/coral/leftBeam", true);
   private DoubleTelemetryEntry voltage = new DoubleTelemetryEntry("/coral/voltage", true);
   private DoubleTelemetryEntry supplyVoltage = new DoubleTelemetryEntry("/coral/supplyVoltage", true);
   private DoubleTelemetryEntry velocity = new DoubleTelemetryEntry("/coral/velocity", true);

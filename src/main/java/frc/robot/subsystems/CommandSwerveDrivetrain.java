@@ -280,10 +280,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return m_sysIdRoutineToApply.quasistatic(direction);
   }
 
-  public Command nothing(){
-return Commands.none();
-  }
-
   /**
    * Runs the SysId Dynamic test in the given direction for the routine specified by {@link
    * #m_sysIdRoutineToApply}.
@@ -429,8 +425,10 @@ return Commands.none();
   }
 
   public Pose2d returnAutoAlignPose(int leftOrRight){
-    int currentZone = determineCurrentZone();
-    return branchPoints[currentZone][leftOrRight];
+    // int currentZone = determineCurrentZone();
+    // return branchPoints[currentZone][leftOrRight];
+
+    return new Pose2d(15.6, 4.3, new Rotation2d(0));
   }
 
   
@@ -483,7 +481,7 @@ return Commands.none();
                   translationFeedbackY,
                   0.0,
                   getPose().getRotation())))
-                  .alongWith(Commands.runOnce(() ->{
+                  .alongWith(Commands.run(() ->{
                     speedXEntry.append(translationFeedbackX);
                     speedYEntry.append(translationFeedbackY);
                   } ));

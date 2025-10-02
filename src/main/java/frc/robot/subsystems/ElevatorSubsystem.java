@@ -248,6 +248,10 @@ private final TelemetryTalonFX leftElevatorMotor =
 //      leftElevatorMotor.setPosition(0.0);
 //    }
 
+if (isHomed()) {
+   leftElevatorMotor.setPosition(0);
+}
+
 leftElevatorMotor.logValues();
 
     elevatorPosition.append(getElevatorPosition());

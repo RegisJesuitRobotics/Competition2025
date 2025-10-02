@@ -28,9 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // @Logged
 public class RobotContainer {
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * .75; // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75)
-            .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+            .in(RadiansPerSecond) * .75; // 3/4 of a rotation per second max angular velocity
 
     
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -74,11 +74,12 @@ public class RobotContainer {
 
     private void configureOperatorBindings() {
                  
-        operator.povUp().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L4_REEF));
+      //  operator.povUp().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L4_REEF));
         operator.povRight().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF));
-        operator.povLeft().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF));
-        operator.povDown().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L1_REEF + 0.001));
-        operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(0.0));
+        operator.povLeft().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L1_REEF));
+        operator.povDown().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF + 0.001));
+        operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.INTAKE_POSITION));
+        operator.rightTrigger().onTrue(elevatorSubsystem.setPosition(0));
 
         operator.options().whileTrue(elevatorSubsystem.setVoltageCommand(-2));
         operator.share().whileTrue(elevatorSubsystem.setVoltageCommand(2));
@@ -150,6 +151,9 @@ public class RobotContainer {
                               // (left)
                               );
                         }), elevatorSubsystem.setPosition(0.0)));
+        
+        //outake backwards in case stuck
+        joystick.minus().whileTrue(coralSubsystem.setVoltageCommand(-5));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);

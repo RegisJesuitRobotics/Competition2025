@@ -35,6 +35,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
+import frc.robot.telemetry.types.Pose2dEntry;
 import frc.robot.utils.RaiderUtils;
 import frc.robot.utils.Reef;
 
@@ -419,7 +420,7 @@ return Commands.none();
 
 }
 
-
+public Pose2dEntry desiredPoseAlign = new Pose2dEntry("/drive/alignPose", true);
   public Command autoDriveTrajectory(int leftOrRight) {
     PathConstraints constraints =
         new PathConstraints(
@@ -429,7 +430,8 @@ return Commands.none();
             Constants.AutoConstants.MAX_ANGULAR_ACCELERATION,
             Constants.AutoConstants.NOMINAL_VOLTAGE);
 
-    
+
+    desiredPoseAlign.append(branchPoints[determineCurrentZone()][leftOrRight]);
     return AutoBuilder.pathfindToPose( branchPoints[determineCurrentZone()][leftOrRight], constraints);
 
     

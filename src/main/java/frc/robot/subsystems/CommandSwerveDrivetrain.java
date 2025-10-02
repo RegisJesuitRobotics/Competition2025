@@ -464,19 +464,21 @@ return Commands.none();
     translationControllerY.setTolerance(0.05);
 
     desiredPoseCurrent = desiredPose;
-    desiredPoseEntry.append(desiredPoseCurrent);
 
-    if (getTranslationError().getNorm() > .05) {
-    
+
+      return Commands.run(()-> {
+
+
+      desiredPoseEntry.append(desiredPoseCurrent);
+
       translationControllerX.setGoal(desiredPose.getX());
-
-      double translationFeedbackX = translationControllerX.calculate(getPose().getX(), desiredPose.getX());
+      double translationFeedbackX = translationControllerX.calculate(getPose().getX());
 
       translationControllerY.setGoal(desiredPose.getY());
+      double translationFeedbackY = translationControllerY.calculate(getPose().getY()); 
 
-      double translationFeedbackY = translationControllerY.calculate(getPose().getY(), desiredPose.getX());
 
-      return applyRequest(
+        applyRequest(
           () -> swerveRequestSpeeds
               .withSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
                   translationFeedbackX,
@@ -488,10 +490,26 @@ return Commands.none();
                     speedYEntry.append(translationFeedbackY);
                   } ));
 
-    } else {
-      return Commands.print("no ToPointCommand :(");
-    }
-  }
+    }, this ) 
+    
+      .until(() -> {
+        return getTranslationError().getNorm() < 0.05 &&
+             translationControllerX.atGoal() &&
+             translationControllerY.atGoal();
+  })
+      .andThen(() -> {
+        setControl(swerveRequestSpeeds.withSpeeds(
+         new ChassisSpeeds(
+          0.0, 0.0, 0.0)));
+  });
+
 
   
 }
+
+
+
+
+}
+
+  

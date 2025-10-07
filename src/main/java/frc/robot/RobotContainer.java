@@ -28,9 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // @Logged
 public class RobotContainer {
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * .75; // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75)
-            .in(RadiansPerSecond) * .75; // 3/4 of a rotation per second max angular velocity
+            .in(RadiansPerSecond) ; // 3/4 of a rotation per second max angular velocit
 
     
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -42,7 +42,11 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.03)
             .withRotationalDeadband(MaxAngularRate * 0.03)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-    private final SwerveRequest.RobotCentricFacingAngle robotCentricFacingAngle = new SwerveRequest.RobotCentricFacingAngle();
+    private final SwerveRequest.RobotCentricFacingAngle robotCentricFacingAngle = new SwerveRequest.RobotCentricFacingAngle()
+    .withDeadband(MaxSpeed * 0.2)
+    .withRotationalDeadband(MaxAngularRate * 0.03)
+    .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
     private final VectorRateLimiter vectorRateLimiter = new VectorRateLimiter(
             Constants.MiscConstants.TRANSLATION_RATE_LIMIT);
 
@@ -75,11 +79,13 @@ public class RobotContainer {
     private void configureOperatorBindings() {
                  
       //  operator.povUp().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L4_REEF));
-        operator.povRight().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF));
-        operator.povLeft().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L1_REEF));
-        operator.povDown().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF + 0.001));
+        operator.povUp().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF));
+        operator.povDown().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L1_REEF));
+        operator.povRight().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF + 0.001));
         operator.leftTrigger().onTrue(elevatorSubsystem.setPosition(ElevatorConstants.INTAKE_POSITION));
         operator.rightTrigger().onTrue(elevatorSubsystem.setPosition(0));
+        operator.rightBumper().whileTrue(coralSubsystem.setVoltageCommand(3));
+        operator.leftBumper().whileTrue(coralSubsystem.setVoltageCommand(-3));
 
         operator.options().whileTrue(elevatorSubsystem.setVoltageCommand(-2));
         operator.share().whileTrue(elevatorSubsystem.setVoltageCommand(2));
@@ -113,6 +119,15 @@ public class RobotContainer {
                                         .withRotationalRate(-joystick.getRightX() * MaxAngularRate)),
                                 drivetrain));
 
+        joystick.leftBumper().whileTrue(
+                Commands.run(() -> drivetrain.setControl(
+                        robotCentricFacingAngle
+                                .withVelocityX(-joystick.getLeftY() * MaxSpeed)
+                                .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+                                .withTargetDirection(new Rotation2d(Units.degreesToRadians(180)))),
+                        drivetrain));
+  
+   
            
         
         joystick.home().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));

@@ -85,7 +85,7 @@ public final class Constants {
     public static final double GEAR_RATIO = 18.0 / 16.0;
     public static final double RUNNING_VOLTAGE = 12.0;
     public static final double OUTPUT_VOLTAGE = 11.0;
-    public static final double INTAKE_VOLTAGE = 2.5;
+    public static final double INTAKE_VOLTAGE = 2;
     
   }
 

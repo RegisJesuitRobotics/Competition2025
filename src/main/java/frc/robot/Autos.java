@@ -58,6 +58,12 @@ public class Autos {
           VisionSubsystem visionSubsystem) {
     
         autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
+
+      NamedCommands.registerCommand("scoreL3", ScoreL3(elevatorSubsystem, coralSubsystem));
+      NamedCommands.registerCommand("scoreL2", ScoreL2(elevatorSubsystem, coralSubsystem));
+      NamedCommands.registerCommand("resetElevator", resetElevatorCommand(elevatorSubsystem));
+      NamedCommands.registerCommand("intake", IntakeCoral(coralSubsystem));
+
     if (MiscConstants.TUNING_MODE) {
       autoChooser.addOption("elevator qf", elevatorSubsystem.sysIdQuasistatic(Direction.kForward));
       autoChooser.addOption("elevator qr", elevatorSubsystem.sysIdQuasistatic(Direction.kReverse));

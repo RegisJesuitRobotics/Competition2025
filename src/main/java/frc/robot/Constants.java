@@ -48,11 +48,11 @@ public final class Constants {
     public static final int BOTTOM_ID = 2;
 
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
-    //public static final InvertedValue INVERTED_RIGHT = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue INVERTED_RIGHT = InvertedValue.CounterClockwise_Positive;
     public static final double GEAR_RATIO = 9;
     public static final double METERS_PER_REVOLUTION =
         (Math.PI * Units.inchesToMeters(2.2594)) / GEAR_RATIO;
-    //public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final TunablePIDGains PID_GAINS =
         new TunablePIDGains("/elevator/PID", 38, 1, 0.5, MiscConstants.TUNING_MODE);
@@ -69,17 +69,6 @@ public final class Constants {
     public static final double INTAKE_POSITION = Units.inchesToMeters(1);
     public static final double HUMAN = Units.inchesToMeters(10.9377);
     public static final double FORCE_HOME = Units.inchesToMeters(7.0);
-  }
-
-  public class AlgaeConstants {
-    public static final double GEAR_RATIO = 0; //we don't know :(
-    public static final TunablePIDGains ALGAE_PID_GAINS = 
-      new TunablePIDGains("/pid/algae/", 0, 0, 0, MiscConstants.TUNING_MODE); //figure out later :3
-    public static final int ID = 0; //also figure out later :33
-    public static final TunableTrapezoidalProfileGains ALGAE_TRAP_GAINS = 
-      new TunableTrapezoidalProfileGains("/trapezoidalprofile/wrist", Units.rotationsToRadians(5), Units.rotationsToRadians(5), Constants.MiscConstants.TUNING_MODE);
-      //pls check above values no idea if they're right :(
-    
   }
 
   public static class CoralConstants {

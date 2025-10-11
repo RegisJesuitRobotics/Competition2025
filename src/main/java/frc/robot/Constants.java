@@ -78,7 +78,7 @@ public final class Constants {
     public static final int SWITCH_ID_LEFT = 0; 
 
     public static final TunablePIDGains CORAL_PID_GAINS =
-        new TunablePIDGains("/coral/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
+        new TunablePIDGains("/coral/PID", 1.5, 0, 0, MiscConstants.TUNING_MODE);
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double SUPPLY_CURRENT_LIMIT = 40; 

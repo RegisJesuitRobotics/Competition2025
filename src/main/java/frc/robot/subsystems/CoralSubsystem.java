@@ -30,7 +30,7 @@ import frc.robot.utils.ConfigurationUtils;
 // @Logged
 public class CoralSubsystem extends SubsystemBase {
 
-  private final TunableTelemetryPIDController pidController = new TunableTelemetryPIDController("/coral/pid", CoralConstants.CORAL_PID_GAINS);
+    private final TunableTelemetryPIDController pidController = new TunableTelemetryPIDController("/coral/pid", CoralConstants.CORAL_PID_GAINS);
 
 
   private final TalonFX coralMotor = new TalonFX(CoralConstants.CORAL_MOTOR_ID, Constants.MiscConstants.CANIVORE_NAME);
@@ -116,8 +116,7 @@ public class CoralSubsystem extends SubsystemBase {
   public Command runRPS(double setpointRPS) {
     return this.run(
             () -> {
-              double rateLimited = slewRateLimiter.calculate(setpointRPS); //radians
-              coralMotor.setVoltage(pidController.calculate(getVelocity(), rateLimited));
+              coralMotor.setVoltage(pidController.calculate(getVelocity(), setpointRPS));
                 })
         .beforeStarting(() -> slewRateLimiter.reset(getVelocity()));
   }

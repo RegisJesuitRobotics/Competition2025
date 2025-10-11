@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.hid.CommandButtonBoard;
@@ -139,7 +140,7 @@ public class RobotContainer {
 
         joystick
                 .leftTrigger()
-                .whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE));
+                .whileTrue(coralSubsystem.runRPS(CoralConstants.OUTTAKE_RPS));
 
         joystick
                 .leftBumper()

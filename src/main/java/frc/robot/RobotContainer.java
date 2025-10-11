@@ -139,7 +139,7 @@ public class RobotContainer {
 
         joystick
                 .leftTrigger()
-                .whileTrue(coralSubsystem.setVoltageCommand(Constants.CoralConstants.OUTPUT_VOLTAGE));
+                .whileTrue(coralSubsystem.runRPS(Constants.CoralConstants.OUTTAKE_RPS));
 
         joystick
                 .leftBumper()

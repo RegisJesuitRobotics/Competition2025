@@ -13,7 +13,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.google.gson.ToNumberStrategy;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -48,11 +47,11 @@ public final class Constants {
     public static final int BOTTOM_ID = 2;
 
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
-    //public static final InvertedValue INVERTED_RIGHT = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue INVERTED_RIGHT = InvertedValue.CounterClockwise_Positive;
     public static final double GEAR_RATIO = 9;
     public static final double METERS_PER_REVOLUTION =
         (Math.PI * Units.inchesToMeters(2.2594)) / GEAR_RATIO;
-    //public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final TunablePIDGains PID_GAINS =
         new TunablePIDGains("/elevator/PID", 38, 1, 0.5, MiscConstants.TUNING_MODE);
@@ -62,31 +61,24 @@ public final class Constants {
     public static final TunableFFGains FF =
         new TunableFFGains("/elevator/ff", 0.02501, 0.12426, 0.074887, MiscConstants.TUNING_MODE);
 
-    public static final double L2_REEF = Units.inchesToMeters(28.5); //7.9736
-    public static final double L4_REEF = Units.inchesToMeters(71.35507394660516);
-    public static final double L3_REEF = Units.inchesToMeters(44.77526942901589);
-    public static final double L1_REEF = Units.inchesToMeters(16.345548826546363);
-    public static final double INTAKE_POSITION = Units.inchesToMeters(1);
+    public static final double L2_REEF = Units.inchesToMeters(7.9736);
+    public static final double L4_REEF = Units.inchesToMeters(57.50);
+    public static final double L3_REEF = Units.inchesToMeters(25.75);
+    public static final double L1_REEF = 0.0;
+    public static final double INTAKE_POSITION = Units.inchesToMeters(1.25);
     public static final double HUMAN = Units.inchesToMeters(10.9377);
     public static final double FORCE_HOME = Units.inchesToMeters(7.0);
   }
 
-  public class AlgaeConstants {
-    public static final double GEAR_RATIO = 0; //we don't know :(
-    public static final TunablePIDGains ALGAE_PID_GAINS = 
-      new TunablePIDGains("/pid/algae/", 0, 0, 0, MiscConstants.TUNING_MODE); //figure out later :3
-    public static final int ID = 0; //also figure out later :33
-    public static final TunableTrapezoidalProfileGains ALGAE_TRAP_GAINS = 
-      new TunableTrapezoidalProfileGains("/trapezoidalprofile/wrist", Units.rotationsToRadians(5), Units.rotationsToRadians(5), Constants.MiscConstants.TUNING_MODE);
-      //pls check above values no idea if they're right :(
-    
-  }
-
+ 
   public static class CoralConstants {
 
     public static final int CORAL_MOTOR_ID = 12;
     public static final int SWITCH_ID_RIGHT = 1; 
     public static final int SWITCH_ID_LEFT = 0; 
+
+    public static final TunablePIDGains CORAL_PID_GAINS =
+        new TunablePIDGains("/coral/PID", 0, 0, 0, MiscConstants.TUNING_MODE);
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
     public static final double SUPPLY_CURRENT_LIMIT = 40; 
@@ -95,8 +87,11 @@ public final class Constants {
 
     public static final double GEAR_RATIO = 18.0 / 16.0;
     public static final double RUNNING_VOLTAGE = 12.0;
-    public static final double OUTPUT_VOLTAGE = 11.0;
-    public static final double INTAKE_VOLTAGE = 2;
+    public static final double OUTPUT_VOLTAGE = 10.0;
+    public static final double INTAKE_VOLTAGE = 2.5;
+
+    public static final double OUTTAKE_RPS =  Units.rotationsPerMinuteToRadiansPerSecond(100); //radians per second
+
     
   }
 
@@ -155,7 +150,7 @@ public final class Constants {
             "/drive/gains/pointTranslationController", 5, 0, 0, MiscConstants.TUNING_MODE);
     public static final TunableTrapezoidalProfileGains trapPointTranslationGains =
         new TunableTrapezoidalProfileGains(
-            "/drive/gains/trapPointTranslationController", 0, 0, MiscConstants.TUNING_MODE);
+            "/drive/gains/trapPointTranslationController", 1, .25, MiscConstants.TUNING_MODE);
     public static final TunableFFGains pointTranslationFFGains =
         new TunableFFGains("/drive/gains/pointFFController", 0, 0.124, 0, MiscConstants.TUNING_MODE);
     public static final double MAX_VELOCITY = 3.0;

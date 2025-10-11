@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TEST"
+            "pathName": "LeftStart-11K"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": null
           }
         }
       ]

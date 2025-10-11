@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ChassisConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.commands.ToPointCommand;
@@ -82,6 +83,27 @@ public class Autos {
   public static Command detectAndMoveTarget(VisionSubsystem vision, CommandSwerveDrivetrain drive) {
     return new ToPointCommand(drive, () -> vision.getTargetTrajectory());
   }
+
+  public static Command ScoreL3(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
+    return Commands.sequence(
+      elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF)
+      .andThen(coralSubsystem.runRPS(Constants.CoralConstants.OUTTAKE_RPS)));
+  }
+
+  public static Command ScoreL2(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
+    return Commands.sequence(
+      elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF)
+      .andThen(coralSubsystem.runRPS(Constants.CoralConstants.OUTTAKE_RPS)));
+  }
+
+  public static Command resetElevatorCommand (ElevatorSubsystem elevatorSubsystem){
+    return elevatorSubsystem.setPosition(ElevatorConstants.INTAKE_POSITION);
+  }
+
+  public static Command IntakeCoral (CoralSubsystem coralSubsystem){
+    return coralSubsystem.intakeUntilDetected();
+  }
+ 
 
   public Command autoStart(
       ElevatorSubsystem elevatorSubsystem) {

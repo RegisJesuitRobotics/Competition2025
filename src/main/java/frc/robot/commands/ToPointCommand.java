@@ -1,4 +1,4 @@
-package frc.robot.commands.autoCommands;
+package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;

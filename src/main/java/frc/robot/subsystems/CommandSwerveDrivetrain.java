@@ -19,9 +19,11 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -31,9 +33,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.telemetry.tunable.TunableTelemetryProfiledPIDController;
 import frc.robot.telemetry.types.DoubleTelemetryEntry;
+import frc.robot.telemetry.types.Pose2dEntry;
 import frc.robot.utils.RaiderUtils;
 import frc.robot.utils.Reef;
 
@@ -69,7 +74,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     
 
   private final DoubleTelemetryEntry pigeonEntry = new DoubleTelemetryEntry("/drive/pigeon", true);
-  private String autoTraj = Reef.MidAlgae.value;
+  
 
   private final Pigeon2 pigeon2 = this.getPigeon2();
   /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
@@ -162,6 +167,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       
       startSimThread();
     }
+
+    makeBranchPlacements();
   }
 
   /**
@@ -243,26 +250,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     this.setVisionMeasurementStdDevs(VecBuilder.fill(1, 1, 99999999));
 
-    RobotConfig config = null;
-    try {
-      config = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      // Handle exception as needed
-      e.printStackTrace();
-    }
 
-    AutoBuilder.configure(
-        this::getPose,
-        this::resetPose,
-        this::getSpeeds,
-        (ChassisSpeeds, FF) ->
-            this.setControl(swerveRequest.withVelocityX(ChassisSpeeds.vxMetersPerSecond).withVelocityY(ChassisSpeeds.vyMetersPerSecond).withRotationalRate(ChassisSpeeds.omegaRadiansPerSecond)),
-        new PPHolonomicDriveController(
-            Constants.AutoConstants.pointTranslationGains.createPIDConstants(),
-            Constants.AutoConstants.ROTATION_PID_GAINS),
-        config,
-        RaiderUtils::shouldFlip,
-        this);
   }
 
  
@@ -290,10 +278,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutineToApply.quasistatic(direction);
-  }
-
-  public Command nothing(){
-return Commands.none();
   }
 
   /**
@@ -352,31 +336,6 @@ return Commands.none();
   }
 
 
-
-  
-
-  public Command autoDriveTrajectory(String position, AtomicBoolean shouldFlip) {
-    PathConstraints constraints =
-        new PathConstraints(
-            Constants.AutoConstants.MAX_VELOCITY,
-            Constants.AutoConstants.MAX_ACCELERATION,
-            Constants.AutoConstants.MAX_ANGULAR_VELOCITY,
-            Constants.AutoConstants.MAX_ANGULAR_ACCELERATION,
-            Constants.AutoConstants.NOMINAL_VOLTAGE);
-
-    PathPlannerPath path;
-    try {
-      path = PathPlannerPath.fromPathFile(position);
-     
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
-    }
-
-    return AutoBuilder.pathfindThenFollowPath(path, constraints);
-  }
-
   private void startSimThread() {
     m_lastSimTime = Utils.getCurrentTimeSeconds();
 
@@ -402,5 +361,135 @@ return Commands.none();
     shouldFlip.set(flipped);
     return flipped;
   }
+
+
+
+   private final Pose2d[][] branchPoints = new Pose2d[6][2];
+  
+     public void makeBranchPlacements(){
+   //0 = left
+   //1 = right
+   
+       branchPoints[0][0] = new Pose2d(5.696, 3.987, new Rotation2d(Units.radiansToDegrees(90)) //180
+       ); //12 
+       branchPoints[0][1] = new Pose2d(5.404, 3.619, new Rotation2d(Units.radiansToDegrees(90))); //1
+   
+       branchPoints[1][0] = new Pose2d(4.994, 3.024, new Rotation2d(Units.radiansToDegrees(60)) //120
+       ); //2
+       branchPoints[1][1] = new Pose2d(4.735, 2.813, new Rotation2d(Units.radiansToDegrees(60))); //3
+   
+       branchPoints[2][0] = new Pose2d(3.81, 3.044, new Rotation2d(Units.radiansToDegrees(-30)) //60
+       ); //4
+       branchPoints[2][1] = new Pose2d(3.561, 3.321, new Rotation2d(Units.radiansToDegrees(-30))); //5
+   
+       branchPoints[3][1] = new Pose2d(3.363, 4.098, new Rotation2d(Units.radiansToDegrees(-90)) //0
+       ); //6
+       branchPoints[3][0] = new Pose2d(3.411, 4.334, new Rotation2d(Units.radiansToDegrees(-90))); //7
+   
+       branchPoints[4][1] = new Pose2d(3.964, 5.006, new Rotation2d(Units.radiansToDegrees(210)) //-60
+       ); //8
+       branchPoints[4][0] = new Pose2d(4.31, 5.075, new Rotation2d(Units.radiansToDegrees(210))); //9
+   
+       branchPoints[5][0] = new Pose2d(5.119, 5.026, new Rotation2d(Units.radiansToDegrees(-55)) //-125
+       ); //10
+       branchPoints[5][1] = new Pose2d(5.364, 4.803, new Rotation2d(Units.radiansToDegrees(-55))); //11
+   
+     }
+   
+     private int determineCurrentZone(){
+      Pose2d pose = getPose();
+     double poseRotation = Math.atan2(pose.getY(), pose.getX());
+
+     if ( -0.524<= poseRotation && poseRotation < .524){
+      return 0;
+     }
+     if ( .524 <= poseRotation && poseRotation < 1.571 ){
+      return 5;
+     }
+     if (1.571 <= poseRotation && poseRotation <2.618 ){
+      return 4;
+     }
+     if ( 2.618 <= poseRotation && poseRotation < -2.618){
+      return 3;
+     }
+     if (-2.618 <= poseRotation && poseRotation < -1.571){
+      return 2;
+     }
+     if (-1.571 <= poseRotation && poseRotation < -0.524){
+      return 1;
+     }
+    else{
+      return -1;
+    }
+   
+  }
+
+  public Pose2d returnAutoAlignPose(int leftOrRight){
+    // int currentZone = determineCurrentZone();
+    // return branchPoints[currentZone][leftOrRight];
+
+    return new Pose2d(15.6, 4.3, new Rotation2d(0));
+  }
+
+  
+  private final SwerveRequest.FieldCentric swerveRequestField = new SwerveRequest.FieldCentric();
+  private final SwerveRequest.ApplyFieldSpeeds swerveRequestSpeeds = new SwerveRequest.ApplyFieldSpeeds();
+
+  private Pose2d desiredPoseCurrent = new Pose2d();
+
+  private final TunableTelemetryProfiledPIDController translationControllerX = new TunableTelemetryProfiledPIDController(
+      "/drive/autoX",
+      Constants.AutoConstants.pointTranslationGains,
+      Constants.AutoConstants.trapPointTranslationGains);
+  private final TunableTelemetryProfiledPIDController translationControllerY = new TunableTelemetryProfiledPIDController(
+      "/drive/autoY",
+      Constants.AutoConstants.pointTranslationGains,
+      Constants.AutoConstants.trapPointTranslationGains);
+
+  private final Pose2dEntry desiredPoseEntry = new Pose2dEntry("/drive/toPoint/neuralDesiredPose", true);
+  private final DoubleTelemetryEntry speedXEntry = new DoubleTelemetryEntry("/drive/toPoint/desiredXSpeeds", true);
+  private final DoubleTelemetryEntry speedYEntry = new DoubleTelemetryEntry("/drive/toPoint/desiredYSpeeds", true);
+
+  private Translation2d getTranslationError() {
+    return desiredPoseCurrent.getTranslation().minus(getPose().getTranslation());
+  }
+
+
+
+
+  public Command ToPointCommand(Pose2d desiredPose) {
+    translationControllerX.setTolerance(0.05);
+    translationControllerY.setTolerance(0.05);
+
+    desiredPoseCurrent = desiredPose;
+    desiredPoseEntry.append(desiredPoseCurrent);
+
+    if (getTranslationError().getNorm() > .05) {
+    
+      translationControllerX.setGoal(desiredPose.getX());
+
+      double translationFeedbackX = translationControllerX.calculate(getPose().getX(), desiredPose.getX());
+
+      translationControllerY.setGoal(desiredPose.getY());
+
+      double translationFeedbackY = translationControllerY.calculate(getPose().getY(), desiredPose.getX());
+
+      return applyRequest(
+          () -> swerveRequestSpeeds
+              .withSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
+                  translationFeedbackX,
+                  translationFeedbackY,
+                  0.0,
+                  getPose().getRotation())))
+                  .alongWith(Commands.run(() ->{
+                    speedXEntry.append(translationFeedbackX);
+                    speedYEntry.append(translationFeedbackY);
+                  } ));
+
+    } else {
+      return Commands.print("no ToPointCommand :(");
+    }
+  }
+
   
 }

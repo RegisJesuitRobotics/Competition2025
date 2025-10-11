@@ -61,11 +61,11 @@ public final class Constants {
     public static final TunableFFGains FF =
         new TunableFFGains("/elevator/ff", 0.02501, 0.12426, 0.074887, MiscConstants.TUNING_MODE);
 
-    public static final double L2_REEF = Units.inchesToMeters(7.9736);
-    public static final double L4_REEF = Units.inchesToMeters(57.50);
-    public static final double L3_REEF = Units.inchesToMeters(25.75);
-    public static final double L1_REEF = 0.0;
-    public static final double INTAKE_POSITION = Units.inchesToMeters(1.25);
+    public static final double L2_REEF = Units.inchesToMeters(28.5); //7.9736
+    public static final double L4_REEF = Units.inchesToMeters(71.35507394660516);
+    public static final double L3_REEF = Units.inchesToMeters(44.77526942901589);
+    public static final double L1_REEF = Units.inchesToMeters(16.345548826546363);
+    public static final double INTAKE_POSITION = Units.inchesToMeters(1);
     public static final double HUMAN = Units.inchesToMeters(10.9377);
     public static final double FORCE_HOME = Units.inchesToMeters(7.0);
   }

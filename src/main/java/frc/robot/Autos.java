@@ -61,6 +61,7 @@ public class Autos {
       NamedCommands.registerCommand("scoreL2", ScoreL2(elevatorSubsystem, coralSubsystem));
       NamedCommands.registerCommand("resetElevator", resetElevatorCommand(elevatorSubsystem));
       NamedCommands.registerCommand("intake", IntakeCoral(coralSubsystem));
+      NamedCommands.registerCommand("score", score(coralSubsystem));
 
         autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
 
@@ -91,9 +92,7 @@ public class Autos {
   }
 
   public static Command ScoreL3(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
-    return Commands.sequence(
-      elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF)
-      .andThen(coralSubsystem.runRPS(Constants.CoralConstants.OUTTAKE_RPS)));
+    return elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF);
   }
 
   public static Command ScoreL2(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
@@ -119,5 +118,9 @@ public class Autos {
     return Commands.parallel(
             elevatorSubsystem.homeElevatorCommand())
         .withName("AutoStart");
+  }
+
+  public Command score(CoralSubsystem coralSubsystem) {
+    return coralSubsystem.setVoltageCommand(10);
   }
 }

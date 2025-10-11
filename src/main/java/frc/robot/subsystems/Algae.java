@@ -30,7 +30,7 @@ import sun.misc.Signal;
 
 import java.util.function.DoubleSupplier;
 
-public class AlgaeSubsystem extends SubsystemBase {
+public class Algae extends SubsystemBase {
     private final TelemetryTalonFX algaeMotor = 
         new TelemetryTalonFX(Constants.AlgaeConstants.ID, "/algae/motor", Constants.MiscConstants.CANIVORE_NAME, Constants.MiscConstants.TUNING_MODE);
     private final SysIdRoutine algaeSysId = new SysIdRoutine(

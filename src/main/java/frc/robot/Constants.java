@@ -88,9 +88,9 @@ public final class Constants {
     public static final double GEAR_RATIO = 18.0 / 16.0;
     public static final double RUNNING_VOLTAGE = 12.0;
     public static final double OUTPUT_VOLTAGE = 10.0;
-    public static final double INTAKE_VOLTAGE = 2.5;
+    public static final double INTAKE_VOLTAGE = 1.75;
 
-    public static final double OUTTAKE_RPS =  Units.rotationsPerMinuteToRadiansPerSecond(100); //radians per second
+    public static final double OUTTAKE_RPS =  Units.rotationsPerMinuteToRadiansPerSecond(75); //radians per second
 
     
   }

@@ -13,13 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "scoreL3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "resetElevator"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "intake"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "scoreL3"
           }
         }
       ]

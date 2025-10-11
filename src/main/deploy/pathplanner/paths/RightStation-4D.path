@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 1.4198227835499784,
-        "y": 0.6703893382587325
+        "y": 0.6703893382587324
       },
       "isLocked": false,
       "linkedName": "RIGHT-STATION"
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -35.394795844987
+    "rotation": 145.78944800124705
   },
   "useDefaultConstraints": true
 }

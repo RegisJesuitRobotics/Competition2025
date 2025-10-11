@@ -13,13 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "scoreL3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "resetElevator"
           }
         },
         {

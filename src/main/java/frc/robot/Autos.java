@@ -23,8 +23,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ChassisConstants;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.MiscConstants;
@@ -61,7 +63,7 @@ public class Autos {
       NamedCommands.registerCommand("scoreL2", ScoreL2(elevatorSubsystem, coralSubsystem));
       NamedCommands.registerCommand("resetElevator", resetElevatorCommand(elevatorSubsystem));
       NamedCommands.registerCommand("intake", IntakeCoral(coralSubsystem));
-      NamedCommands.registerCommand("score", score(coralSubsystem));
+      NamedCommands.registerCommand("score", score(coralSubsystem, elevatorSubsystem));
 
         autoChooser = AutoBuilder.buildAutoChooser("JustProbe");
 
@@ -93,13 +95,12 @@ public class Autos {
 
   public static Command ScoreL3(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
     return elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF)
-    .until(()->elevatorSubsystem.getElevatorPosition()== (ElevatorConstants.L3_REEF- Units.inchesToMeters(1)));
+    .until(()-> Math.abs(elevatorSubsystem.getElevatorPosition() - ElevatorConstants.L3_REEF) < Units.inchesToMeters(0.6));
   }
 
   public static Command ScoreL2(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
-    return Commands.sequence(
-      elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF)
-      .andThen(coralSubsystem.runRPS(Constants.CoralConstants.OUTTAKE_RPS)));
+    return elevatorSubsystem.setPosition(ElevatorConstants.L2_REEF)
+    .until(()-> Math.abs(elevatorSubsystem.getElevatorPosition() - ElevatorConstants.L2_REEF) < Units.inchesToMeters(0.4));
   }
 
   public static Command resetElevatorCommand (ElevatorSubsystem elevatorSubsystem){
@@ -110,8 +111,8 @@ public class Autos {
     return coralSubsystem.intakeUntilDetected();
   }
  
-  public static Command score(CoralSubsystem coralSubsystem) {
-    return coralSubsystem.setVoltageCommand(10).until(()-> !coralSubsystem.getRightSwitchState());
+  public static Command score(CoralSubsystem coralSubsystem, ElevatorSubsystem elevatorSubsystem) {
+    return coralSubsystem.runRPS(CoralConstants.OUTTAKE_RPS).alongWith(elevatorSubsystem.setPosition(elevatorSubsystem.getElevatorPosition()));
   }
 
   public Command autoStart(

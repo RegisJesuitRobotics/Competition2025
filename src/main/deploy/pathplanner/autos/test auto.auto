@@ -5,6 +5,18 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "TEST"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreL2"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "score"

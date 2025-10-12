@@ -92,7 +92,8 @@ public class Autos {
   }
 
   public static Command ScoreL3(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
-    return elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF);
+    return elevatorSubsystem.setPosition(ElevatorConstants.L3_REEF)
+    .until(()->elevatorSubsystem.getElevatorPosition()== (ElevatorConstants.L3_REEF- Units.inchesToMeters(1)));
   }
 
   public static Command ScoreL2(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem) {
@@ -109,6 +110,9 @@ public class Autos {
     return coralSubsystem.intakeUntilDetected();
   }
  
+  public static Command score(CoralSubsystem coralSubsystem) {
+    return coralSubsystem.setVoltageCommand(10).until(()-> !coralSubsystem.getRightSwitchState());
+  }
 
   public Command autoStart(
       ElevatorSubsystem elevatorSubsystem) {
@@ -120,7 +124,5 @@ public class Autos {
         .withName("AutoStart");
   }
 
-  public Command score(CoralSubsystem coralSubsystem) {
-    return coralSubsystem.setVoltageCommand(10);
-  }
+  
 }
